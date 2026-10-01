@@ -29,6 +29,19 @@ const scrollFrac = (id, frac) => async (page) => {
 };
 
 const SCENARIOS = {
+  // Phase 3 — maps (v6 needs ~6 s for tiles + intro; the app map loads when in view)
+  territory: { widths: [1440, 390], act: async (page) => { await scroll("territorio", 0)(page); await page.waitForTimeout(6500); } },
+  "territory-pick": {
+    widths: [390],
+    act: async (page) => {
+      await scroll("territorio", 0)(page);
+      await page.waitForTimeout(5000);
+      await page.locator("#territorio").getByRole("button", { name: "Galarza", exact: true }).first().click();
+      await page.waitForTimeout(2500);
+    },
+  },
+  "sheet-map": { widths: [1440], act: async (page) => { await scroll("ficha", 1900)(page); await page.waitForTimeout(6000); } },
+
   // Phase 2 — content sections
   intro: { widths: [1440, 390], act: scrollFrac("intro", 0.5) },
   roads: { widths: [1440, 390], act: scroll("caminos", 0) },

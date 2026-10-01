@@ -10,11 +10,12 @@ import { PortalSheet } from "@/components/sections/PortalSheet";
 import { PortalsRail } from "@/components/sections/PortalsRail";
 import { RoadStatus } from "@/components/sections/RoadStatus";
 import { SectionPlaceholder } from "@/components/sections/SectionPlaceholder";
+import { Territory } from "@/components/sections/Territory";
 import { LandingProvider } from "@/context/LandingContext";
 import { SECTION_IDS } from "@/lib/data/copy";
 
 // Ibera Landing v6, section by section and in the same order.
-// Placeholders: Territorio (phase 3: maps), Aprender jugando and Reportar (phase 4: interactive).
+// Placeholders: Aprender jugando and Reportar (phase 4: interactive).
 export default function LandingPage() {
   return (
     <LandingProvider>
@@ -22,7 +23,7 @@ export default function LandingPage() {
       <main>
         <Hero />
         <ConnectedByWater />
-        <SectionPlaceholder id={SECTION_IDS.territory} tone="photo" label="Territorio" title="Ocho puertas a un mismo estero" heightClass="min-h-dvh lg:h-[300vh]" image="satellite" />
+        <Territory />
         <RoadStatus />
         <Pause />
         <PortalsRail />

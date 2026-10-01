@@ -30,7 +30,8 @@
 - **v6 ya es responsive.** Se validó con Playwright: 0 errores y 0 px de scroll horizontal en 1440 y 390 px.
 - **Fase 0 completa** (rama `feat/landing-v6`). Se retiró el código del Prototipo, los datos quedaron alineados 1:1 con v6 y la base visual está lista.
 - **Fase 1 completa.** Header, menú móvil, tema, franja “Caminos hoy” y footer iguales a v6.
-- **Fase 2 completa.** 9 de las 12 secciones de v6 implementadas. Siguen provisorias Territorio (fase 3), Aprender jugando y Reportar (fase 4). El mapa chico de la ficha muestra una imagen satelital estática hasta la fase 3.
+- **Fase 2 completa.** Secciones de contenido iguales a v6.
+- **Fase 3 completa.** Territorio y el mapa de la ficha con MapLibre. 10 de las 12 secciones implementadas; siguen provisorias Aprender jugando y Reportar (fase 4).
 
 Archivos del prototipo que **no** se implementan: `Ibera Prototipo`, `Ibera Mockup`, `Ibera Escritorio`, `Ibera Landing v2`–`v5` e `Ibera Landing`. `Ibera Sistema Visual` y `Icon` quedan como referencia de íconos.
 
@@ -74,7 +75,7 @@ Cada necesidad de v6, cómo la resuelve el prototipo y con qué se implementa. *
 | Imágenes | `background: url()` enlazando Wikimedia a 1400–2400 px | **`next/image`** con archivos locales WebP en `public/img` (19 fotos, 4,7 MB) | Validado; 3 fotos de baja resolución (sección 13) |
 | Mapa | **MapLibre GL 4.7.1** por CDN, cargado a mano | **`maplibre-gl` 6.11.2** por npm, `dynamic(..., { ssr: false })` dentro de un Client Component | Validado: las 18 APIs que usa v6 existen en los typings de 6.11 (`fitBounds`, `cameraForBounds`, `flyTo` con `offset`, `project`, `setPaintProperty` de `raster-saturation` y `raster-brightness-max`, `webglcontextlost`, `touchZoomRotate.disableRotation`, `cooperativeGestures`…) |
 | Teselas | MapTiler Hybrid si hay clave; si no, Esri World Imagery + capas de referencia | Igual (`lib/map/config.ts`), clave en `NEXT_PUBLIC_MAPTILER_KEY` | Validado; producción: ver riesgos |
-| Marcadores | Elementos HTML posicionados con `map.project()` en cada `move` | Igual, escribiendo `transform` por ref (sin `setState` por frame) | A implementar (fase 3) |
+| Marcadores | Elementos HTML posicionados con `map.project()` en cada `move` | Igual, escribiendo `transform` por ref (sin `setState` por frame) | Implementado (fase 3) |
 | Animación de scroll | `scroll` + `requestAnimationFrame` + `IntersectionObserver`, escribiendo estilos directo en el DOM | **Sin librería de animación.** Hooks propios con `rAF` + `IntersectionObserver` que escriben por ref. Se descarta `motion`: v6 no lo necesita y agrega peso | Decisión validada |
 | Ondulación del agua | Filtro SVG `feTurbulence` + `feDisplacementMap` animado | Mismo filtro SVG inline | Compatible |
 | Sonido (Voces de la noche) | **Web Audio API**: 4 osciladores con rampa descendente | Igual. No hacen falta archivos de audio | Compatible |
@@ -107,7 +108,7 @@ components/
   layout/               SiteChrome (client: header + menú móvil + franja), Footer, Logo
   sections/             Hero, ConnectedByWater, Territory, RoadStatus, Pause, PortalsRail,
                         PortalSheet, Ecosystem, Fragility, Play, Act, Future
-  map/                  MapView (client), LazyMap, MapFallback, MapControls, ScaleBar
+  map/                  MapView (client, MapLibre diferido), PortalMiniMap
   games/                CleanChannels, WaterSigns, DarkSky, NightVoices, GamesIndex
   report/               ReportWizard, ReportsMapDialog, TrackingTimeline
   ui/                   Icon, Lightbox, Controls (flechas, botón vidrio, acción subrayada, punto),
@@ -210,12 +211,18 @@ Cuatro instancias de MapLibre, como en v6 (`mountMap`):
 
 | Clave | Sección | Comportamiento |
 | --- | --- | --- |
-| `main` | Territorio | Encuadre `BOUNDS`, inclinación 6° (prop `tilt`, máx. 15) solo en escritorio, vuelo al portal activo, zoom ±, reiniciar vista, escala en km, brújula, leyenda, estados cargando / error con “Reintentar”; en celular sin arrastre ni zoom con dos dedos |
-| `aside` | Ficha | No interactivo, 8 pines con el actual resaltado |
+| `main` | Territorio | Encuadre `BOUNDS`, inclinación 6° solo en escritorio, vuelo al portal elegido, zoom ±, reiniciar vista, escala en km, brújula, leyenda, estados cargando / error con “Reintentar”; en celular sin arrastre ni zoom con dos dedos. Se reencuadra al cambiar el tamaño salvo que haya un portal enfocado ✅ |
+| `aside` | Ficha | No interactivo, 8 pines con el actual resaltado ✅ |
 | `loc` | Reportar | Interactivo, zoom 14; al soltar, el centro es la ubicación (“Marcar manualmente”) |
 | `rmap` | Panel “Reclamos en el mapa” | Interactivo con teclado y rueda; marcadores por estado; el reporte propio aparece al enviarse |
 
 Datos fijos: `BOUNDS = [[-58.0692, -28.6549], [-56.6969, -27.8572]]`, `PELLEGRINI = [-57.1745, -28.5405]`. Tratamiento del raster: saturación −0.15, contraste +0.08, brillo máximo 0.9 (oscuro) o 0.97 (claro). Atribución: “© MapTiler · © colaboradores de OpenStreetMap” o “Imágenes: Esri, Maxar, Earthstar Geographics · Referencias: Esri”.
+
+**Sin WebGL o con error de carga:** como en v6, nunca se muestra una geografía falsa. Territorio muestra “No pudimos cargar el mapa interactivo” con **Reintentar** y **Ver portales**; el mapa de la ficha muestra “Mapa no disponible”. El resto de la página sigue funcionando.
+
+**Worker de MapLibre 6:** MapLibre busca su worker junto a su módulo (`import.meta.url`), que no existe dentro del bundle de Next. `scripts/copy-maplibre-worker.mjs` (corre en `predev` y `prebuild`) copia `maplibre-gl-worker.mjs` y `maplibre-gl-shared.mjs` a `public/vendor/maplibre/`, y `MapView` llama a `setWorkerUrl` antes de crear el mapa. La carpeta está en `.gitignore`.
+
+**Contenedor:** la hoja de estilos de MapLibre fuerza `position: relative` en el contenedor; por eso ocupa el 100% de un padre posicionado en lugar de usar `absolute inset-0`.
 
 ---
 
@@ -298,7 +305,7 @@ Rama de trabajo: `feat/landing-v6`. Cada fase termina con lint, build y Playwrig
 | **0 · Reestructuración** ✅ | Se retira el código del Prototipo; datos 1:1 con v6; 19 imágenes; fuentes, tokens y tema de v6; guía v2; tests base | Build de una sola ruta `/`; 5 tests en verde | `refactor(landing): restructure project around Ibera Landing v6` |
 | **1 · Cáscara** ✅ | Header (tono, vidrio, link activo), menú móvil, selector de tema, franja “Caminos hoy”, footer, `Reveal`, breakpoint `tab`, `useLandingScroll`, secciones provisorias con ids/tonos/alturas de v6 | Comparación lado a lado con v6 (header arriba y sobre superficie, oscuro y claro, menú, franja, footer) en 1440 y 390 px; 12 tests en verde | `feat(layout): add v6 header, mobile menu, roads band and footer` |
 | **2 · Secciones de contenido** ✅ | Portada (entrada animada), Conectado por el agua (texto iluminado), Caminos, Pausa, Carrusel de portales, Ficha con galería, lightbox y “Antes de ir”, Ecosistema y Fragilidad (ficha activa por scroll), Cierre; `LandingContext` (portal y juego elegidos) | Comparación lado a lado con v6 de 12 escenarios en 1440 y 390 px; 19 tests en verde | `feat(sections): build v6 content sections` |
-| 3 · Mapas | MapView v2 (marcadores por `project()`, controles, escala, brújula, leyenda, estados), Territorio (por toque y lista), mapa de la ficha | Mapa funcional con y sin WebGL | `feat(map): territory, portal and fallback maps` |
+| **3 · Mapas** ✅ | `MapView` (MapLibre diferido, marcadores HTML por `project()`, tratamiento del raster por tema, estados y reintento), Territorio (pines, etiquetas, tarjeta, zoom, reiniciar, brújula, escala, leyenda, intro, tira de portales en celular), mapa de la ficha; worker de MapLibre servido desde `public/` | Comparación lado a lado con v6 en 1440 y 390 px; 26 tests en verde (incluye fallo de teselas) | `feat(map): territory and portal sheet maps` |
 | 4 · Interactivos | 4 juegos, asistente de reporte con foto y GPS reales, panel de reclamos, `useOffline` | Flujos E2E en verde | `feat(play,report): games and report wizard` |
 | 5 · Coreografía | Parallax, iluminado, mapa sticky por scroll, ondulación, sanación, cursor, carrusel con parallax, reduced-motion | Comparación visual con v6 en escritorio y celular | `feat(motion): scroll choreography from v6` |
 | 6 · Producción | Postgres + Drizzle, bucket, Server Action, Serwist, imágenes de reemplazo, deploy en Railway | Reporte sin señal que llega al volver la conexión; Lighthouse móvil ≥ 90 | `feat(api): persist reports and offline queue` |
@@ -328,7 +335,7 @@ Rama de trabajo: `feat/landing-v6`. Cada fase termina con lint, build y Playwrig
 - **Teselas de Esri sin clave:** sirven para desarrollo; para producción usar MapTiler con clave o revisar los términos de Esri.
 - **Rendimiento:** v6 hace `setState` en cada evento de scroll. Si se copia tal cual, se traba en celulares. Por eso la coreografía escribe por ref.
 - **`useOffline` es experimental** en Next 16: aislarlo en un hook propio para poder reemplazarlo.
-- **WebGL ausente** en algunos teléfonos: el fallback estático del mapa es obligatorio.
+- **WebGL ausente** en algunos teléfonos: se muestra el panel de error con reintento (decisión de v6: nunca una geografía falsa).
 
 ---
 

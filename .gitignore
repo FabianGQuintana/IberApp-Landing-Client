@@ -47,3 +47,6 @@ next-env.d.ts
 /tests/.screens/
 /playwright-report/
 /tests/.compare/
+
+# copied from node_modules by scripts/copy-maplibre-worker.mjs
+/public/vendor/

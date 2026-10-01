@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useRef, useState, type ReactNode } from "react";
+import { PortalMiniMap } from "@/components/map/PortalMiniMap";
 import { Dot, RoundArrowButton, TextAction } from "@/components/ui/Controls";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { Reveal } from "@/components/ui/Reveal";
@@ -16,7 +17,7 @@ import { ISSUE_LABEL } from "@/lib/data/statuses";
 const GUTTER = "clamp(24px,4vw,64px)";
 const EASE = "cubic-bezier(.2,.7,.2,1)";
 
-// "Ficha del portal" (v6 #ficha). The aside map becomes a live MapLibre map in phase 3.
+// "Ficha del portal" (v6 #ficha).
 export function PortalSheet() {
   const { portalId, openPortal, openGame } = useLanding();
   const portal = getPortal(portalId) ?? PORTALS[0];
@@ -228,13 +229,7 @@ export function PortalSheet() {
             <BeforeRow label="Señal">{portal.signal}</BeforeRow>
             <BeforeRow label="Combustible">{portal.fuel}</BeforeRow>
             <BeforeRow label="Visitantes">{portal.phone}</BeforeRow>
-            <div className="relative mt-6 aspect-[16/10] overflow-hidden rounded-[2px] bg-[#0D1511]">
-              {/* Phase 3: live MapLibre map with the 8 portals (v6 `aside` map) */}
-              <Image src={IMAGES.satellite.src} alt="" fill sizes="420px" className="object-cover opacity-60" />
-              <span className="eyebrow absolute bottom-3 left-3 text-[11px] text-cloud [text-shadow:0_1px_8px_rgba(0,0,0,.8)]">
-                {portal.kind === "national-park" ? "Parque Nacional" : "Portal"} {portal.name}
-              </span>
-            </div>
+            <PortalMiniMap portalId={portal.id} label={`${portal.kind === "national-park" ? "Parque Nacional" : "Portal"} ${portal.name}`} />
             <TextAction className="mt-6 text-head" onClick={() => setSavedId(saved ? null : portal.id)} aria-pressed={saved}>
               {saved && <span className="h-[7px] w-[7px] animate-ib-fadeup rounded-full bg-mint" />}
               {saved ? "Guardada para usar sin conexión" : "Guardar sin conexión ↓"}
