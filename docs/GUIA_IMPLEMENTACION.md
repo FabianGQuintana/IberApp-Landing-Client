@@ -29,6 +29,7 @@
 - **Lo simulado en v6 se vuelve real**: foto, GPS, código de seguimiento y detección de conexión (sección 9).
 - **v6 ya es responsive.** Se validó con Playwright: 0 errores y 0 px de scroll horizontal en 1440 y 390 px.
 - **Fase 0 completa** (rama `feat/landing-v6`). Se retiró el código del Prototipo, los datos quedaron alineados 1:1 con v6 y la base visual está lista.
+- **Fase 1 completa.** Header, menú móvil, tema, franja “Caminos hoy” y footer iguales a v6. Las secciones todavía son provisorias (`SectionPlaceholder`), salvo la portada y el cierre en versión inicial.
 
 Archivos del prototipo que **no** se implementan: `Ibera Prototipo`, `Ibera Mockup`, `Ibera Escritorio`, `Ibera Landing v2`–`v5` e `Ibera Landing`. `Ibera Sistema Visual` y `Icon` quedan como referencia de íconos.
 
@@ -102,7 +103,7 @@ app/
   globals.css           tokens v6 (oscuro/claro), animaciones ib-*, utilidades
   manifest.ts · not-found.tsx
 components/
-  layout/               Header (client), MobileMenu (client), RoadsBand (client), Footer
+  layout/               SiteChrome (client: header + menú móvil + franja), Footer, Logo
   sections/             Hero, ConnectedByWater, Territory, RoadStatus, Pause, PortalsRail,
                         PortalSheet, Ecosystem, Fragility, Play, Act, Future
   map/                  MapView (client), LazyMap, MapFallback, MapControls, ScaleBar
@@ -112,8 +113,8 @@ components/
   theme/                ThemeScript, ThemeToggle (client)
 context/
   LandingContext.tsx    portal seleccionado, juego activo, visibilidad de la franja, sección activa
-hooks/                  useScrollProgress, useReveal, useParallax, useActiveSection,
-                        useMediaQuery, useReducedMotion, useCanHover
+hooks/                  useLandingScroll (header, sección activa, franja), useTheme,
+                        useScrollProgress, useParallax, useMediaQuery, useReducedMotion, useCanHover
 lib/
   data/                 portals, road-status, ecosystem, games, reports, copy, images, statuses
   map/config.ts         BOUNDS, PELLEGRINI, satStyle(), atribución
@@ -133,7 +134,7 @@ v6 guarda todo en un único componente. En Next se reparte así:
 | --- | --- | --- |
 | Portal elegido (`portal`) | `LandingContext` + `?portal=<id>` en la URL | Lo cambian Territorio, Caminos, Portales y Ficha; la URL permite compartir una ficha |
 | Juego activo | `LandingContext` | Lo cambian la Ficha (“Aprendelo jugando”) y el índice de juegos |
-| Sección activa, tono del header, franja | `useActiveSection` (IntersectionObserver) | Antes se recalculaba en cada scroll |
+| Sección activa, tono del header, franja | `useLandingScroll`: un listener pasivo con `rAF`; el estado solo cambia cuando cambia un valor | Mismas reglas que `update()` de v6 |
 | Progreso de scroll (iluminado, parallax, mapa) | Refs + `rAF`, **nunca `setState` por frame** | Rendimiento en celulares y regla `set-state-in-effect` |
 | Tema | `data-theme` + `localStorage` | Igual que v6 |
 | Reporte en curso | Estado local de `ReportWizard` | Solo lo usa esa sección |
@@ -293,7 +294,7 @@ Rama de trabajo: `feat/landing-v6`. Cada fase termina con lint, build y Playwrig
 | Fase | Entregables | Criterio de cierre | Commit |
 | --- | --- | --- | --- |
 | **0 · Reestructuración** ✅ | Se retira el código del Prototipo; datos 1:1 con v6; 19 imágenes; fuentes, tokens y tema de v6; guía v2; tests base | Build de una sola ruta `/`; 5 tests en verde | `refactor(landing): restructure project around Ibera Landing v6` |
-| 1 · Cáscara | Header (tono, vidrio, link activo), menú móvil, selector de tema, franja “Caminos hoy”, footer, `Reveal`, breakpoint `tab`, `useActiveSection` | Navegar por anclas en 360/768/1440 igual que v6; cambio de tema sin parpadeo | `feat(layout): add v6 header, mobile menu, roads band and footer` |
+| **1 · Cáscara** ✅ | Header (tono, vidrio, link activo), menú móvil, selector de tema, franja “Caminos hoy”, footer, `Reveal`, breakpoint `tab`, `useLandingScroll`, secciones provisorias con ids/tonos/alturas de v6 | Comparación lado a lado con v6 (header arriba y sobre superficie, oscuro y claro, menú, franja, footer) en 1440 y 390 px; 12 tests en verde | `feat(layout): add v6 header, mobile menu, roads band and footer` |
 | 2 · Secciones de contenido | Portada, Conectado por el agua (estático), Caminos, Pausa, Carrusel de portales, Ficha con galería y lightbox, Ecosistema, Fragilidad, Cierre | Capturas lado a lado con v6 en 4 anchos | `feat(sections): build v6 content sections` |
 | 3 · Mapas | MapView v2 (marcadores por `project()`, controles, escala, brújula, leyenda, estados), Territorio (por toque y lista), mapa de la ficha | Mapa funcional con y sin WebGL | `feat(map): territory, portal and fallback maps` |
 | 4 · Interactivos | 4 juegos, asistente de reporte con foto y GPS reales, panel de reclamos, `useOffline` | Flujos E2E en verde | `feat(play,report): games and report wizard` |
@@ -335,6 +336,7 @@ Rama de trabajo: `feat/landing-v6`. Cada fase termina con lint, build y Playwrig
 - **Commits:** [Conventional Commits](https://www.conventionalcommits.org/) (`feat`, `fix`, `refactor`, `chore`, `docs`, `test`) con scope (`layout`, `sections`, `map`, `play`, `report`, `motion`, `api`). Un commit por fase como mínimo.
 - **Ramas:** trabajo en `feat/landing-v6`; PR a `main` al cerrar cada fase o al final.
 - **Next 16 primero:** ante cualquier duda, `node_modules/next/dist/docs/` manda (AGENTS.md).
+- **Comparación visual con v6:** con el prototipo servido en `:8765` (`python -m http.server 8765` en su carpeta) y `npm run dev -- -p 3005`, correr `npm run compare:v6 [escenario…]`. Deja capturas lado a lado (izquierda v6, derecha IberAPP) en `tests/.compare/`. Cada fase agrega sus escenarios en `tests/compare-v6.mjs`.
 - **Una tarea está terminada cuando** pasan `npm run lint`, `npm run build` y `npm run test:e2e`; no hay scroll horizontal ni errores de runtime en 360, 768, 1024 y 1440 px; respeta `prefers-reduced-motion`; y se comparó con v6 en el navegador.
 
 ### Skills recomendadas (skills.sh)

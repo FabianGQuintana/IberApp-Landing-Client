@@ -56,6 +56,10 @@
 }
 
 @theme {
+  /* v6 layouts: < 700 px = phone ("mobile"), 700–1023 px = tablet, ≥ 1024 px = desktop ("narrow" is < 1024).
+     `tab:` matches v6's mobile cut; `lg:` (1024 px, Tailwind default) matches its desktop cut. */
+  --breakpoint-tab: 700px;
+
   /* Fixed brand colors used by v6 regardless of theme (photo overlays, statuses, accents) */
   --color-mint: #00d58a;
   --color-leaf: #00b96c;
@@ -137,6 +141,9 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     margin: 0;
     background: var(--bg);

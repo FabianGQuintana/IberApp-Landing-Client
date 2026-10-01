@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "compare:v6": "node tests/compare-v6.mjs"
   },
   "dependencies": {
     "maplibre-gl": "^6.11.2",
