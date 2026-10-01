@@ -134,6 +134,23 @@
     0%, 100% { transform: scale(0.9); opacity: 0.55; }
     50% { transform: scale(1.12); opacity: 1; }
   }
+  /* Hero entrance (v6: heroIntroSc, heroTy, heroMetaOp, heroSubOp / heroSubTy on `loaded`) */
+  @keyframes ib-settle {
+    0% { transform: scale(1.0185); }
+    100% { transform: none; }
+  }
+  @keyframes ib-rise {
+    0% { transform: translateY(105%); }
+    100% { transform: none; }
+  }
+  @keyframes ib-appear {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes ib-subup {
+    0% { opacity: 0; transform: translateY(12px); }
+    100% { opacity: 1; transform: none; }
+  }
   @keyframes ib-load {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }

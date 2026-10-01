@@ -18,7 +18,31 @@ const scroll = (id, offset = 40) => async (page) => {
   }, [id, offset]);
 };
 
+// Scrolls to a fraction of a tall section (0 = its top, 1 = its end minus one viewport).
+const scrollFrac = (id, frac) => async (page) => {
+  await page.evaluate(([i, f]) => {
+    const el = document.getElementById(i);
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + scrollY;
+    window.scrollTo({ top: top + (el.offsetHeight - innerHeight) * f, behavior: "instant" });
+  }, [id, frac]);
+};
+
 const SCENARIOS = {
+  // Phase 2 — content sections
+  intro: { widths: [1440, 390], act: scrollFrac("intro", 0.5) },
+  roads: { widths: [1440, 390], act: scroll("caminos", 0) },
+  pause: { widths: [1440, 390], act: async (page) => { await scroll("portales", 0)(page); await page.evaluate(() => window.scrollBy(0, -innerHeight * 0.95)); } },
+  portals: { widths: [1440, 390], act: scroll("portales", 0) },
+  sheet: { widths: [1440, 390], act: scroll("ficha", 0) },
+  "sheet-info": { widths: [1440, 390], act: scroll("ficha", 1150) },
+  "sheet-aside": { widths: [1440], act: scroll("ficha", 1900) },
+  ecosystem: { widths: [1440, 390], act: scroll("ecosistema", 0) },
+  "ecosystem-2": { widths: [1440, 390], act: scroll("ecosistema", 1900) },
+  "fragility-intro": { widths: [1440, 390], act: scrollFrac("fragilidad", 0.18) },
+  "fragility-items": { widths: [1440, 390], act: scrollFrac("fragilidad", 0.62) },
+  future: { widths: [1440, 390], act: scroll("futuro", 0) },
+
   top: { widths: [1440, 390], act: async () => {} },
   "header-surface": { widths: [1440, 390], act: scroll("caminos") },
   "band": { widths: [1440, 390], act: scroll("portales", 300) },
@@ -49,7 +73,7 @@ for (const name of names) {
       await page.goto(url);
       await page.waitForTimeout(url === V6 ? 3500 : 1500);
       await sc.act(page);
-      await page.waitForTimeout(900);
+      await page.waitForTimeout(1600);
       shots.push(await page.screenshot());
       await page.close();
     }

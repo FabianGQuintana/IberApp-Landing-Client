@@ -29,7 +29,8 @@
 - **Lo simulado en v6 se vuelve real**: foto, GPS, código de seguimiento y detección de conexión (sección 9).
 - **v6 ya es responsive.** Se validó con Playwright: 0 errores y 0 px de scroll horizontal en 1440 y 390 px.
 - **Fase 0 completa** (rama `feat/landing-v6`). Se retiró el código del Prototipo, los datos quedaron alineados 1:1 con v6 y la base visual está lista.
-- **Fase 1 completa.** Header, menú móvil, tema, franja “Caminos hoy” y footer iguales a v6. Las secciones todavía son provisorias (`SectionPlaceholder`), salvo la portada y el cierre en versión inicial.
+- **Fase 1 completa.** Header, menú móvil, tema, franja “Caminos hoy” y footer iguales a v6.
+- **Fase 2 completa.** 9 de las 12 secciones de v6 implementadas. Siguen provisorias Territorio (fase 3), Aprender jugando y Reportar (fase 4). El mapa chico de la ficha muestra una imagen satelital estática hasta la fase 3.
 
 Archivos del prototipo que **no** se implementan: `Ibera Prototipo`, `Ibera Mockup`, `Ibera Escritorio`, `Ibera Landing v2`–`v5` e `Ibera Landing`. `Ibera Sistema Visual` y `Icon` quedan como referencia de íconos.
 
@@ -109,12 +110,13 @@ components/
   map/                  MapView (client), LazyMap, MapFallback, MapControls, ScaleBar
   games/                CleanChannels, WaterSigns, DarkSky, NightVoices, GamesIndex
   report/               ReportWizard, ReportsMapDialog, TrackingTimeline
-  ui/                   Icon, Lightbox, Gallery, CustomCursor, LitText, Reveal
+  ui/                   Icon, Lightbox, Controls (flechas, botón vidrio, acción subrayada, punto),
+                        LitText, Reveal, CustomCursor (fase 5)
   theme/                ThemeScript, ThemeToggle (client)
 context/
-  LandingContext.tsx    portal seleccionado, juego activo, visibilidad de la franja, sección activa
+  LandingContext.tsx    portal y juego elegidos (`openPortal`, `openGame`), `scrollToSection`
 hooks/                  useLandingScroll (header, sección activa, franja), useTheme,
-                        useScrollProgress, useParallax, useMediaQuery, useReducedMotion, useCanHover
+                        useScrollFrame (+ sectionProgress, activeIndexAtMiddle), useMediaQuery
 lib/
   data/                 portals, road-status, ecosystem, games, reports, copy, images, statuses
   map/config.ts         BOUNDS, PELLEGRINI, satStyle(), atribución
@@ -295,7 +297,7 @@ Rama de trabajo: `feat/landing-v6`. Cada fase termina con lint, build y Playwrig
 | --- | --- | --- | --- |
 | **0 · Reestructuración** ✅ | Se retira el código del Prototipo; datos 1:1 con v6; 19 imágenes; fuentes, tokens y tema de v6; guía v2; tests base | Build de una sola ruta `/`; 5 tests en verde | `refactor(landing): restructure project around Ibera Landing v6` |
 | **1 · Cáscara** ✅ | Header (tono, vidrio, link activo), menú móvil, selector de tema, franja “Caminos hoy”, footer, `Reveal`, breakpoint `tab`, `useLandingScroll`, secciones provisorias con ids/tonos/alturas de v6 | Comparación lado a lado con v6 (header arriba y sobre superficie, oscuro y claro, menú, franja, footer) en 1440 y 390 px; 12 tests en verde | `feat(layout): add v6 header, mobile menu, roads band and footer` |
-| 2 · Secciones de contenido | Portada, Conectado por el agua (estático), Caminos, Pausa, Carrusel de portales, Ficha con galería y lightbox, Ecosistema, Fragilidad, Cierre | Capturas lado a lado con v6 en 4 anchos | `feat(sections): build v6 content sections` |
+| **2 · Secciones de contenido** ✅ | Portada (entrada animada), Conectado por el agua (texto iluminado), Caminos, Pausa, Carrusel de portales, Ficha con galería, lightbox y “Antes de ir”, Ecosistema y Fragilidad (ficha activa por scroll), Cierre; `LandingContext` (portal y juego elegidos) | Comparación lado a lado con v6 de 12 escenarios en 1440 y 390 px; 19 tests en verde | `feat(sections): build v6 content sections` |
 | 3 · Mapas | MapView v2 (marcadores por `project()`, controles, escala, brújula, leyenda, estados), Territorio (por toque y lista), mapa de la ficha | Mapa funcional con y sin WebGL | `feat(map): territory, portal and fallback maps` |
 | 4 · Interactivos | 4 juegos, asistente de reporte con foto y GPS reales, panel de reclamos, `useOffline` | Flujos E2E en verde | `feat(play,report): games and report wizard` |
 | 5 · Coreografía | Parallax, iluminado, mapa sticky por scroll, ondulación, sanación, cursor, carrusel con parallax, reduced-motion | Comparación visual con v6 en escritorio y celular | `feat(motion): scroll choreography from v6` |
