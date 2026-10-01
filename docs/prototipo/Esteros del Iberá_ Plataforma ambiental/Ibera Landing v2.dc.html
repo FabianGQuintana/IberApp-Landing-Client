@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,400&amp;family=Barlow+Semi+Condensed:wght@800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F2F5F3;color:#111514;font-family:Barlow,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+*{box-sizing:border-box}
+a{color:#003E25;text-underline-offset:4px}
+a:hover{color:#006B32}
+:focus-visible{outline:2px solid #00D58A;outline-offset:3px}
+button{font-family:inherit;cursor:pointer}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+
+<header style="position:fixed;top:0;left:0;right:0;z-index:60;height:76px;padding:0 clamp(20px,4vw,56px);display:flex;align-items:center;justify-content:space-between;gap:24px;background:{{ navBg }};backdrop-filter:{{ navBlur }};-webkit-backdrop-filter:{{ navBlur }};border-bottom:1px solid {{ navLine }};transition:background .5s,border-color .5s">
+  <button onClick="{{ goTop }}" aria-label="Iberá, inicio" style="border:none;background:none;padding:0;display:flex;align-items:center;gap:14px;color:{{ navFg }};transition:color .5s">
+    <span style="display:block;width:64px;height:34px;background:{{ navFg }};transition:background .5s;-webkit-mask:url(uploads/iso.svg) left center/contain no-repeat;mask:url(uploads/iso.svg) left center/contain no-repeat"></span>
+    <span style="width:1px;height:26px;background:{{ navFg }};opacity:.4"></span>
+    <span style="display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left"><span style="font:800 17px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Iberá</span><span style="font:500 11px/1 Barlow,sans-serif;text-transform:uppercase;opacity:.8">Corrientes · Argentina</span></span>
+  </button>
+  <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+    <nav style="display:flex;align-items:center;gap:36px">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+        <button onClick="{{ n.onClick }}" style="border:none;background:none;padding:6px 0;color:{{ navFg }};font:500 15px/1 Barlow,sans-serif;border-bottom:1px solid {{ n.line }};transition:color .5s,border-color .3s">{{ n.label }}</button>
+      </sc-for>
+      <button onClick="{{ goActuar }}" style="height:40px;padding:0 18px;border:1px solid {{ navFg }};border-radius:2px;background:transparent;color:{{ navFg }};font:500 15px/1 Barlow,sans-serif;transition:color .5s,border-color .5s,background .2s" style-hover="background:rgba(127,127,127,.14)">Reportar</button>
+    </nav>
+  </sc-if>
+  <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ toggleMenu }}" style="border:none;background:none;padding:10px 0;color:{{ navFg }};font:500 16px/1 Barlow,sans-serif">Menú</button>
+  </sc-if>
+</header>
+
+<sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:80;background:#003E25;color:#FFFFFF;padding:24px clamp(20px,4vw,56px) 40px;display:flex;flex-direction:column">
+    <div style="display:flex;justify-content:space-between;align-items:center;height:52px"><span style="font:800 17px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Iberá</span><button onClick="{{ toggleMenu }}" style="border:none;background:none;color:#FFFFFF;font:500 16px/1 Barlow,sans-serif;padding:10px 0">Cerrar</button></div>
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px">
+      <sc-for list="{{ navM }}" as="n" hint-placeholder-count="5">
+        <button onClick="{{ n.onClick }}" style="border:none;background:none;padding:8px 0;color:#FFFFFF;text-align:left;font:500 44px/1 Barlow,sans-serif">{{ n.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ bandOn }}" hint-placeholder-val="{{ false }}">
+  <button onClick="{{ goCaminos }}" style="position:fixed;left:clamp(16px,4vw,56px);bottom:20px;z-index:55;display:flex;align-items:center;gap:10px;height:44px;padding:0 16px;border:1px solid #DDE3DF;border-radius:2px;background:rgba(242,245,243,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#111514;font:500 14px/1 Barlow,sans-serif" style-hover="border-color:#003E25"><span style="width:8px;height:8px;border-radius:50%;background:#00B96C"></span>Caminos hoy: {{ cntOk }} de 8 transitables<span style="color:#006B32">→</span></button>
+</sc-if>
+
+<div ref="{{ cursorRef }}" aria-hidden="true" style="position:fixed;left:0;top:0;z-index:58;width:104px;height:104px;border-radius:50%;background:#F2F5F3;color:#003E25;display:flex;align-items:center;justify-content:center;font:600 13px/1 Barlow,sans-serif;text-transform:uppercase;pointer-events:none;opacity:0;transform:translate3d(-200px,-200px,0) scale(.6);transition:opacity .3s">Ver portal</div>
+
+<!-- HERO -->
+<section id="descubrir" data-tone="dark" data-screen-label="Portada" style="position:relative;height:100vh;min-height:620px;overflow:hidden;background:#003E25;color:#FFFFFF">
+  <div data-hero-img="" style="position:absolute;inset:0;background:#003E25 {{ imgHero }} center/cover no-repeat;transform:scale(1.08);will-change:transform"></div>
+  <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(17,21,20,.45) 0%,rgba(17,21,20,0) 22%,rgba(17,21,20,0) 50%,rgba(17,21,20,.7) 100%)"></div>
+  <div data-hero-txt="" style="position:absolute;left:0;right:0;bottom:0;padding:0 clamp(20px,4vw,56px) clamp(32px,6vh,64px);display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:28px">
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div style="font:500 13px/1.4 Barlow,sans-serif;text-transform:uppercase">Gran Parque Iberá<br>Corrientes, Argentina</div>
+      <h1 style="margin:0 0 0 -0.03em;font:800 clamp(96px,15vw,240px)/0.8 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Iberá</h1>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:22px;max-width:360px;padding-bottom:6px">
+      <p style="margin:0;font:400 clamp(20px,1.7vw,24px)/1.35 Barlow,sans-serif;text-wrap:pretty">{{ heroLine }}</p>
+      <button onClick="{{ goIntro }}" style="align-self:flex-start;border:none;border-bottom:1px solid #FFFFFF;background:none;padding:0 0 6px;color:#FFFFFF;font:500 16px/1 Barlow,sans-serif">Explorar ↓</button>
+    </div>
+  </div>
+</section>
+
+<!-- INTRO: scroll-lit -->
+<section id="intro" data-tone="light" data-litsec="" data-screen-label="Conectado por el agua" style="position:relative;height:{{ litH }};background:#F2F5F3">
+  <div style="position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;padding:0 clamp(20px,6vw,120px)">
+    <p data-on="#003E25" data-off="#C9D2CD" style="margin:0;max-width:1100px;font:500 clamp(30px,4.2vw,64px)/1.12 Barlow,sans-serif;color:#C9D2CD;text-wrap:pretty">
+      <sc-for list="{{ litA }}" as="w" hint-placeholder-count="0"><span data-w="" style="transition:color .35s">{{ w.t }} </span></sc-for>
+    </p>
+  </div>
+</section>
+
+<!-- TERRITORIO -->
+<section id="territorio" data-tone="dark" data-screen-label="Territorio" style="position:relative;height:{{ terrH }};background:#003E25;color:#FFFFFF">
+  <div style="position:{{ terrPos }};top:0;min-height:100vh;overflow:hidden;display:flex;flex-wrap:wrap;align-items:center;gap:40px;padding:120px clamp(20px,4vw,56px) 56px">
+    <div style="flex:1 1 300px;max-width:400px;display:flex;flex-direction:column;gap:28px;position:relative;z-index:2">
+      <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#A9B8B0">Territorio</div>
+      <h2 style="margin:0;font:500 clamp(36px,3.4vw,52px)/1.05 Barlow,sans-serif;text-wrap:balance">Ocho puertas a un mismo estero.</h2>
+      <p style="margin:0;font:400 17px/1.55 Barlow,sans-serif;color:#A9B8B0;text-wrap:pretty">Más de un millón de hectáreas de lagunas, esteros y embalsados. Cada portal es un acceso distinto: su camino, su paisaje, su gente.</p>
+      <div style="display:flex;flex-direction:column;border-top:1px solid #1E5A3E">
+        <sc-for list="{{ pins }}" as="p" hint-placeholder-count="8">
+          <button onClick="{{ p.onOpen }}" onMouseEnter="{{ p.onEnter }}" onMouseLeave="{{ p.onLeave }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border:none;border-bottom:1px solid #1E5A3E;background:none;color:{{ p.fg }};text-align:left;font:500 17px/1.2 Barlow,sans-serif;transition:color .35s"><span>{{ p.name }}</span><span style="opacity:{{ p.arrow }};transition:opacity .35s">→</span></button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="flex:2 1 520px;position:relative;height:min(76vh,720px);min-height:380px">
+      <div style="position:absolute;inset:0;perspective:1800px;perspective-origin:50% 20%;display:flex;align-items:center;justify-content:center">
+        <div data-map-plane="" style="position:relative;width:min(100%,900px);aspect-ratio:16/10;transform-style:preserve-3d;transform:rotateX(58deg) rotateZ(-22deg) scale(.82);--rx:58;--rz:-22">
+          <div style="position:absolute;inset:0;background:#0B2A1C {{ imgSat }} center/cover no-repeat;filter:saturate(.55) brightness(.85) contrast(1.05)"></div>
+          <div style="position:absolute;inset:0;background:repeating-radial-gradient(circle at 54% 52%,rgba(255,255,255,0) 0 26px,rgba(255,255,255,.07) 27px 28px);pointer-events:none"></div>
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none">
+            <polyline data-route="" points="{{ routePts }}" pathLength="100" fill="none" stroke="#FFFFFF" stroke-opacity=".85" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="100 100" stroke-dashoffset="100"></polyline>
+          </svg>
+          <sc-for list="{{ pins }}" as="p" hint-placeholder-count="8">
+            <div style="position:absolute;left:{{ p.x }}%;top:{{ p.y }}%;width:0;height:0;transform-style:preserve-3d">
+              <div style="position:absolute;left:0;bottom:0;transform-origin:0 100%;transform:rotateZ(calc(var(--rz) * -1deg)) rotateX(calc(var(--rx) * -1deg))">
+                <button onClick="{{ p.onOpen }}" onMouseEnter="{{ p.onEnter }}" onMouseLeave="{{ p.onLeave }}" aria-label="{{ p.name }}" style="position:absolute;left:-16px;bottom:-16px;width:32px;height:32px;border:none;background:none;padding:0;display:flex;align-items:center;justify-content:center">
+                  <span style="width:{{ p.dot }}px;height:{{ p.dot }}px;border-radius:50%;background:#FFFFFF;box-shadow:0 0 0 {{ p.ring }}px rgba(255,255,255,.28);transition:width .4s,height .4s,box-shadow .4s"></span>
+                </button>
+                <span style="position:absolute;left:18px;bottom:-9px;white-space:nowrap;font:500 15px/1 Barlow,sans-serif;color:#FFFFFF;opacity:{{ p.lbl }};transform:translateX({{ p.lx }}px);transition:opacity .4s,transform .5s;pointer-events:none">{{ p.name }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CAMINOS -->
+<section id="caminos" data-tone="light" data-screen-label="Estado de accesos" style="background:#F2F5F3;padding:clamp(104px,12vw,176px) clamp(20px,4vw,56px)">
+  <div style="max-width:1320px;margin:0 auto;display:flex;flex-wrap:wrap;gap:clamp(40px,6vw,120px)">
+    <div data-rv="" style="flex:1 1 300px;max-width:420px;display:flex;flex-direction:column;gap:22px">
+      <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#5E6663">Estado de accesos</div>
+      <h2 style="margin:0;font:500 clamp(36px,3.4vw,52px)/1.05 Barlow,sans-serif;color:#003E25;text-wrap:balance">Antes de salir, mirá el camino.</h2>
+      <p style="margin:0;font:400 17px/1.55 Barlow,sans-serif;color:#5E6663;text-wrap:pretty">Los accesos son de ripio, tierra o arena. Una lluvia cambia el viaje. Actualizado hoy a las 08:40 por guardaparques.</p>
+    </div>
+    <div style="flex:2 1 520px;display:flex;flex-direction:column;border-top:1px solid #C9D2CD">
+      <sc-for list="{{ caminos }}" as="c" hint-placeholder-count="8">
+        <button onClick="{{ c.onOpen }}" style="display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 24px;padding:22px 0;border:none;border-bottom:1px solid #C9D2CD;background:none;color:#111514;text-align:left;transition:padding .4s cubic-bezier(.2,.7,.2,1)" style-hover="padding-left:12px">
+          <span style="flex:1 1 260px;display:flex;flex-direction:column;gap:6px"><span style="font:500 clamp(22px,2vw,28px)/1.1 Barlow,sans-serif">{{ c.name }}</span><span style="font:400 15px/1.3 Barlow,sans-serif;color:#5E6663">{{ c.ruta }}</span></span>
+          <span style="flex:0 0 auto;min-width:170px;display:flex;align-items:center;gap:10px;font:500 16px/1 Barlow,sans-serif"><span style="width:8px;height:8px;border-radius:50%;background:{{ c.dot }}"></span>{{ c.eLabel }}</span>
+          <span style="color:#006B32;font:400 20px/1 Barlow,sans-serif">→</span>
+        </button>
+      </sc-for>
+      <div data-rv="" style="margin-top:56px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:32px">
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="font:500 17px/1.3 Barlow,sans-serif">Sin señal al final</div><div style="font:400 15px/1.5 Barlow,sans-serif;color:#5E6663">Guardá la ficha del portal antes de salir; funciona sin conexión.</div></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="font:500 17px/1.3 Barlow,sans-serif">Combustible antes</div><div style="font:400 15px/1.5 Barlow,sans-serif;color:#5E6663">En varios accesos no hay estación en más de 100 km.</div></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="font:500 17px/1.3 Barlow,sans-serif">Tu basura vuelve con vos</div><div style="font:400 15px/1.5 Barlow,sans-serif;color:#5E6663">En la reserva no hay recolección.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAUSA -->
+<section data-tone="dark" data-screen-label="Pausa" style="background:#F2F5F3;padding:0 0 clamp(40px,6vw,80px)">
+  <div data-reveal="" style="position:relative;height:clamp(420px,92vh,960px);overflow:hidden;clip-path:inset(10% 8% round 2px);background:#003E25">
+    <div data-reveal-img="" style="position:absolute;inset:0;background:#003E25 {{ imgPause }} center/cover;transform:scale(1.08)"></div>
+    <div style="position:absolute;left:clamp(20px,4vw,56px);bottom:clamp(20px,4vw,48px);color:#FFFFFF;font:500 13px/1.4 Barlow,sans-serif;text-transform:uppercase">Cormoranes en la laguna</div>
+  </div>
+</section>
+
+<!-- PORTALES -->
+<section id="portales" data-tone="light" data-screen-label="Portales" style="background:#F2F5F3;padding:clamp(80px,10vw,152px) 0 clamp(104px,12vw,176px)">
+  <div data-rv="" style="max-width:1440px;margin:0 auto;padding:0 clamp(20px,4vw,56px);display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px">
+    <div style="display:flex;flex-direction:column;gap:18px;max-width:640px">
+      <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#5E6663">Portales</div>
+      <h2 style="margin:0;font:500 clamp(40px,4.4vw,68px)/1.02 Barlow,sans-serif;color:#003E25;text-wrap:balance">Explorá las puertas de entrada al Iberá.</h2>
+    </div>
+    <div style="display:flex;gap:28px;font:500 15px/1 Barlow,sans-serif">
+      <button onClick="{{ railPrev }}" style="border:none;background:none;padding:8px 0;color:#003E25">← Anterior</button>
+      <button onClick="{{ railNext }}" style="border:none;background:none;padding:8px 0;color:#003E25">Siguiente →</button>
+    </div>
+  </div>
+  <div ref="{{ railRef }}" onScroll="{{ onRail }}" style="margin-top:56px;display:flex;gap:clamp(16px,2vw,32px);overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 clamp(20px,4vw,56px);padding:0 clamp(20px,4vw,56px);scrollbar-width:none">
+    <sc-for list="{{ cards }}" as="c" hint-placeholder-count="2">
+      <article style="flex:none;scroll-snap-align:start;width:{{ cardW }};display:flex;flex-direction:column;gap:22px">
+        <button onClick="{{ c.onOpen }}" onMouseEnter="{{ curEnter }}" onMouseMove="{{ curMove }}" onMouseLeave="{{ curLeave }}" aria-label="Ver portal {{ c.name }}" style="position:relative;height:clamp(360px,64vh,680px);border:none;padding:0;overflow:hidden;background:#003E25;cursor:{{ cursorCss }};border-radius:2px">
+          <span style="position:absolute;inset:0;background:#003E25 {{ c.img }} center/cover;transition:transform 1.2s cubic-bezier(.2,.7,.2,1)" style-hover="transform:scale(1.025)"></span>
+        </button>
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:8px;max-width:480px">
+            <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#5E6663">{{ c.loc }}</div>
+            <div style="font:800 clamp(36px,3.6vw,56px)/0.9 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">{{ c.name }}</div>
+            <div style="font:400 17px/1.45 Barlow,sans-serif;color:#111514">{{ c.tag }}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px">
+            <span style="display:flex;align-items:center;gap:8px;font:500 14px/1 Barlow,sans-serif;color:#5E6663"><span style="width:8px;height:8px;border-radius:50%;background:{{ c.dot }}"></span>{{ c.eLabel }}</span>
+            <button onClick="{{ c.onOpen }}" style="border:none;border-bottom:1px solid #003E25;background:none;padding:0 0 5px;color:#003E25;font:500 16px/1 Barlow,sans-serif">Explorar portal →</button>
+          </div>
+        </div>
+      </article>
+    </sc-for>
+  </div>
+  <div style="max-width:1440px;margin:40px auto 0;padding:0 clamp(20px,4vw,56px)"><div style="height:1px;background:#C9D2CD;position:relative"><div data-railbar="" style="position:absolute;left:0;top:-0.5px;height:2px;width:20%;background:#003E25;transition:left .2s"></div></div></div>
+</section>
+
+<!-- FICHA -->
+<section id="ficha" data-tone="light" data-screen-label="Ficha del portal" style="background:#FFFFFF;padding:clamp(104px,12vw,168px) clamp(20px,4vw,56px)">
+  <div style="max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:48px">
+    <div style="display:flex;flex-wrap:wrap;gap:6px 26px">
+      <sc-for list="{{ chips }}" as="c" hint-placeholder-count="8">
+        <button onClick="{{ c.onClick }}" style="border:none;border-bottom:1px solid {{ c.line }};background:none;padding:6px 0;color:{{ c.fg }};font:500 15px/1 Barlow,sans-serif;transition:color .3s,border-color .3s">{{ c.name }}</button>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div data-reveal="" style="position:relative;height:clamp(360px,70vh,760px);overflow:hidden;clip-path:inset(6% 5% round 2px);background:#003E25">
+        <div data-reveal-img="" style="position:absolute;inset:0;transform:scale(1.08)">
+          <sc-for list="{{ gal }}" as="g" hint-placeholder-count="1">
+            <div style="position:absolute;inset:0;background:#003E25 {{ g.img }} center/cover;opacity:{{ g.op }};transition:opacity 1s"></div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;font:500 14px/1 Barlow,sans-serif;color:#5E6663">
+        <span>{{ cur.name }} · {{ cur.loc }}</span>
+        <span style="display:flex;align-items:center;gap:20px"><button onClick="{{ galPrev }}" aria-label="Foto anterior" style="border:none;background:none;padding:8px;color:#003E25;font:400 20px/1 Barlow,sans-serif">←</button><span>{{ galTxt }}</span><button onClick="{{ galNext }}" aria-label="Foto siguiente" style="border:none;background:none;padding:8px;color:#003E25;font:400 20px/1 Barlow,sans-serif">→</button></span>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:clamp(40px,6vw,112px);align-items:flex-start;margin-top:32px">
+      <div style="flex:1.6 1 520px;display:flex;flex-direction:column;gap:72px;min-width:0">
+        <div data-rv="" style="display:flex;flex-direction:column;gap:22px;max-width:680px">
+          <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#5E6663">Portal {{ cur.name }}</div>
+          <h3 style="margin:0;font:500 clamp(32px,3vw,46px)/1.1 Barlow,sans-serif;color:#003E25;text-wrap:pretty">{{ cur.desc }}</h3>
+          <p style="margin:0;font:400 18px/1.65 Barlow,sans-serif;text-wrap:pretty">{{ cur.hist }}</p>
+        </div>
+        <div data-rv="" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:40px">
+          <div style="display:flex;flex-direction:column;gap:12px;border-top:1px solid #111514;padding-top:16px"><div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#5E6663">Qué hacer</div><sc-for list="{{ curActs }}" as="a" hint-placeholder-count="3"><div style="font:400 17px/1.35 Barlow,sans-serif">{{ a.t }}</div></sc-for></div>
+          <div style="display:flex;flex-direction:column;gap:12px;border-top:1px solid #111514;padding-top:16px"><div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#5E6663">Puntos de interés</div><sc-for list="{{ curPoi }}" as="a" hint-placeholder-count="3"><div style="font:400 17px/1.35 Barlow,sans-serif">{{ a.t }}</div></sc-for></div>
+          <div style="display:flex;flex-direction:column;gap:12px;border-top:1px solid #111514;padding-top:16px"><div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#5E6663">Dónde quedarse</div><sc-for list="{{ curAloj }}" as="a" hint-placeholder-count="3"><div style="font:400 17px/1.35 Barlow,sans-serif">{{ a.t }} <span style="color:#5E6663">· {{ a.k }}</span></div></sc-for></div>
+        </div>
+        <div data-rv="" style="display:flex;flex-direction:column;gap:16px;max-width:620px;border-top:1px solid #C9D2CD;padding-top:28px">
+          <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#5E6663">El desafío de esta zona · {{ cur.prob }}</div>
+          <p style="margin:0;font:400 clamp(20px,1.6vw,24px)/1.45 Barlow,sans-serif;color:#003E25;text-wrap:pretty">{{ cur.probTxt }}</p>
+          <div style="display:flex;flex-wrap:wrap;gap:12px 32px;font:500 16px/1 Barlow,sans-serif">
+            <button onClick="{{ goJugar }}" style="border:none;border-bottom:1px solid #003E25;background:none;padding:0 0 5px;color:#003E25">Aprendelo jugando: {{ cur.juego }} →</button>
+            <button onClick="{{ goActuar }}" style="border:none;border-bottom:1px solid #003E25;background:none;padding:0 0 5px;color:#003E25">Reportar en esta zona →</button>
+          </div>
+        </div>
+      </div>
+      <aside style="flex:1 1 300px;max-width:420px;position:sticky;top:112px;display:flex;flex-direction:column;gap:0">
+        <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#5E6663;padding-bottom:16px;border-bottom:1px solid #111514">Antes de ir</div>
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid #DDE3DF;font:400 16px/1.4 Barlow,sans-serif"><span style="color:#5E6663">Camino</span><span style="display:flex;align-items:center;gap:8px;font-weight:500"><span style="width:8px;height:8px;border-radius:50%;background:{{ cur.dot }}"></span>{{ cur.eLabel }}</span></div>
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid #DDE3DF;font:400 16px/1.4 Barlow,sans-serif"><span style="color:#5E6663">Cómo llegar</span><span style="text-align:right">{{ cur.ruta }}</span></div>
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid #DDE3DF;font:400 16px/1.4 Barlow,sans-serif"><span style="color:#5E6663">Señal</span><span style="text-align:right">{{ cur.senal }}</span></div>
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid #DDE3DF;font:400 16px/1.4 Barlow,sans-serif"><span style="color:#5E6663">Combustible</span><span style="text-align:right">{{ cur.gas }}</span></div>
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid #DDE3DF;font:400 16px/1.4 Barlow,sans-serif"><span style="color:#5E6663">Visitantes</span><span style="text-align:right">{{ cur.tel }}</span></div>
+        <div style="position:relative;margin-top:24px;aspect-ratio:16/10;overflow:hidden;background:#0B2A1C {{ imgSatS }} center/cover;filter:saturate(.6);border-radius:2px">
+          <span style="position:absolute;left:{{ cur.x }}%;top:{{ cur.y }}%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#FFFFFF;box-shadow:0 0 0 6px rgba(255,255,255,.3);transition:left .7s cubic-bezier(.2,.7,.2,1),top .7s cubic-bezier(.2,.7,.2,1)"></span>
+        </div>
+        <button onClick="{{ toggleSave }}" style="margin-top:20px;align-self:flex-start;border:none;border-bottom:1px solid #003E25;background:none;padding:0 0 5px;color:#003E25;font:500 16px/1 Barlow,sans-serif;display:flex;align-items:center;gap:8px"><sc-if value="{{ saved }}" hint-placeholder-val="{{ false }}"><span style="width:8px;height:8px;border-radius:50%;background:#00D58A"></span></sc-if>{{ saveLabel }}</button>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSISTEMA -->
+<section id="ecosistema" data-tone="light" data-screen-label="Ecosistema" style="background:#F2F5F3;padding-top:clamp(104px,12vw,176px)">
+  <div data-rv="" style="max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,56px) clamp(56px,6vw,96px);display:flex;flex-direction:column;gap:22px">
+    <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#5E6663">Ecosistema</div>
+    <h2 style="margin:0;max-width:760px;font:500 clamp(40px,4.4vw,68px)/1.02 Barlow,sans-serif;color:#003E25;text-wrap:balance">Un estero que respira.</h2>
+    <p style="margin:0;max-width:520px;font:400 18px/1.55 Barlow,sans-serif;color:#5E6663;text-wrap:pretty">Más de 4.000 especies comparten el agua. Algunas estuvieron a punto de desaparecer, y volvieron.</p>
+  </div>
+  <div style="display:flex">
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:0 0 58%;position:sticky;top:0;height:100vh;overflow:hidden;background:#003E25">
+        <sc-for list="{{ fauna }}" as="f" hint-placeholder-count="1">
+          <div style="position:absolute;inset:0;background:#003E25 {{ f.img }} center/cover;opacity:{{ f.op }};transform:scale({{ f.sc }});clip-path:{{ f.clip }};transition:opacity 1s,transform 1.8s cubic-bezier(.2,.7,.2,1),clip-path 1.1s cubic-bezier(.7,0,.2,1)"></div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <div style="flex:1 1 42%;display:flex;flex-direction:column;padding:0 clamp(20px,4vw,72px)">
+      <sc-for list="{{ fauna }}" as="f" hint-placeholder-count="2">
+        <div data-fauna="" style="min-height:{{ faunaH }};display:flex;flex-direction:column;justify-content:center;gap:20px;padding:48px 0;opacity:{{ f.tOp }};transition:opacity .6s">
+          <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}"><div style="margin:0 calc(-1 * clamp(20px,4vw,72px)) 12px;aspect-ratio:4/5;background:#003E25 {{ f.img }} center/cover"></div></sc-if>
+          <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#5E6663">{{ f.name }} · <span style="font-style:italic;text-transform:none">{{ f.sci }}</span></div>
+          <h3 style="margin:0;font:500 clamp(32px,3vw,48px)/1.08 Barlow,sans-serif;color:#003E25;text-wrap:balance">{{ f.line }}</h3>
+          <p style="margin:0;max-width:440px;font:400 17px/1.6 Barlow,sans-serif;text-wrap:pretty">{{ f.txt }}</p>
+          <div style="font:400 15px/1.3 Barlow,sans-serif;color:#5E6663">Dónde verlo: {{ f.where }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- FRAGILIDAD -->
+<section id="fragilidad" data-tone="dark" data-screen-label="Fragilidad" style="background:#111514;color:#FFFFFF">
+  <div data-litsec="" data-dimsec="" style="position:relative;height:{{ fragIntroH }}">
+    <div style="position:sticky;top:0;height:100vh;overflow:hidden">
+      <div data-dim="" style="position:absolute;inset:0;background:#111514 {{ imgFrag }} center/cover"></div>
+      <div data-dimov="" style="position:absolute;inset:0;background:#111514;opacity:.2"></div>
+      <div style="position:relative;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(20px,6vw,120px);gap:28px">
+        <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase">Fragilidad</div>
+        <p data-on="#FFFFFF" data-off="rgba(255,255,255,.28)" style="margin:0;max-width:980px;font:500 clamp(36px,5vw,80px)/1.05 Barlow,sans-serif;color:rgba(255,255,255,.28);text-wrap:balance">
+          <sc-for list="{{ litB }}" as="w" hint-placeholder-count="0"><span data-w="" style="transition:color .35s">{{ w.t }} </span></sc-for>
+        </p>
+      </div>
+    </div>
+  </div>
+  <div style="position:relative">
+    <div style="position:sticky;top:0;height:100vh;overflow:hidden">
+      <sc-for list="{{ frags }}" as="f" hint-placeholder-count="1">
+        <div style="position:absolute;inset:0;background:#111514 {{ f.img }} center/cover;filter:grayscale(.9) contrast(1.05) brightness(.8);opacity:{{ f.op }};transform:scale({{ f.sc }});transition:opacity 1.1s,transform 2.4s cubic-bezier(.2,.7,.2,1)"></div>
+      </sc-for>
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(17,21,20,.92) 0%,rgba(17,21,20,.72) 50%,rgba(17,21,20,.3) 100%)"></div>
+    </div>
+    <div style="position:relative;margin-top:-100vh;z-index:1">
+      <sc-for list="{{ frags }}" as="f" hint-placeholder-count="2">
+        <div data-frag="" style="min-height:100vh;display:flex;align-items:center;padding:120px clamp(20px,6vw,120px)">
+          <div style="max-width:560px;display:flex;flex-direction:column;gap:20px;opacity:{{ f.tOp }};transform:translateY({{ f.ty }}px);transition:opacity .7s,transform .9s cubic-bezier(.2,.7,.2,1)">
+            <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#A9B8B0">{{ f.t }}</div>
+            <h3 style="margin:0;font:500 clamp(32px,3.2vw,50px)/1.08 Barlow,sans-serif;text-wrap:balance">{{ f.line }}</h3>
+            <p style="margin:0;font:400 18px/1.6 Barlow,sans-serif;color:#DDE3DF;text-wrap:pretty">{{ f.d }}</p>
+            <div style="font:400 15px/1.4 Barlow,sans-serif;color:#A9B8B0">Pasa en {{ f.where }} · Se aprende en {{ f.game }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- JUGAR -->
+<section id="jugar" data-tone="light" data-screen-label="Aprender" style="background:#F2F5F3;padding:clamp(120px,13vw,192px) clamp(20px,4vw,56px) clamp(104px,12vw,176px)">
+  <div style="max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:clamp(96px,11vw,168px)">
+    <div data-rv="" style="display:flex;flex-direction:column;gap:22px">
+      <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#5E6663">Aprender · Desafío Iberá</div>
+      <h2 style="margin:0;max-width:880px;font:500 clamp(40px,4.4vw,68px)/1.02 Barlow,sans-serif;color:#003E25;text-wrap:balance">Lo que se hace en el estero, se aprende jugando.</h2>
+      <p style="margin:0;max-width:540px;font:400 18px/1.55 Barlow,sans-serif;color:#5E6663;text-wrap:pretty">Actividades reales de los portales convertidas en experiencias cortas. Cada una enseña el problema del lugar donde sucede, y todas forman parte de un modo historia en tres actos.</p>
+      <div style="margin-top:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:32px">
+        <sc-for list="{{ actos }}" as="a" hint-placeholder-count="3">
+          <div style="border-top:1px solid #111514;padding-top:16px;display:flex;flex-direction:column;gap:8px"><div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#5E6663">{{ a.n }}</div><div style="font:500 20px/1.2 Barlow,sans-serif;color:#003E25">{{ a.t }}</div><div style="font:400 15px/1.5 Barlow,sans-serif;color:#5E6663">{{ a.d }}</div></div>
+        </sc-for>
+      </div>
+    </div>
+
+    <sc-for list="{{ juegos }}" as="j" hint-placeholder-count="2">
+      <article style="display:flex;flex-wrap:wrap;flex-direction:{{ j.dir }};align-items:center;gap:clamp(32px,6vw,112px)">
+        <div data-reveal="" style="flex:1.5 1 480px;position:relative;aspect-ratio:5/4;overflow:hidden;clip-path:inset(8% 6% round 2px);background:#111514">
+          <div data-reveal-img="" style="position:absolute;inset:0;background:#111514 {{ j.img }} center/cover;transform:scale(1.08);filter:{{ j.filter }}"></div>
+          <sc-if value="{{ j.isSky }}" hint-placeholder-val="{{ false }}">
+            <sc-for list="{{ stars }}" as="s" hint-placeholder-count="0"><span style="position:absolute;left:{{ s.x }}%;top:{{ s.y }}%;width:{{ s.r }}px;height:{{ s.r }}px;border-radius:50%;background:#FFFFFF;opacity:{{ s.op }};transition:opacity .25s"></span></sc-for>
+            <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(246,142,19,.75) 0%,rgba(246,142,19,.2) 35%,rgba(246,142,19,0) 70%);opacity:{{ glowOp }};mix-blend-mode:screen"></div>
+            <div style="position:absolute;left:0;right:0;bottom:0;height:16%;background:#111514"></div>
+          </sc-if>
+        </div>
+        <div data-rv="" style="flex:1 1 320px;max-width:460px;display:flex;flex-direction:column;gap:20px">
+          <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#5E6663">{{ j.meta }}</div>
+          <h3 style="margin:0;font:800 clamp(44px,4.6vw,76px)/0.88 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">{{ j.t }}</h3>
+          <p style="margin:0;font:400 18px/1.6 Barlow,sans-serif;text-wrap:pretty">{{ j.d }}</p>
+          <sc-if value="{{ j.isSky }}" hint-placeholder-val="{{ false }}">
+            <label style="display:flex;flex-direction:column;gap:12px;font:500 15px/1 Barlow,sans-serif;color:#5E6663">Luz artificial · {{ skyLbl }}<input type="range" min="0" max="100" value="{{ sky }}" onChange="{{ onSky }}" onInput="{{ onSky }}" style="width:100%;accent-color:#003E25"></label>
+            <div style="font:400 16px/1.4 Barlow,sans-serif"><span style="font:500 28px/1 Barlow,sans-serif;color:#003E25">{{ starsN }}</span> estrellas visibles, aprox.</div>
+          </sc-if>
+          <a href="{{ j.href }}" style="align-self:flex-start;text-decoration:none;border-bottom:1px solid #003E25;padding-bottom:5px;color:#003E25;font:500 16px/1 Barlow,sans-serif">{{ j.cta }} →</a>
+        </div>
+      </article>
+    </sc-for>
+  </div>
+</section>
+
+<!-- ACTUAR -->
+<section id="actuar" data-tone="light" data-screen-label="Reportar" style="background:#FFFFFF;padding:clamp(120px,13vw,192px) clamp(20px,4vw,56px)">
+  <div style="max-width:1320px;margin:0 auto;display:flex;flex-wrap:wrap;gap:clamp(56px,8vw,140px);align-items:center">
+    <div data-rv="" style="flex:1.3 1 460px;display:flex;flex-direction:column;gap:28px">
+      <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#5E6663">Actuar</div>
+      <h2 style="margin:0;max-width:700px;font:500 clamp(40px,4.4vw,68px)/1.02 Barlow,sans-serif;color:#003E25;text-wrap:balance">¿Viste algo que no debería estar acá?</h2>
+      <p style="margin:0;max-width:520px;font:400 18px/1.55 Barlow,sans-serif;color:#5E6663;text-wrap:pretty">Un basural, agua oscura, humo. Reportalo en tres pasos y seguí el caso con un código, sin crear cuenta.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:28px;margin-top:8px">
+        <div style="border-top:1px solid #111514;padding-top:14px;display:flex;flex-direction:column;gap:6px"><div style="font:500 18px/1.2 Barlow,sans-serif">Foto</div><div style="font:400 15px/1.45 Barlow,sans-serif;color:#5E6663">Si podés, sacala en el momento.</div></div>
+        <div style="border-top:1px solid #111514;padding-top:14px;display:flex;flex-direction:column;gap:6px"><div style="font:500 18px/1.2 Barlow,sans-serif">Ubicación</div><div style="font:400 15px/1.45 Barlow,sans-serif;color:#5E6663">Se detecta sola, o la marcás.</div></div>
+        <div style="border-top:1px solid #111514;padding-top:14px;display:flex;flex-direction:column;gap:6px"><div style="font:500 18px/1.2 Barlow,sans-serif">Reporte</div><div style="font:400 15px/1.45 Barlow,sans-serif;color:#5E6663">Sin señal, se envía después.</div></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:20px 32px;margin-top:16px">
+        <a href="Ibera Prototipo.dc.html" style="height:60px;padding:0 32px;display:flex;align-items:center;background:#003E25;color:#FFFFFF;text-decoration:none;border-radius:2px;font:500 17px/1 Barlow,sans-serif;transition:background .25s" style-hover="background:#111514;color:#FFFFFF">Reportar un problema</a>
+        <a href="Ibera Prototipo.dc.html" style="font:500 16px/1 Barlow,sans-serif;text-decoration:none;border-bottom:1px solid #003E25;padding-bottom:5px">Ver reclamos en el mapa →</a>
+      </div>
+    </div>
+    <div data-rv="" style="flex:1 1 320px;display:flex;justify-content:center">
+      <div style="width:min(100%,340px);border:1px solid #DDE3DF;border-radius:28px;padding:14px;background:#F2F5F3">
+        <div style="background:#FFFFFF;border-radius:18px;overflow:hidden;display:flex;flex-direction:column">
+          <div style="aspect-ratio:4/3;background:#003E25 {{ imgReport }} center/cover"></div>
+          <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:20px;display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <sc-for list="{{ rTipos }}" as="t" hint-placeholder-count="3"><button onClick="{{ t.onClick }}" style="height:36px;padding:0 12px;border-radius:2px;border:1px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }};font:500 14px/1 Barlow,sans-serif">{{ t.label }}</button></sc-for>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:4px;padding:12px 0;border-top:1px solid #DDE3DF;border-bottom:1px solid #DDE3DF"><span style="font:500 12px/1 Barlow,sans-serif;text-transform:uppercase;color:#5E6663">Ubicación</span><span style="font:400 15px/1.35 Barlow,sans-serif">Colonia Carlos Pellegrini · a 300 m de la laguna</span></div>
+              <button onClick="{{ send }}" style="height:48px;border:none;border-radius:2px;background:#003E25;color:#FFFFFF;font:500 16px/1 Barlow,sans-serif">Enviar reporte</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:20px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;align-items:center;gap:8px;font:500 15px/1 Barlow,sans-serif"><span style="width:8px;height:8px;border-radius:50%;background:#00D58A"></span>Recibido</div>
+              <div style="font:500 26px/1.1 Barlow,sans-serif;color:#003E25">Gracias. Lo recibe el guardaparque de la zona.</div>
+              <div style="font:400 14px/1.4 Barlow,sans-serif;color:#5E6663">Código de seguimiento</div>
+              <div style="font:800 30px/1 'Barlow Semi Condensed',sans-serif">IB-0419</div>
+              <button onClick="{{ reset }}" style="align-self:flex-start;border:none;border-bottom:1px solid #003E25;background:none;padding:0 0 4px;color:#003E25;font:500 15px/1 Barlow,sans-serif">Hacer otro reporte</button>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CIERRE -->
+<section id="futuro" data-tone="dark" data-screen-label="Cierre" style="position:relative;height:110vh;min-height:640px;overflow:hidden;background:#111514;color:#FFFFFF">
+  <div data-heal="" style="position:absolute;inset:0;background:#111514 {{ imgJag }} 60% center/cover;filter:grayscale(1) brightness(.55)"></div>
+  <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(17,21,20,.35) 0%,rgba(17,21,20,0) 40%,rgba(17,21,20,.78) 100%)"></div>
+  <div style="position:absolute;left:0;right:0;bottom:0;padding:0 clamp(20px,4vw,56px) clamp(48px,8vh,96px);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:32px">
+    <h2 data-rv="" style="margin:0;max-width:900px;font:800 clamp(56px,8vw,136px)/0.86 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">El estero es de todos. Cuidarlo también.</h2>
+    <div data-rv="" style="display:flex;flex-direction:column;gap:20px;max-width:320px">
+      <p style="margin:0;font:400 17px/1.5 Barlow,sans-serif">El yaguareté volvió a nacer en el Iberá después de más de setenta años. Conocer es el primer paso para cuidar.</p>
+      <button onClick="{{ goTerritorio }}" style="align-self:flex-start;border:none;border-bottom:1px solid #FFFFFF;background:none;padding:0 0 6px;color:#FFFFFF;font:500 16px/1 Barlow,sans-serif">Explorar el Iberá →</button>
+    </div>
+  </div>
+</section>
+
+<footer data-tone="dark" style="background:#111514;color:#FFFFFF;padding:64px clamp(20px,4vw,56px) 88px">
+  <div style="max-width:1440px;margin:0 auto;display:flex;flex-wrap:wrap;gap:40px;justify-content:space-between;align-items:flex-start">
+    <div style="display:flex;align-items:center;gap:14px"><span style="display:block;width:64px;height:34px;background:#FFFFFF;-webkit-mask:url(uploads/iso.svg) left center/contain no-repeat;mask:url(uploads/iso.svg) left center/contain no-repeat"></span><span style="font:400 14px/1.5 Barlow,sans-serif;color:#A9B8B0;max-width:300px">Turismo, educación ambiental y participación ciudadana. Proyecto no oficial.</span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:28px;font:400 15px/1 Barlow,sans-serif">
+      <a href="#portales" style="color:#FFFFFF;text-decoration:none">Portales</a><a href="#caminos" style="color:#FFFFFF;text-decoration:none">Accesos</a><a href="#ecosistema" style="color:#FFFFFF;text-decoration:none">Ecosistema</a><a href="#jugar" style="color:#FFFFFF;text-decoration:none">Aprender</a><a href="https://parqueibera.gob.ar/" style="color:#FFFFFF;text-decoration:none">Prensa</a><a href="https://parqueibera.gob.ar/" style="color:#FFFFFF;text-decoration:none">Contacto</a>
+    </div>
+  </div>
+  <div style="max-width:1440px;margin:48px auto 0;font:400 13px/1.5 Barlow,sans-serif;color:#A9B8B0">Estados de camino, teléfonos y alojamientos: datos de ejemplo. Fotos: Wikimedia Commons.</div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;heroCopy&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Un paisaje hecho de agua&quot;,&quot;options&quot;:[&quot;Un paisaje hecho de agua&quot;,&quot;El estero es de todos&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Portada&quot;},&quot;tilt&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:58,&quot;min&quot;:30,&quot;max&quot;:70,&quot;step&quot;:1,&quot;unit&quot;:&quot;°&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Mapa&quot;},&quot;showBand&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Utilidad&quot;}}">
+class Component extends DCLogic {
+  state = { narrow: false, tone: 'dark', mapIdx: 0, hov: null, portal: 'laguna', gal: 0, fauna: 0, frag: 0, sky: 10, rTipo: 'basura', sent: false, saved: false, band: false, menu: false, navAct: -1 };
+  railRef = React.createRef();
+  cursorRef = React.createRef();
+
+  static U(n, w) { return "url('https://commons.wikimedia.org/wiki/Special:FilePath/" + encodeURIComponent(n.replace(/ /g, '_')) + "?width=" + (w || 1400) + "')"; }
+  static I = {
+    A: 'Esteros_del_Ibera_Laguna.JPG', B: 'Esteros Del Ibera, Corrientes, Argentina, 2nd. Jan 2011 - Flickr - PhillipC (4).jpg',
+    C: 'Urupe, Esteros Del Ibera, Corrientes, Argentina, 2nd. Jan 2011 - Flickr - PhillipC.jpg', D: 'Avifauna_en_los_esteros_del_Iberá,_cormoranes.JPG',
+    E: 'Yacaré_-_Esteros_del_Iberá_-_Argentina_02.jpg', F: 'Gubernatrix cristata - Yellow cardinal (male); Iberá marshes, Corrientes, Argentina.jpg',
+    G: 'Yacare con flor (26389548324).jpg', H: 'Esteros_Ibera_Caiman_Yacare.jpg', SAT: 'Esteros del Iberá, Argentina.jpg',
+    JAG: 'Jaguar (Panthera onca palustris) male Three Brothers River 2.jpg', JAG2: 'Standing jaguar.jpg', CAP: 'Capybara (Hydrochoerus hydrochaeris).JPG',
+    CIE: 'Blastocerus dichotomus.jpg', CAM: 'Pontederia crassipes.jpg', SKY: 'Milky Way Night Sky Black Rock Desert Nevada.jpg',
+    WASTE: 'Plastic Pollution.jpg', WATER: 'Water pollution.jpg', FIRE: 'Grass fire.jpg', LIGHT: 'Light pollution.jpg'
+  };
+  static E = {
+    ok: { eLabel: 'Transitable', dot: '#00B96C' },
+    barro: { eLabel: 'Con precaución', dot: '#FACD05' },
+    x4: { eLabel: 'Solo 4×4', dot: '#F68E13' }
+  };
+  static P = [
+    { id: 'laguna', name: 'Laguna Iberá', loc: 'Colonia Carlos Pellegrini', est: 'ok', x: 52, y: 58, ruta: 'RP 40 desde Mercedes · 120 km de ripio', img: 'A', gal: ['A', 'D', 'H'], tag: 'El pueblo y la laguna comparten orilla.', desc: 'Un pueblo de calles de arena a orillas de la laguna, y el portal más visitado del sistema.', hist: 'Colonia Carlos Pellegrini nació como un asentamiento de pescadores y mariscadores. Hoy vive del turismo de naturaleza, y muchos de sus guías son hijos de quienes antes cazaban en el estero.', acts: ['Kayak y lancha por la laguna', 'Sendero de los monos', 'Observación nocturna'], poi: ['Centro de interpretación', 'Puente sobre la laguna', 'Sendero de los monos'], aloj: [['Posadas y hosterías', 'En el pueblo'], ['Camping municipal', 'Costanera'], ['Estancias', 'RP 40']], senal: 'Solo en el pueblo', gas: 'Última carga en Mercedes', tel: '+54 3773 000 000', prob: 'Residuos', probTxt: 'En temporada alta llegan visitantes todos los días. Lo que no se recolecta termina en los canales.', juego: 'Canales limpios' },
+    { id: 'galarza', name: 'Galarza', loc: 'Gdor. Virasoro', est: 'barro', x: 84, y: 42, ruta: 'RP 41 · ripio con barro tras lluvias', img: 'E', gal: ['E', 'B', 'G'], tag: 'La puerta del este, entre el estero y el monte.', desc: 'La puerta del este: lagunas rodeadas de monte, cerca de Misiones.', hist: 'Una zona de estancias ganaderas que se abrió a la conservación. Todavía muestra las huellas del incendio de 2022.', acts: ['Avistaje de fauna', 'Paseo en canoa', 'Sendero del monte'], poi: ['Laguna Galarza', 'Mirador del monte', 'Zona en recuperación'], aloj: [['Camping del portal', 'Con reserva'], ['Hospedajes', 'Gdor. Virasoro']], senal: 'Intermitente', gas: 'Última carga en Gdor. Virasoro', tel: '+54 3756 000 000', prob: 'Fuego', probTxt: 'Zona afectada por los incendios de 2022. La fauna todavía se está recuperando.', juego: 'Voces de la noche' },
+    { id: 'cambyreta', name: 'Cambyretá', loc: 'Ituzaingó', est: 'ok', x: 70, y: 24, ruta: 'Desde Ituzaingó · camino de tierra', img: 'B', gal: ['B', 'C', 'D'], tag: 'Palmares y esteros abiertos al norte.', desc: 'La puerta norte, entre palmares y esteros abiertos.', hist: 'Un paisaje de transición entre el estero y los campos altos, donde se cruzan especies del monte y del agua.', acts: ['Safari nocturno', 'Sendero del palmar', 'Canoa por el estero'], poi: ['Palmar', 'Mirador del estero', 'Centro de visitantes'], aloj: [['Camping del portal', 'Con reserva'], ['Hoteles', 'Ituzaingó']], senal: 'Nula en el último tramo', gas: 'Última carga en Ituzaingó', tel: '+54 3786 000 000', prob: 'Fuego', probTxt: 'Las quemas de pastizales avanzan con la sequía y ponen en riesgo a la fauna del palmar.', juego: 'Voces de la noche' },
+    { id: 'sannicolas', name: 'San Nicolás', loc: 'Ituzaingó', est: 'x4', x: 62, y: 34, ruta: 'Tramo final de arena · solo 4×4', img: 'C', gal: ['C', 'B', 'A'], tag: 'El más aislado, con lagunas de agua clara.', desc: 'Uno de los portales más aislados, con lagunas de agua muy clara.', hist: 'Un antiguo campo ganadero hoy dedicado a la reintroducción de especies. Llegar cuesta, y eso lo protege.', acts: ['Senderos de observación', 'Kayak en laguna', 'Avistaje de aves'], poi: ['Laguna de agua clara', 'Sendero interpretativo', 'Área de reintroducción'], aloj: [['Refugio del portal', 'Con reserva'], ['Hoteles', 'Ituzaingó']], senal: 'Sin señal', gas: 'Última carga en Ituzaingó', tel: '+54 3786 000 001', prob: 'Lixiviados', probTxt: 'El líquido que se filtra de la basura acumulada viaja bajo tierra hasta el agua.', juego: 'Señales del agua' },
+    { id: 'uguay', name: 'Uguay', loc: 'Villa Olivari', est: 'ok', x: 46, y: 20, ruta: 'Desde RN 12 · camino de tierra', img: 'D', gal: ['D', 'A', 'E'], tag: 'Aves acuáticas a un paso de la ruta.', desc: 'El acceso más directo desde la ruta nacional, con aves acuáticas.', hist: 'Un buen primer contacto con el estero para quien viene de paso por la RN 12.', acts: ['Avistaje de aves', 'Kayak', 'Sendero costero'], poi: ['Muelle', 'Laguna Uguay', 'Sendero costero'], aloj: [['Camping del portal', 'Sin reserva'], ['Hospedajes', 'Villa Olivari']], senal: 'Buena cerca de la ruta', gas: 'Sobre la RN 12', tel: '+54 3786 000 002', prob: 'Residuos', probTxt: 'Los residuos de pesca y camping quedan en la costa y llegan al agua con la crecida.', juego: 'Canales limpios' },
+    { id: 'sanantonio', name: 'San Antonio', loc: 'Concepción', est: 'ok', x: 38, y: 36, ruta: 'Camino vecinal · tierra', img: 'G', gal: ['G', 'H', 'C'], tag: 'Pequeño y ligado a su comunidad.', desc: 'Un portal pequeño, gestionado junto a los vecinos.', hist: 'Aquí el estero y la vida rural se tocan: la gestión del portal se hace con la comunidad.', acts: ['Sendero comunitario', 'Avistaje de yacarés', 'Cielo nocturno'], poi: ['Sendero comunitario', 'Laguna', 'Feria local'], aloj: [['Casas de familia', 'Concepción'], ['Camping', 'Con reserva']], senal: 'Intermitente', gas: 'Última carga en Concepción', tel: '+54 3782 000 000', prob: 'Lixiviados', probTxt: 'Basurales cercanos a cursos de agua contaminan lagunas y peces.', juego: 'Señales del agua' },
+    { id: 'carambola', name: 'Carambola', loc: 'Concepción', est: 'ok', x: 28, y: 48, ruta: 'Desde Concepción · ripio', img: 'F', gal: ['F', 'B', 'D'], tag: 'Monte, senderos y un cielo muy oscuro.', desc: 'Senderos de monte y uno de los cielos más oscuros de la provincia.', hist: 'Lejos de las ciudades, Carambola es el lugar del Iberá para mirar hacia arriba.', acts: ['Astroturismo', 'Senderos de monte', 'Avistaje del cardenal amarillo'], poi: ['Mirador nocturno', 'Sendero del monte', 'Laguna'], aloj: [['Camping del portal', 'Con reserva'], ['Hospedajes', 'Concepción']], senal: 'Nula en el portal', gas: 'Última carga en Concepción', tel: '+54 3782 000 001', prob: 'Luz artificial', probTxt: 'La luz de los pueblos cercanos apaga el cielo nocturno y desorienta a la fauna.', juego: 'Cielo oscuro' },
+    { id: 'mburucuya', name: 'Mburucuyá', loc: 'Parque Nacional', est: 'ok', x: 14, y: 74, ruta: 'RP 86 · ripio', img: 'H', gal: ['H', 'G', 'E'], tag: 'Bosque, palmar y estero en un parque nacional.', desc: 'Parque nacional vecino, con bosques, palmares y esteros.', hist: 'Donado por un botánico que dedicó su vida a estudiar sus plantas. Protege ambientes que en el resto de la provincia desaparecieron.', acts: ['Senderos del bosque', 'Avistaje de ciervos', 'Noche en el parque'], poi: ['Sendero Yatay', 'Sendero Che Roga', 'Estero Santa Lucía'], aloj: [['Camping del parque', 'Gratuito'], ['Hospedajes', 'Mburucuyá']], senal: 'Solo en el pueblo', gas: 'Última carga en Mburucuyá', tel: '+54 3782 000 002', prob: 'Residuos', probTxt: 'El crecimiento del turismo exige separar y retirar los residuos del parque.', juego: 'Canales limpios' }
+  ];
+  static FAUNA = [
+    { name: 'Yaguareté', sci: 'Panthera onca', img: 'JAG', line: 'Volvió después de setenta años de ausencia.', txt: 'Desapareció de Corrientes a mediados del siglo XX. Desde 2021 vuelve a vivir en libertad en el Iberá.', where: 'San Nicolás' },
+    { name: 'Ciervo de los pantanos', sci: 'Blastocerus dichotomus', img: 'CIE', line: 'Camina donde el suelo es agua.', txt: 'El ciervo más grande de Sudamérica. Sus pezuñas se abren para no hundirse en los bañados.', where: 'Mburucuyá' },
+    { name: 'Aves', sci: 'Más de 350 especies', img: 'D', line: 'El estero se escucha antes de verse.', txt: 'Cormoranes, garzas, chajáes y el cardenal amarillo, en peligro por el tráfico de aves.', where: 'Uguay, Carambola' },
+    { name: 'Embalsados', sci: 'Islas flotantes', img: 'CAM', line: 'Islas que flotan y sostienen un bosque.', txt: 'La vegetación se acumula sobre el agua hasta formar suelo firme, donde crecen árboles y viven animales.', where: 'Todo el estero' }
+  ];
+  static FRAG = [
+    { t: 'Residuos', img: 'WASTE', line: 'Lo que se tira en el pueblo llega al canal.', d: 'Plásticos y bolsas que no se recolectan viajan con la crecida hasta la laguna y los animales que viven en ella.', where: 'Laguna Iberá y Uguay', game: 'Canales limpios' },
+    { t: 'Lixiviados', img: 'WATER', line: 'Lo que no se ve también contamina.', d: 'El líquido que se filtra de la basura acumulada viaja bajo tierra hasta el agua y cambia plantas y peces.', where: 'San Nicolás y San Antonio', game: 'Señales del agua' },
+    { t: 'Fuego', img: 'FIRE', line: 'Hay daños que no se revierten.', d: 'En 2022 los incendios afectaron una porción enorme de la reserva. Solo se pueden prevenir y mitigar.', where: 'Galarza y Cambyretá', game: 'Voces de la noche' },
+    { t: 'Luz artificial', img: 'LIGHT', line: 'Cada luz de más apaga una estrella.', d: 'La luz de los pueblos borra el cielo nocturno y desorienta a aves e insectos.', where: 'Carambola', game: 'Cielo oscuro' }
+  ];
+  static LIT_A = 'En el Iberá todo está conectado por el agua. Lo que pasa en el pueblo llega a la laguna, y de la laguna a cada animal que vive en ella.';
+  static LIT_B = 'Pero un ecosistema tan vivo también es vulnerable.';
+  static STARS = Array.from({ length: 110 }, (_, i) => { const f = n => { const v = Math.sin(i * 12.9898 + n * 78.233) * 43758.5453; return v - Math.floor(v); }; return { x: +(f(1) * 100).toFixed(2), y: +(f(2) * 80).toFixed(2), b: f(3), r: f(4) > 0.85 ? 3 : f(4) > 0.5 ? 2 : 1.5 }; });
+
+  componentDidMount() {
+    this.rm = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    this.hover = !!(window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches);
+    this.onScroll = () => { if (this.tk) return; this.tk = requestAnimationFrame(() => { this.tk = 0; this.update(); }); };
+    addEventListener('scroll', this.onScroll, { passive: true });
+    addEventListener('resize', this.onScroll);
+    if ('IntersectionObserver' in window) this.io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'none'; this.io.unobserve(e.target); } }), { rootMargin: '0px 0px -10% 0px' });
+    this.scanRv(); this.update(); this.onRailScroll();
+  }
+  componentDidUpdate(pp, ps) { this.scanRv(); if (ps.narrow !== this.state.narrow) this.onScroll(); }
+  componentWillUnmount() { removeEventListener('scroll', this.onScroll); removeEventListener('resize', this.onScroll); cancelAnimationFrame(this.tk); cancelAnimationFrame(this.cr); this.io && this.io.disconnect(); }
+
+  scanRv() {
+    if (this.rm || !this.io) return;
+    document.querySelectorAll('[data-rv]:not([data-rvi])').forEach(el => {
+      el.setAttribute('data-rvi', '');
+      if (el.getBoundingClientRect().top < innerHeight * .9) return;
+      el.style.opacity = '0'; el.style.transform = 'translateY(32px)';
+      el.style.transition = 'opacity 1.2s cubic-bezier(.2,.7,.2,1), transform 1.2s cubic-bezier(.2,.7,.2,1)';
+      this.io.observe(el);
+    });
+  }
+
+  update() {
+    const vh = innerHeight, y = scrollY, q = s => document.querySelector(s), cl = (v, a, b) => Math.max(a, Math.min(b, v));
+    const narrow = innerWidth < 1024, rm = this.rm;
+    const secP = el => { const r = el.getBoundingClientRect(); return cl(-r.top / Math.max(1, r.height - vh), 0, 1); };
+    if (!rm) {
+      const hp = cl(y / vh, 0, 1);
+      const hi = q('[data-hero-img]'); if (hi) hi.style.transform = `translateY(${(hp * 12).toFixed(2)}%) scale(${(1.08 - hp * .08).toFixed(4)})`;
+      const ht = q('[data-hero-txt]'); if (ht) { ht.style.transform = `translateY(${(-hp * 120).toFixed(1)}px)`; ht.style.opacity = String(cl(1 - hp * 1.4, 0, 1)); }
+    }
+    document.querySelectorAll('[data-litsec]').forEach(sec => {
+      const p = rm ? 1 : secP(sec), words = sec.querySelectorAll('[data-w]'), par = words[0] && words[0].parentElement;
+      if (!par) return;
+      const on = par.getAttribute('data-on'), off = par.getAttribute('data-off'), n = Math.round(cl((p - .08) / .7, 0, 1) * words.length);
+      words.forEach((w, i) => { const c = i < n ? on : off; if (w.style.color !== c) w.style.color = c; });
+    });
+    document.querySelectorAll('[data-reveal]').forEach(el => {
+      if (rm) { el.style.clipPath = 'none'; return; }
+      const r = el.getBoundingClientRect(), p = cl((vh - r.top) / (vh * .85), 0, 1), e = 1 - Math.pow(1 - p, 2);
+      const iy = (1 - e) * 10, ix = (1 - e) * 8;
+      el.style.clipPath = `inset(${iy.toFixed(2)}% ${ix.toFixed(2)}% round 2px)`;
+      const img = el.querySelector('[data-reveal-img]'); if (img) img.style.transform = `scale(${(1.08 - e * .08).toFixed(4)})`;
+    });
+    const tilt = Number(this.props.tilt ?? 58);
+    const T = document.getElementById('territorio'); let mp = 1;
+    if (T && !narrow && !rm) mp = secP(T);
+    const pl = q('[data-map-plane]');
+    if (pl) {
+      const still = narrow || rm, rx = still ? tilt * .6 : tilt - mp * (tilt - 24), rz = still ? -10 : -22 + mp * 16, sc = still ? .95 : .82 + mp * .14;
+      pl.style.setProperty('--rx', rx.toFixed(2)); pl.style.setProperty('--rz', rz.toFixed(2));
+      pl.style.transform = `rotateX(${rx.toFixed(2)}deg) rotateZ(${rz.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
+    }
+    const rt = q('[data-route]'); if (rt) rt.setAttribute('stroke-dashoffset', (100 - (narrow || rm ? 1 : cl((mp - .05) / .8, 0, 1)) * 100).toFixed(2));
+    const mapIdx = narrow || rm ? this.state.mapIdx : Math.min(7, Math.floor(cl((mp - .05) / .85, 0, .999) * 8));
+    const idx = sel => { let a = 0; document.querySelectorAll(sel).forEach((el, i) => { if (el.getBoundingClientRect().top < vh * .5) a = i; }); return a; };
+    const fauna = idx('[data-fauna]'), frag = idx('[data-frag]');
+    const ds = q('[data-dimsec]');
+    if (ds) { const p = rm ? 1 : secP(ds); const im = q('[data-dim]'), ov = q('[data-dimov]'); if (im) { im.style.filter = `saturate(${(1 - p * .75).toFixed(3)}) brightness(${(1 - p * .35).toFixed(3)})`; if (!rm) im.style.transform = `scale(${(1.1 - p * .1).toFixed(4)})`; } if (ov) ov.style.opacity = (.2 + p * .45).toFixed(3); }
+    const H = q('[data-heal]');
+    if (H) { const r = H.getBoundingClientRect(); const p = cl((vh - r.top) / (vh * 1.1), 0, 1); H.style.filter = `grayscale(${(1 - p).toFixed(3)}) brightness(${(.55 + p * .45).toFixed(3)})`; }
+    let tone = 'dark';
+    document.querySelectorAll('[data-tone]').forEach(el => { const r = el.getBoundingClientRect(); if (r.top <= 38 && r.bottom > 38) tone = el.getAttribute('data-tone'); });
+    const ids = ['territorio', 'portales', 'ecosistema', 'jugar'];
+    let navAct = -1; ids.forEach((id, i) => { const el = document.getElementById(id); if (el && el.getBoundingClientRect().top < vh * .4) navAct = i; });
+    const C = document.getElementById('caminos'), A = document.getElementById('actuar'); let hide = true;
+    if (C && A) { const rc = C.getBoundingClientRect(), ra = A.getBoundingClientRect(); hide = (rc.top < vh && rc.bottom > 0) || ra.top < vh * .8 || y < vh * 1.5; }
+    const n = { narrow, mapIdx, fauna, frag, tone, navAct, band: !hide };
+    if (Object.keys(n).some(k => n[k] !== this.state[k])) this.setState(n);
+  }
+
+  onRailScroll() {
+    const r = this.railRef.current, b = document.querySelector('[data-railbar]'); if (!r || !b) return;
+    const vis = r.clientWidth / r.scrollWidth, p = r.scrollLeft / Math.max(1, r.scrollWidth - r.clientWidth);
+    b.style.width = (vis * 100).toFixed(1) + '%'; b.style.left = (p * (1 - vis) * 100).toFixed(1) + '%';
+  }
+  cursorLoop() {
+    const el = this.cursorRef.current; if (!el) return;
+    this.px += (this.cx - this.px) * .18; this.py += (this.cy - this.py) * .18;
+    el.style.transform = `translate3d(${(this.px - 52).toFixed(1)}px,${(this.py - 52).toFixed(1)}px,0) scale(${this.curOn ? 1 : .6})`;
+    if (this.curOn || Math.abs(this.cx - this.px) > .5) this.cr = requestAnimationFrame(() => this.cursorLoop());
+  }
+  scrollToId(id) {
+    this.setState({ menu: false });
+    const el = document.getElementById(id); if (!el) return;
+    const top = el.getBoundingClientRect().top + scrollY;
+    try { window.scrollTo({ top, behavior: this.rm ? 'auto' : 'smooth' }); } catch (e) { window.scrollTo(0, top); }
+  }
+  openPortal(id) { this.setState({ portal: id, gal: 0, saved: false }); setTimeout(() => this.scrollToId('ficha'), 30); }
+
+  renderVals() {
+    const s = this.state, C = Component, U = C.U, I = C.I;
+    const P = C.P.map(p => ({ ...p, ...C.E[p.est], onOpen: () => this.openPortal(p.id) }));
+    const dark = s.tone === 'dark' && !s.menu;
+    const links = [['Explorar', 'territorio'], ['Visitar', 'portales'], ['Ecosistema', 'ecosistema'], ['Aprender', 'jugar']];
+    const navFg = dark ? '#FFFFFF' : '#003E25';
+    const act = s.hov ? P.findIndex(p => p.id === s.hov) : s.mapIdx;
+    const cur = P.find(p => p.id === s.portal) || P[0];
+    const gi = s.gal % cur.gal.length;
+    const v = s.sky, frac = Math.max(0, 1 - v / 100 * 1.05);
+    const narrow = s.narrow;
+    const heroLine = this.props.heroCopy === 'El estero es de todos' ? 'El estero es de todos. Cuidarlo también.' : 'Un paisaje hecho de agua. Para descubrir, entender y cuidar.';
+    const tipos = [['basura', 'Minibasural'], ['gota', 'Agua oscura'], ['fuego', 'Humo o fuego']];
+
+    return {
+      wide: !narrow, narrow, menuOpen: s.menu, toggleMenu: () => this.setState({ menu: !s.menu }),
+      navFg, navBg: dark ? 'rgba(17,21,20,0)' : 'rgba(242,245,243,.86)', navBlur: dark ? 'none' : 'blur(14px)', navLine: dark ? 'rgba(255,255,255,0)' : '#DDE3DF',
+      nav: links.map(([label, id], i) => ({ label, line: i === s.navAct ? navFg : 'transparent', onClick: () => this.scrollToId(id) })),
+      navM: [...links, ['Reportar', 'actuar']].map(([label, id]) => ({ label, onClick: () => this.scrollToId(id) })),
+      goTop: () => this.scrollToId('descubrir'), goIntro: () => this.scrollToId('intro'), goTerritorio: () => this.scrollToId('territorio'),
+      goCaminos: () => this.scrollToId('caminos'), goActuar: () => this.scrollToId('actuar'), goJugar: () => this.scrollToId('jugar'),
+      bandOn: s.band && this.props.showBand !== false, cntOk: P.filter(p => p.est === 'ok').length,
+      heroLine, imgHero: U(I.B, 2200), imgSat: U(I.SAT, 1600), imgSatS: U(I.SAT, 800), imgPause: U(I.D, 2200), imgFrag: U(I.A, 2000), imgJag: U(I.JAG2, 2200), imgReport: U(I.C, 700),
+      litA: C.LIT_A.split(' ').map(t => ({ t })), litB: C.LIT_B.split(' ').map(t => ({ t })), litH: narrow ? '160vh' : '190vh', fragIntroH: narrow ? '170vh' : '210vh',
+
+      terrH: narrow ? 'auto' : '320vh', terrPos: narrow ? 'relative' : 'sticky',
+      pins: P.map((p, i) => { const on = i === act; return { ...p, dot: on ? 14 : 8, ring: on ? 8 : 0, lbl: on ? 1 : 0, lx: on ? 0 : -6, fg: on ? '#FFFFFF' : '#8FA89A', arrow: on ? 1 : 0, onEnter: () => this.setState({ hov: p.id }), onLeave: () => this.setState({ hov: null }) }; }),
+      routePts: P.map(p => p.x + ',' + p.y).join(' '),
+
+      caminos: P,
+      cards: P.map(p => ({ ...p, img: U(I[p.img], 1400) })), cardW: narrow ? 'min(84vw,640px)' : 'min(58vw,880px)',
+      railRef: this.railRef, cursorRef: this.cursorRef, onRail: () => this.onRailScroll(), cursorCss: this.hover ? 'none' : 'pointer',
+      railPrev: () => { const r = this.railRef.current; r && r.scrollBy({ left: -r.clientWidth * .6, behavior: 'smooth' }); },
+      railNext: () => { const r = this.railRef.current; r && r.scrollBy({ left: r.clientWidth * .6, behavior: 'smooth' }); },
+      curEnter: e => { if (!this.hover || this.rm) return; this.curOn = true; this.cx = e.clientX; this.cy = e.clientY; if (this.px == null) { this.px = this.cx; this.py = this.cy; } const el = this.cursorRef.current; if (el) el.style.opacity = '1'; cancelAnimationFrame(this.cr); this.cursorLoop(); },
+      curMove: e => { this.cx = e.clientX; this.cy = e.clientY; },
+      curLeave: () => { this.curOn = false; const el = this.cursorRef.current; if (el) el.style.opacity = '0'; },
+
+      chips: P.map(p => { const on = p.id === cur.id; return { name: p.name, fg: on ? '#003E25' : '#5E6663', line: on ? '#003E25' : 'transparent', onClick: () => this.setState({ portal: p.id, gal: 0, saved: false }) }; }),
+      cur, gal: cur.gal.map((k, i) => ({ img: U(I[k], 2000), op: i === gi ? 1 : 0 })), galTxt: String(gi + 1).padStart(2, '0') + ' / ' + String(cur.gal.length).padStart(2, '0'),
+      galPrev: () => this.setState(st => ({ gal: (st.gal + cur.gal.length - 1) % cur.gal.length })), galNext: () => this.setState(st => ({ gal: (st.gal + 1) % cur.gal.length })),
+      curActs: cur.acts.map(t => ({ t })), curPoi: cur.poi.map(t => ({ t })), curAloj: cur.aloj.map(([t, k]) => ({ t, k })),
+      saved: s.saved, saveLabel: s.saved ? 'Guardada para usar sin conexión' : 'Guardar sin conexión ↓', toggleSave: () => this.setState({ saved: !s.saved }),
+
+      fauna: C.FAUNA.map((f, i) => ({ ...f, img: U(I[f.img], 1800), op: i <= s.fauna ? 1 : 0, sc: i === s.fauna ? 1 : 1.06, clip: i <= s.fauna ? 'inset(0 0 0 0)' : 'inset(0 0 100% 0)', tOp: narrow || i === s.fauna ? 1 : .22 })),
+      faunaH: narrow ? 'auto' : '100vh',
+
+      frags: C.FRAG.map((f, i) => ({ ...f, img: U(I[f.img], 1800), op: i === s.frag ? 1 : 0, sc: i === s.frag ? 1 : 1.08, tOp: i === s.frag ? 1 : .2, ty: i === s.frag ? 0 : 20 })),
+
+      actos: [
+        { n: 'Acto I', t: 'Laguna Iberá', d: 'Una salida en kayak y los primeros residuos en los canales.' },
+        { n: 'Acto II', t: 'El pueblo y la laguna', d: 'Un vecino, un basural y una lección: acusar no funciona.' },
+        { n: 'Acto III', t: 'El estero profundo', d: 'El daño acumulado, el fuego y una salida colectiva.' }
+      ],
+      juegos: [
+        { t: 'Canales limpios', meta: 'Kayak · Residuos · Laguna Iberá', img: U(I.A, 1400), d: 'Recorré los canales en kayak y recolectá lo que flota antes de que llegue a la laguna.', cta: 'Jugar experiencia', href: 'Ibera Prototipo.dc.html', dir: 'row', isSky: false, filter: 'none' },
+        { t: 'Señales del agua', meta: 'Senderismo · Lixiviados · San Nicolás', img: U(I.C, 1400), d: 'Avanzá por el sendero y aprendé a leer el ambiente: huellas, agua turbia, plantas que avisan.', cta: 'Ver experiencia', href: '#jugar', dir: 'row-reverse', isSky: false, filter: 'none' },
+        { t: 'Cielo oscuro', meta: 'Astroturismo · Luz artificial · Carambola', img: U(I.SKY, 1400), d: 'El Iberá tiene uno de los cielos más oscuros del país. Mové la luz y mirá qué se pierde.', cta: 'Ver experiencia', href: '#jugar', dir: 'row', isSky: true, filter: `brightness(${(1 - v * .0065).toFixed(3)}) saturate(${(1 - v * .006).toFixed(3)})` },
+        { t: 'Voces de la noche', meta: 'Safari nocturno · Fauna · Cambyretá', img: U(I.H, 1400), d: 'Reconocé a los animales por su sonido o su silueta, como lo hacen los guías de noche.', cta: 'Ver experiencia', href: '#jugar', dir: 'row-reverse', isSky: false, filter: 'none' }
+      ],
+      sky: v, onSky: e => this.setState({ sky: +e.target.value }), glowOp: (v / 100).toFixed(2),
+      stars: C.STARS.map(st => ({ ...st, op: +(Math.max(0, Math.min(1, (st.b - v / 100 * .95) * 2.4)) * (.5 + st.b * .5)).toFixed(2) })),
+      starsN: Math.max(30, Math.round(frac * frac * 2500 / 10) * 10).toLocaleString('es-AR'),
+      skyLbl: v < 25 ? 'desde el estero' : v < 60 ? 'junto a un pueblo' : 'desde una ciudad',
+
+      rTipos: tipos.map(([k, label]) => { const on = s.rTipo === k; return { label, bd: on ? '#003E25' : '#DDE3DF', bg: on ? '#003E25' : '#FFFFFF', fg: on ? '#FFFFFF' : '#111514', onClick: () => this.setState({ rTipo: k }) }; }),
+      notSent: !s.sent, sent: s.sent, send: () => this.setState({ sent: true }), reset: () => this.setState({ sent: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

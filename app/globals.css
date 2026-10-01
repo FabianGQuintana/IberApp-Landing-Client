@@ -1,26 +1,209 @@
 @import "tailwindcss";
 
+/* IberAPP design tokens — taken 1:1 from Ibera Landing v6 (:root and html[data-theme=light]).
+   Dark is the default theme; light is opt-in through <html data-theme="light">.
+   See docs/GUIA_IMPLEMENTACION.md §6. */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #0b100e;
+  --bg2: #101813;
+  --forest: #002e1d;
+  --fg: #eef2ee;
+  --head: #ffffff;
+  --mute: #8fa89a;
+  --rule: rgba(255, 255, 255, 0.14);
+  --rule2: rgba(255, 255, 255, 0.08);
+  --litoff: rgba(255, 255, 255, 0.16);
+  --btnbg: #eef2ee;
+  --btnfg: #0b100e;
+  --navglass: rgba(11, 16, 14, 0.58);
+  --navline: rgba(255, 255, 255, 0.08);
+  color-scheme: dark;
 }
 
+:root[data-theme="light"] {
+  --bg: #f2f5f3;
+  --bg2: #ffffff;
+  --forest: #003e25;
+  --fg: #111514;
+  --head: #003e25;
+  --mute: #5e6663;
+  --rule: #c9d2cd;
+  --rule2: #dde3df;
+  --litoff: #c9d2cd;
+  --btnbg: #003e25;
+  --btnfg: #ffffff;
+  --navglass: rgba(242, 245, 243, 0.74);
+  --navline: rgba(17, 21, 20, 0.08);
+  color-scheme: light;
+}
+
+/* Theme-aware colors: bg-page, text-fg, text-head, text-mute, border-rule… */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-page: var(--bg);
+  --color-page-2: var(--bg2);
+  --color-forest: var(--forest);
+  --color-fg: var(--fg);
+  --color-head: var(--head);
+  --color-mute: var(--mute);
+  --color-rule: var(--rule);
+  --color-rule-2: var(--rule2);
+  --color-litoff: var(--litoff);
+  --color-btn: var(--btnbg);
+  --color-btn-fg: var(--btnfg);
+  --color-navglass: var(--navglass);
+  --color-navline: var(--navline);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@theme {
+  /* Fixed brand colors used by v6 regardless of theme (photo overlays, statuses, accents) */
+  --color-mint: #00d58a;
+  --color-leaf: #00b96c;
+  --color-night: #0b100e;
+  --color-night-2: #16211b;
+  --color-cloud: #eef2ee;
+  --color-sage: #8fa89a;
+  --color-yellow: #facd05;
+  --color-orange: #f68e13;
+  --color-sky: #90b4e1;
+
+  /* Typography (next/font variables set in app/layout.tsx) */
+  --font-sans: var(--font-barlow), system-ui, sans-serif;
+  --font-display: var(--font-barlow-condensed), var(--font-barlow), sans-serif;
+
+  /* Radii used by v6: 2 / 4 / 10 / 12 px and full circles */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+
+  /* Easing used across v6 */
+  --ease-soft: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-line: cubic-bezier(0.2, 0.75, 0.15, 1);
+  --ease-spring: cubic-bezier(0.3, 1.2, 0.4, 1);
+
+  /* v6 keyframes (ib-*) exposed as animate-* utilities */
+  --animate-ib-pulse: ib-pulse 1.8s ease-out infinite;
+  --animate-ib-bob: ib-bob 3s ease-in-out infinite;
+  --animate-ib-wave: ib-wave 1s ease-in-out infinite;
+  --animate-ib-ring: ib-ring 2.4s ease-out infinite;
+  --animate-ib-fadeup: ib-fadeup 0.6s var(--ease-soft) both;
+  --animate-ib-zoom: ib-zoom 1.4s var(--ease-soft) both;
+  --animate-ib-shimmer: ib-shimmer 6s ease-in-out infinite alternate;
+  --animate-ib-drift: ib-drift 18s ease-in-out infinite alternate;
+  --animate-ib-breathe: ib-breathe 2.4s ease-in-out infinite;
+  --animate-ib-load: ib-load 1.2s ease-in-out infinite;
+
+  @keyframes ib-pulse {
+    0% { transform: scale(1); opacity: 0.7; }
+    100% { transform: scale(2.6); opacity: 0; }
+  }
+  @keyframes ib-bob {
+    0%, 100% { transform: translateY(0) rotate(-6deg); }
+    50% { transform: translateY(-8px) rotate(6deg); }
+  }
+  @keyframes ib-wave {
+    0%, 100% { transform: scaleY(0.25); }
+    50% { transform: scaleY(1); }
+  }
+  @keyframes ib-ring {
+    0% { transform: scale(0.4); opacity: 0.9; }
+    100% { transform: scale(3.2); opacity: 0; }
+  }
+  @keyframes ib-fadeup {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: none; }
+  }
+  @keyframes ib-zoom {
+    0% { transform: scale(1.04); }
+    100% { transform: none; }
+  }
+  @keyframes ib-shimmer {
+    0% { transform: translateX(-6%); }
+    100% { transform: translateX(6%); }
+  }
+  @keyframes ib-drift {
+    0% { transform: scale(1.06) translate(0, 0); }
+    100% { transform: scale(1.06) translate(-1.5%, 1%); }
+  }
+  @keyframes ib-breathe {
+    0%, 100% { transform: scale(0.9); opacity: 0.55; }
+    50% { transform: scale(1.12); opacity: 1; }
+  }
+  @keyframes ib-load {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    transition: background-color 0.45s, color 0.45s;
+  }
+  a {
+    color: var(--head);
+    text-underline-offset: 4px;
+  }
+  a:hover {
+    color: var(--mute);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-mint);
+    outline-offset: 3px;
+  }
+  button {
+    font-family: inherit;
+    cursor: pointer;
+  }
+  textarea {
+    font-family: inherit;
+  }
+}
+
+/* Display title: Barlow Semi Condensed ExtraBold, uppercase (v6 headings) */
+@utility title-display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+/* Small uppercase label above sections ("TERRITORIO", "ESTADO DE ACCESOS") */
+@utility eyebrow {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Animated underline used by v6 links and nav (background-size 0% → 100%) */
+@utility link-underline {
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0% 1px no-repeat;
+  transition: background-size 0.6s var(--ease-soft);
+  &:hover,
+  &[aria-current="true"] {
+    background-size: 100% 1px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* MapLibre markers: no default styles */
+.maplibregl-marker {
+  line-height: 1;
 }

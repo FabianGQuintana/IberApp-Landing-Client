@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+{{ svg }}
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;48px&quot;,&quot;height&quot;:&quot;48px&quot;},&quot;n&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;check&quot;,&quot;options&quot;:[&quot;check&quot;,&quot;alerta&quot;,&quot;cortado&quot;,&quot;auto4x4&quot;,&quot;basura&quot;,&quot;gota&quot;,&quot;fuego&quot;,&quot;bandeja&quot;,&quot;derivar&quot;,&quot;kayak&quot;,&quot;montana&quot;,&quot;estrella&quot;,&quot;ojo&quot;,&quot;pin&quot;,&quot;camara&quot;,&quot;casa&quot;,&quot;mapa&quot;,&quot;joystick&quot;,&quot;megafono&quot;,&quot;flecha&quot;,&quot;atras&quot;,&quot;reloj&quot;,&quot;info&quot;,&quot;ubicar&quot;,&quot;descarga&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;c&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#2E2D2C&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;k&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#FFFFFF&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;s&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:24,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  static ICONS = (() => {
+    const C = (x, y, r) => `M${x - r} ${y}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0Z`;
+    return {
+      check: [['f', C(12, 12, 9)], ['k', 'M8 12.3l2.8 2.8L16 9.7']],
+      alerta: [['f', 'M10.4 4.6a1.8 1.8 0 0 1 3.2 0l7.2 13.1a1.8 1.8 0 0 1-1.6 2.7H4.8a1.8 1.8 0 0 1-1.6-2.7Z'], ['k', 'M12 9.6v4'], ['k', 'M12 16.9v.1', 2.2]],
+      cortado: [['f', C(12, 12, 9)], ['k', 'M7.8 12h8.4', 2]],
+      auto4x4: [['f', 'M3.5 15.5v-3.7l2-4.4a2 2 0 0 1 1.8-1.2h9.4a2 2 0 0 1 1.8 1.2l2 4.4v3.7a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1Z'], ['kf', 'M6.9 11.2l1.1-2.6h8l1.1 2.6Z'], ['fk', C(7.5, 17.4, 2.1)], ['fk', C(16.5, 17.4, 2.1)]],
+      basura: [['s', 'M4 6.5h16'], ['f', 'M9.5 6.5V4.8a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1.7'], ['f', 'M6 6.5h12l-1 13a1.5 1.5 0 0 1-1.5 1.4h-7A1.5 1.5 0 0 1 7 19.5Z'], ['k', 'M10 10.5v6'], ['k', 'M14 10.5v6']],
+      gota: [['f', 'M12 3.2c3.4 4 6 7.4 6 10.6a6 6 0 0 1-12 0c0-3.2 2.6-6.6 6-10.6Z'], ['k', 'M9.3 14.2a2.7 2.7 0 0 0 2.7 2.7']],
+      fuego: [['f', 'M12 3c.9 3 4.3 4.9 5.3 8.3A6.2 6.2 0 0 1 12 21a6.2 6.2 0 0 1-6.2-6.6c.3-2.4 1.8-3.8 2.9-5.4.4 1.6 1.2 2.6 2.3 3.1C11.6 9.6 10.9 6 12 3Z'], ['kf', 'M12 18.2a2 2 0 0 1-2-2c0-1.2 1-2.1 2-3.4 1 1.3 2 2.2 2 3.4a2 2 0 0 1-2 2Z']],
+      bandeja: [['f', 'M3.5 13l2.7-7a1.6 1.6 0 0 1 1.5-1h8.6a1.6 1.6 0 0 1 1.5 1l2.7 7v5.5a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5Z'], ['k', 'M3.6 13H8l1.5 2.5h5L16 13h4.4']],
+      derivar: [['f', C(12, 12, 9)], ['k', 'M7.8 12h7.8'], ['k', 'M12.6 8.8l3.2 3.2-3.2 3.2']],
+      kayak: [['f', 'M2.5 13h19l-2 3.5a2 2 0 0 1-1.7 1H6.2a2 2 0 0 1-1.7-1Z'], ['kk', 'M8.2 4l7.6 16'], ['s', 'M8.2 4l7.6 16'], ['s', 'M7.2 2.6l1.2 2.4', 3.2], ['s', 'M15.6 19.2l1.2 2.4', 3.2]],
+      montana: [['f', 'M2.8 19.5l6-10.2a1 1 0 0 1 1.7 0l3.1 5.2 1.8-2.8a1 1 0 0 1 1.7 0l4.6 7.8Z'], ['f', C(17, 5.8, 2)]],
+      estrella: [['f', 'M12 3.3l2.6 5.4 5.9.9-4.3 4.1 1 5.9L12 16.8l-5.2 2.8 1-5.9-4.3-4.1 5.9-.9Z']],
+      ojo: [['f', 'M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z'], ['kf', C(12, 12, 3.3)], ['f', C(12, 12, 1.4)]],
+      pin: [['f', 'M12 21.3s-6.8-6-6.8-11.2a6.8 6.8 0 0 1 13.6 0c0 5.2-6.8 11.2-6.8 11.2Z'], ['kf', C(12, 10.1, 2.4)]],
+      camara: [['f', 'M3.5 8.6A1.6 1.6 0 0 1 5.1 7h2.4L9 5h6l1.5 2h2.4a1.6 1.6 0 0 1 1.6 1.6v9.3a1.6 1.6 0 0 1-1.6 1.6H5.1a1.6 1.6 0 0 1-1.6-1.6Z'], ['kf', C(12, 13, 3.6)], ['f', C(12, 13, 1.8)]],
+      casa: [['f', 'M3.5 10.6L12 3.6l8.5 7v8.4a1.5 1.5 0 0 1-1.5 1.5h-4.2v-5.6H9.2v5.6H5A1.5 1.5 0 0 1 3.5 19Z']],
+      mapa: [['f', 'M3.5 6.3L9 4l6 2.5L20.5 4v13.7L15 20l-6-2.5-5.5 2.3Z'], ['k', 'M9 4.3v13'], ['k', 'M15 6.7v13']],
+      joystick: [['f', 'M7.2 7.5h9.6a4.6 4.6 0 0 1 4.5 5.5l-.8 4a2.6 2.6 0 0 1-4.4 1.3L14 16.2h-4l-2.1 2.1a2.6 2.6 0 0 1-4.4-1.3l-.8-4A4.6 4.6 0 0 1 7.2 7.5Z'], ['k', 'M7.6 10.6v3.2'], ['k', 'M6 12.2h3.2'], ['k', 'M15.6 11.2v.1', 2.2], ['k', 'M17.6 13.2v.1', 2.2]],
+      megafono: [['f', 'M3.5 10.2v3.6a1.2 1.2 0 0 0 1.2 1.2H7l7 4.3V4.7L7 9H4.7a1.2 1.2 0 0 0-1.2 1.2Z'], ['s', 'M17.3 9a4.2 4.2 0 0 1 0 6'], ['s', 'M7.5 15.2l1.1 4.3']],
+      flecha: [['s', 'M9.5 6l6 6-6 6', 2]],
+      atras: [['s', 'M14.5 6l-6 6 6 6', 2]],
+      reloj: [['f', C(12, 12, 9)], ['k', 'M12 7.5V12l3 2']],
+      info: [['f', C(12, 12, 9)], ['k', 'M12 11v5'], ['k', 'M12 8v.1', 2.2]],
+      ubicar: [['f', C(12, 12, 4.6)], ['s', 'M12 2.8v3'], ['s', 'M12 18.2v3'], ['s', 'M2.8 12h3'], ['s', 'M18.2 12h3']],
+      descarga: [['f', C(12, 12, 9)], ['k', 'M12 7.5v7'], ['k', 'M8.8 11.6L12 14.8l3.2-3.2']]
+    };
+  })();
+  renderVals() {
+    const n = this.props.n ?? 'check', c = this.props.c ?? '#2E2D2C', k = this.props.k ?? '#FFFFFF', s = Number(this.props.s ?? 24);
+    const parts = (Component.ICONS[n] || Component.ICONS.info).map((p, i) => {
+      const [t, d, w] = p;
+      const a = { key: i, d, strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: w || 1.7 };
+      if (t === 'f') { a.fill = c; a.stroke = c; }
+      else if (t === 'fk') { a.fill = c; a.stroke = k; }
+      else if (t === 'k') { a.fill = 'none'; a.stroke = k; }
+      else if (t === 'kf') { a.fill = k; a.stroke = k; }
+      else if (t === 'kk') { a.fill = 'none'; a.stroke = k; a.strokeWidth = 4.6; }
+      else { a.fill = 'none'; a.stroke = c; }
+      return React.createElement('path', a);
+    });
+    return { svg: React.createElement('svg', { width: s, height: s, viewBox: '0 0 24 24', style: { display: 'block', flex: 'none' }, 'aria-hidden': true }, parts) };
+  }
+}
+</script>
+</body>
+</html>
