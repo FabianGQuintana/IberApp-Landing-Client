@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+!.env.example
+
+# playwright
+/tests/.results/
+/tests/.screens/
+/playwright-report/
+/tests/.compare/
+
+# copied from node_modules by scripts/copy-maplibre-worker.mjs
+/public/vendor/

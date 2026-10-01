@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,400&amp;family=Barlow+Semi+Condensed:wght@700;800&amp;display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0B100E;--bg2:#101813;--forest:#002E1D;--fg:#EEF2EE;--head:#FFFFFF;--mute:#8FA89A;--rule:rgba(255,255,255,.14);--rule2:rgba(255,255,255,.08);--litoff:rgba(255,255,255,.16);--btnbg:#EEF2EE;--btnfg:#0B100E;--navglass:rgba(11,16,14,.58);--navline:rgba(255,255,255,.08)}
+html[data-theme=light]{--bg:#F2F5F3;--bg2:#FFFFFF;--forest:#003E25;--fg:#111514;--head:#003E25;--mute:#5E6663;--rule:#C9D2CD;--rule2:#DDE3DF;--litoff:#C9D2CD;--btnbg:#003E25;--btnfg:#FFFFFF;--navglass:rgba(242,245,243,.74);--navline:rgba(17,21,20,.08)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:Barlow,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background-color .45s,color .45s}
+body *{transition-property:background-color,color,border-color;transition-duration:.45s}
+*{box-sizing:border-box}
+a{color:var(--head);text-underline-offset:4px}
+a:hover{color:var(--mute)}
+:focus-visible{outline:2px solid #00D58A;outline-offset:3px}
+button{font-family:inherit;cursor:pointer}
+textarea{font-family:inherit}
+@keyframes ib-pulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(2.6);opacity:0}}
+@keyframes ib-bob{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-8px) rotate(6deg)}}
+@keyframes ib-wave{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="ibera-ripple" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence id="ibera-turb" type="fractalNoise" baseFrequency="0.008 0.03" numOctaves="2" seed="4" result="t"></feTurbulence><feDisplacementMap id="ibera-disp" in="SourceGraphic" in2="t" scale="0" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap></filter></svg>
+
+<header style="position:fixed;top:0;left:0;right:0;z-index:60;height:76px;padding:0 clamp(20px,4vw,56px);display:flex;align-items:center;justify-content:space-between;gap:24px;background:{{ navBg }};backdrop-filter:{{ navBlur }};-webkit-backdrop-filter:{{ navBlur }};border-bottom:1px solid {{ navLine }};transition:background-color .5s,border-color .5s">
+  <button onClick="{{ goTop }}" aria-label="Iberá, inicio" style="border:none;background:none;padding:0;display:flex;align-items:center;gap:14px;color:{{ navFg }};transition:color .5s">
+    <span style="display:block;width:60px;height:32px;background:{{ navFg }};transition:background-color .5s;-webkit-mask:url(uploads/iso.svg) left center/contain no-repeat;mask:url(uploads/iso.svg) left center/contain no-repeat"></span>
+    <span style="display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;border-left:1px solid {{ navLineStrong }};padding-left:14px"><span style="font:800 18px/0.9 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Iberá</span><span style="font:500 10.5px/1 Barlow,sans-serif;text-transform:uppercase;opacity:.75">Corrientes · Argentina</span></span>
+  </button>
+  <div style="display:flex;align-items:center;gap:clamp(16px,2.6vw,36px)">
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+      <nav style="display:flex;align-items:center;gap:34px">
+        <sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+          <button onClick="{{ n.onClick }}" style="position:relative;border:none;background:none;padding:8px 0;color:{{ navFg }};font:500 15px/1 Barlow,sans-serif;transition:color .5s">{{ n.label }}<span style="position:absolute;left:0;right:0;bottom:0;height:1px;background:{{ navFg }};transform-origin:0 50%;transform:scaleX({{ n.sx }});transition:transform .5s cubic-bezier(.3,1.2,.4,1)"></span></button>
+        </sc-for>
+        <button onClick="{{ goActuar }}" style="height:40px;padding:0 18px;border:1px solid {{ navFg }};border-radius:2px;background:transparent;color:{{ navFg }};font:500 15px/1 Barlow,sans-serif;transition:color .5s,border-color .5s,background-color .25s" style-hover="background:rgba(127,127,127,.16)">Reportar</button>
+      </nav>
+    </sc-if>
+    <button onClick="{{ toggleTheme }}" aria-label="{{ themeAria }}" style="width:36px;height:36px;border-radius:50%;border:1px solid {{ navLineStrong }};background:transparent;color:{{ navFg }};display:flex;align-items:center;justify-content:center;padding:0;transition:color .5s,border-color .5s">
+      <sc-if value="{{ isDark }}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"></circle><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"></path></svg></sc-if>
+      <sc-if value="{{ isLight }}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"></path></svg></sc-if>
+    </button>
+    <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ toggleMenu }}" style="border:none;background:none;padding:10px 0;color:{{ navFg }};font:500 16px/1 Barlow,sans-serif">Menú</button>
+    </sc-if>
+  </div>
+</header>
+
+<sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:80;background:#002E1D;color:#FFFFFF;padding:24px clamp(20px,4vw,56px) 40px;display:flex;flex-direction:column">
+    <div style="display:flex;justify-content:space-between;align-items:center;height:52px"><span style="font:800 18px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Iberá</span><button onClick="{{ toggleMenu }}" style="border:none;background:none;color:#FFFFFF;font:500 16px/1 Barlow,sans-serif;padding:10px 0">Cerrar</button></div>
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:6px">
+      <sc-for list="{{ navM }}" as="n" hint-placeholder-count="5">
+        <button onClick="{{ n.onClick }}" style="border:none;background:none;padding:8px 0;color:#FFFFFF;text-align:left;font:800 52px/0.95 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">{{ n.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ bandOn }}" hint-placeholder-val="{{ false }}">
+  <button onClick="{{ goCaminos }}" style="position:fixed;left:clamp(16px,4vw,56px);bottom:20px;z-index:55;display:flex;align-items:center;gap:10px;height:44px;padding:0 16px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:rgba(12,20,16,.55);backdrop-filter:blur(18px) saturate(120%);-webkit-backdrop-filter:blur(18px) saturate(120%);color:#FFFFFF;font:500 14px/1 Barlow,sans-serif;box-shadow:inset 0 1px rgba(255,255,255,.05)"><span style="width:7px;height:7px;border-radius:50%;background:#00B96C"></span>Caminos hoy: {{ cntOk }} de 8 transitables<span style="opacity:.7">→</span></button>
+</sc-if>
+
+<div ref="{{ cursorRef }}" aria-hidden="true" style="position:fixed;left:0;top:0;z-index:95;width:96px;height:96px;border-radius:50%;background:rgba(238,242,238,.92);color:#002E1D;display:flex;align-items:center;justify-content:center;font:600 12px/1 Barlow,sans-serif;text-transform:uppercase;pointer-events:none;opacity:0;transform:translate3d(-200px,-200px,0) scale(.5);transition:opacity .3s">Ver</div>
+
+<!-- HERO -->
+<section id="descubrir" data-tone="photo" data-screen-label="Portada" style="position:relative;height:100vh;min-height:620px;overflow:hidden;background:#002E1D;color:#FFFFFF">
+  <div data-hero-img="" style="position:absolute;inset:0;background:#002E1D {{ imgHero }} center/cover no-repeat;transform:scale(1.08);will-change:transform"></div>
+  <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,16,14,.5) 0%,rgba(11,16,14,0) 24%,rgba(11,16,14,0) 48%,rgba(11,16,14,.78) 100%)"></div>
+  <div data-hero-txt="" style="position:absolute;left:0;right:0;bottom:0;padding:0 clamp(20px,4vw,56px) clamp(32px,6vh,64px);display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:28px">
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div data-hero-meta="" style="font:500 13px/1.4 Barlow,sans-serif;text-transform:uppercase">Gran Parque Iberá<br>Corrientes, Argentina</div>
+      <h1 style="margin:0 0 0 -0.03em;font:800 clamp(104px,16vw,260px)/0.78 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Iberá</h1>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:22px;max-width:360px;padding-bottom:6px">
+      <p style="margin:0;font:400 clamp(20px,1.7vw,24px)/1.35 Barlow,sans-serif;text-wrap:pretty">{{ heroLine }}</p>
+      <button onClick="{{ goIntro }}" style="align-self:flex-start;border:none;border-bottom:1px solid #FFFFFF;background:none;padding:0 0 6px;color:#FFFFFF;font:500 16px/1 Barlow,sans-serif;transition:padding .4s cubic-bezier(.3,1.2,.4,1)" style-hover="padding-bottom:10px">Explorar ↓</button>
+    </div>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section id="intro" data-tone="surface" data-litsec="" data-screen-label="Conectado por el agua" style="position:relative;height:{{ litH }};background:var(--bg)">
+  <div style="position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;padding:0 clamp(20px,6vw,120px)">
+    <p data-on="var(--head)" data-off="var(--litoff)" style="margin:0;max-width:1100px;font:500 clamp(30px,4.2vw,64px)/1.12 Barlow,sans-serif;color:var(--litoff);text-wrap:pretty">
+      <sc-for list="{{ litA }}" as="w" hint-placeholder-count="0"><span data-w="" style="transition:color .35s">{{ w.t }} </span></sc-for>
+    </p>
+  </div>
+</section>
+
+<!-- TERRITORIO -->
+<section id="territorio" data-tone="photo" data-screen-label="Territorio" style="position:relative;height:{{ terrH }};background:var(--forest);color:#FFFFFF">
+  <div style="position:{{ terrPos }};top:0;height:{{ terrInnerH }};overflow:hidden">
+    <div style="position:relative;z-index:3;height:100%;display:flex;flex-direction:{{ terrDir }};gap:32px;padding:{{ terrPad }}">
+      <div style="flex:0 0 auto;width:{{ terrTextW }};display:flex;flex-direction:column;gap:26px">
+        <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#8FA89A">Territorio</div>
+        <h2 style="margin:0;font:800 clamp(44px,4.4vw,72px)/0.88 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;text-wrap:balance">Ocho puertas a un mismo estero</h2>
+        <p style="margin:0;max-width:380px;font:400 17px/1.55 Barlow,sans-serif;color:#B5C4BB;text-wrap:pretty">Más de un millón de hectáreas de lagunas, esteros y embalsados. Cada portal es un acceso distinto: su camino, su paisaje, su gente.</p>
+        <div style="display:flex;flex-direction:{{ listDir }};flex-wrap:wrap;gap:{{ listGap }};max-width:380px">
+          <sc-for list="{{ pins }}" as="p" hint-placeholder-count="8">
+            <button onClick="{{ p.onPick }}" onMouseEnter="{{ p.onEnter }}" onMouseLeave="{{ p.onLeave }}" style="display:flex;align-items:center;gap:10px;padding:7px 0;border:none;background:none;color:{{ p.fg }};text-align:left;font:500 16px/1.2 Barlow,sans-serif;transition:color .35s,transform .45s cubic-bezier(.3,1.2,.4,1);transform:translateX({{ p.tx }}px)"><span style="width:{{ p.bar }}px;height:1px;background:#FFFFFF;transition:width .45s cubic-bezier(.3,1.2,.4,1)"></span>{{ p.name }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="flex:1 1 auto;position:relative;min-height:{{ sceneMinH }}"></div>
+    </div>
+    <div style="position:absolute;z-index:1;left:{{ sb.l }};right:0;top:{{ sb.t }};bottom:{{ sb.b }};height:{{ sb.h }};overflow:visible;pointer-events:none">
+      <div style="position:absolute;inset:0;perspective:{{ persp }};perspective-origin:50% 25%;display:flex;align-items:center;justify-content:center;overflow:visible">
+        <div data-map-plane="" style="position:relative;width:{{ planeW }};aspect-ratio:16/10;transform-style:preserve-3d;transform:rotateX(58deg) rotateZ(-20deg) scale(.82);--rx:58;--rz:-20;pointer-events:auto">
+          <div style="position:absolute;inset:0;border-radius:4px;background:#0B2A1C {{ imgSat }} center/cover no-repeat;filter:saturate(.5) brightness(.8) contrast(1.05)"></div>
+          <div style="position:absolute;inset:0;border-radius:4px;background:repeating-radial-gradient(circle at 54% 52%,rgba(255,255,255,0) 0 26px,rgba(255,255,255,.06) 27px 28px);pointer-events:none"></div>
+          <div style="position:absolute;inset:0;border-radius:4px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);pointer-events:none"></div>
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none">
+            <polyline data-route="" points="{{ routePts }}" pathLength="100" fill="none" stroke="#FFFFFF" stroke-opacity=".8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" stroke-dasharray="100 100" stroke-dashoffset="100"></polyline>
+          </svg>
+          <sc-for list="{{ pins }}" as="p" hint-placeholder-count="8">
+            <div style="position:absolute;left:{{ p.x }}%;top:{{ p.y }}%;width:0;height:0;transform-style:preserve-3d">
+              <div style="position:absolute;left:0;bottom:0;transform-origin:0 100%;transform:rotateZ(calc(var(--rz) * -1deg)) rotateX(calc(var(--rx) * -1deg))">
+                <button onClick="{{ p.onPick }}" onMouseEnter="{{ p.onEnter }}" onMouseLeave="{{ p.onLeave }}" aria-label="{{ p.name }}" style="position:absolute;left:-18px;bottom:-18px;width:36px;height:36px;border:none;background:none;padding:0;display:flex;align-items:center;justify-content:center">
+                  <sc-if value="{{ p.on }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:11px;top:11px;width:14px;height:14px;border-radius:50%;border:1px solid #FFFFFF;animation:ib-pulse 2.2s cubic-bezier(.2,.7,.2,1) infinite"></span></sc-if>
+                  <span style="width:{{ p.dot }}px;height:{{ p.dot }}px;border-radius:50%;background:#FFFFFF;box-shadow:0 0 0 {{ p.ring }}px rgba(255,255,255,.22);transition:width .5s cubic-bezier(.3,1.4,.4,1),height .5s cubic-bezier(.3,1.4,.4,1),box-shadow .5s"></span>
+                </button>
+                <span style="position:absolute;left:20px;bottom:-8px;white-space:nowrap;font:500 15px/1 Barlow,sans-serif;color:#FFFFFF;opacity:{{ p.lbl }};transform:translateX({{ p.lx }}px);transition:opacity .45s,transform .6s cubic-bezier(.3,1.2,.4,1);pointer-events:none">{{ p.name }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    <div style="position:absolute;z-index:4;left:{{ mc.l }};right:{{ mc.r }};bottom:{{ mc.b }};width:min(320px,calc(100% - 40px));padding:18px 20px;border-radius:12px;background:rgba(12,20,16,.55);backdrop-filter:blur(18px) saturate(120%);-webkit-backdrop-filter:blur(18px) saturate(120%);border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 1px rgba(255,255,255,.05);display:flex;flex-direction:column;gap:10px">
+      <div style="font:500 11px/1 Barlow,sans-serif;text-transform:uppercase;color:#8FA89A">Portal</div>
+      <div style="font:800 30px/0.9 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">{{ act.name }}</div>
+      <div style="font:400 15px/1.3 Barlow,sans-serif;color:#B5C4BB">{{ act.loc }}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.1)">
+        <span style="display:flex;align-items:center;gap:8px;font:500 14px/1 Barlow,sans-serif"><span style="width:7px;height:7px;border-radius:50%;background:{{ act.dot }}"></span>{{ act.eLabel }}</span>
+        <button onClick="{{ act.onOpen }}" style="border:none;background:none;padding:4px 0;color:#FFFFFF;font:500 14px/1 Barlow,sans-serif;transition:transform .4s cubic-bezier(.3,1.2,.4,1)" style-hover="transform:translateX(4px)">Explorar →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CAMINOS -->
+<section id="caminos" data-tone="surface" data-screen-label="Estado de accesos" style="background:var(--bg);padding:clamp(104px,12vw,176px) clamp(20px,4vw,56px)">
+  <div style="max-width:1320px;margin:0 auto;display:flex;flex-wrap:wrap;gap:clamp(40px,6vw,120px)">
+    <div data-rv="" style="flex:1 1 300px;max-width:420px;display:flex;flex-direction:column;gap:22px">
+      <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:var(--mute)">Estado de accesos</div>
+      <h2 style="margin:0;font:500 clamp(36px,3.4vw,52px)/1.05 Barlow,sans-serif;color:var(--head);text-wrap:balance">Antes de salir, mirá el camino.</h2>
+      <p style="margin:0;font:400 17px/1.55 Barlow,sans-serif;color:var(--mute);text-wrap:pretty">Los accesos son de ripio, tierra o arena. Una lluvia cambia el viaje. Actualizado hoy a las 08:40 por guardaparques.</p>
+    </div>
+    <div style="flex:2 1 520px;display:flex;flex-direction:column;border-top:1px solid var(--rule)">
+      <sc-for list="{{ caminos }}" as="c" hint-placeholder-count="8">
+        <button onClick="{{ c.onOpen }}" style="display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 24px;padding:22px 0;border:none;border-bottom:1px solid var(--rule);background:none;color:var(--fg);text-align:left;transition:padding .5s cubic-bezier(.3,1.2,.4,1),border-color .45s,color .45s" style-hover="padding-left:12px">
+          <span style="flex:1 1 260px;display:flex;flex-direction:column;gap:6px"><span style="font:500 clamp(22px,2vw,28px)/1.1 Barlow,sans-serif">{{ c.name }}</span><span style="font:400 15px/1.3 Barlow,sans-serif;color:var(--mute)">{{ c.ruta }}</span></span>
+          <span style="flex:0 0 auto;min-width:170px;display:flex;align-items:center;gap:10px;font:500 16px/1 Barlow,sans-serif"><span style="width:7px;height:7px;border-radius:50%;background:{{ c.dot }}"></span>{{ c.eLabel }}</span>
+          <span style="font:400 20px/1 Barlow,sans-serif;color:var(--mute)">→</span>
+        </button>
+      </sc-for>
+      <div data-rv="" style="margin-top:56px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:32px">
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="font:500 17px/1.3 Barlow,sans-serif">Sin señal al final</div><div style="font:400 15px/1.5 Barlow,sans-serif;color:var(--mute)">Guardá la ficha del portal antes de salir; funciona sin conexión.</div></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="font:500 17px/1.3 Barlow,sans-serif">Combustible antes</div><div style="font:400 15px/1.5 Barlow,sans-serif;color:var(--mute)">En varios accesos no hay estación en más de 100 km.</div></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="font:500 17px/1.3 Barlow,sans-serif">Tu basura vuelve con vos</div><div style="font:400 15px/1.5 Barlow,sans-serif;color:var(--mute)">En la reserva no hay recolección.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAUSA -->
+<section data-tone="surface" data-screen-label="Pausa" style="background:var(--bg);padding:0 0 clamp(40px,6vw,80px)">
+  <div data-reveal="" style="position:relative;height:clamp(420px,92vh,960px);overflow:hidden;clip-path:inset(10% 8% round 2px);background:#002E1D">
+    <div data-reveal-img="" style="position:absolute;inset:-6% 0;background:#002E1D {{ imgPause }} center/cover;transform:scale(1.08)"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,16,14,0) 55%,rgba(11,16,14,.55) 100%)"></div>
+    <div data-drift="-0.12" style="position:absolute;left:clamp(20px,6vw,96px);bottom:clamp(40px,8vw,120px);color:#FFFFFF;font:800 clamp(48px,6vw,104px)/0.86 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;max-width:760px">El estero se escucha antes de verse</div>
+    <div style="position:absolute;right:clamp(20px,4vw,56px);bottom:clamp(20px,4vw,48px);color:#FFFFFF;font:500 12px/1.4 Barlow,sans-serif;text-transform:uppercase;opacity:.8">Cormoranes · Laguna Iberá</div>
+  </div>
+</section>
+
+<!-- PORTALES -->
+<section id="portales" data-tone="surface" data-screen-label="Portales" style="background:var(--bg);padding:clamp(80px,10vw,152px) 0 clamp(104px,12vw,176px)">
+  <div style="max-width:1440px;margin:0 auto;padding:0 clamp(20px,4vw,56px);display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px">
+    <div style="display:flex;flex-direction:column;gap:18px;max-width:720px">
+      <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:var(--mute)">Portales</div>
+      <h2 data-lines="" style="margin:0;font:500 clamp(40px,4.4vw,68px)/1.04 Barlow,sans-serif;color:var(--head)"><span style="display:block;overflow:hidden;padding-bottom:.06em"><span data-line="" style="display:block">Explorá las puertas</span></span><span style="display:block;overflow:hidden;padding-bottom:.06em"><span data-line="" style="display:block">de entrada al Iberá.</span></span></h2>
+    </div>
+    <div style="display:flex;gap:28px;font:500 15px/1 Barlow,sans-serif">
+      <button onClick="{{ railPrev }}" style="border:none;background:none;padding:8px 0;color:var(--head);transition:transform .4s cubic-bezier(.3,1.2,.4,1)" style-hover="transform:translateX(-4px)">← Anterior</button>
+      <button onClick="{{ railNext }}" style="border:none;background:none;padding:8px 0;color:var(--head);transition:transform .4s cubic-bezier(.3,1.2,.4,1)" style-hover="transform:translateX(4px)">Siguiente →</button>
+    </div>
+  </div>
+  <div ref="{{ railRef }}" onScroll="{{ onRail }}" style="margin-top:56px;display:flex;gap:clamp(16px,2vw,32px);overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 clamp(20px,4vw,56px);padding:0 clamp(20px,4vw,56px);scrollbar-width:none">
+    <sc-for list="{{ cards }}" as="c" hint-placeholder-count="2">
+      <article style="flex:none;scroll-snap-align:start;width:{{ cardW }};display:flex;flex-direction:column;gap:22px">
+        <button onClick="{{ c.onOpen }}" data-cursor="Ver portal" onMouseEnter="{{ curEnter }}" onMouseMove="{{ curMove }}" onMouseLeave="{{ curLeave }}" aria-label="Ver portal {{ c.name }}" style="position:relative;height:clamp(360px,64vh,680px);border:none;padding:0;overflow:hidden;background:#002E1D;cursor:{{ cursorCss }};border-radius:2px">
+          <span style="position:absolute;inset:0;background:#002E1D {{ c.img }} center/cover;transition:transform 1.4s cubic-bezier(.2,.7,.2,1)" style-hover="transform:scale(1.025)"></span>
+        </button>
+        <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:8px;max-width:480px">
+            <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:var(--mute)">{{ c.loc }}</div>
+            <div style="font:800 clamp(38px,3.8vw,60px)/0.88 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:var(--head)">{{ c.name }}</div>
+            <div style="font:400 17px/1.45 Barlow,sans-serif">{{ c.tag }}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px">
+            <span style="display:flex;align-items:center;gap:8px;font:500 14px/1 Barlow,sans-serif;color:var(--mute)"><span style="width:7px;height:7px;border-radius:50%;background:{{ c.dot }}"></span>{{ c.eLabel }}</span>
+            <button onClick="{{ c.onOpen }}" style="border:none;border-bottom:1px solid var(--head);background:none;padding:0 0 5px;color:var(--head);font:500 16px/1 Barlow,sans-serif">Explorar portal →</button>
+          </div>
+        </div>
+      </article>
+    </sc-for>
+  </div>
+  <div style="max-width:1440px;margin:40px auto 0;padding:0 clamp(20px,4vw,56px)"><div style="height:1px;background:var(--rule);position:relative"><div data-railbar="" style="position:absolute;left:0;top:-0.5px;height:2px;width:20%;background:var(--head);transition:left .25s"></div></div></div>
+</section>
+
+<!-- FICHA -->
+<section id="ficha" data-tone="surface" data-screen-label="Ficha del portal" style="background:var(--bg2);padding:clamp(104px,12vw,168px) 0">
+  <div style="max-width:1440px;margin:0 auto;display:flex;flex-direction:column;gap:40px">
+    <div style="padding:0 clamp(20px,4vw,56px);display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;flex-wrap:wrap;gap:6px 26px">
+        <sc-for list="{{ chips }}" as="c" hint-placeholder-count="8">
+          <button onClick="{{ c.onClick }}" style="position:relative;border:none;background:none;padding:6px 0;color:{{ c.fg }};font:500 15px/1 Barlow,sans-serif">{{ c.name }}<span style="position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--head);transform-origin:0 50%;transform:scaleX({{ c.sx }});transition:transform .5s cubic-bezier(.3,1.2,.4,1)"></span></button>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px">
+        <h3 style="margin:0;font:800 clamp(56px,8vw,132px)/0.84 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:var(--head)">{{ cur.name }}</h3>
+        <div style="font:500 13px/1.5 Barlow,sans-serif;text-transform:uppercase;color:var(--mute);text-align:right">{{ cur.loc }}<br>Corrientes, Argentina</div>
+      </div>
+    </div>
+
+    <div tabIndex="0" onKeyDown="{{ galKey }}" onWheel="{{ galWheel }}" onPointerDown="{{ galDown }}" onPointerUp="{{ galUp }}" aria-label="Galería de fotos de {{ cur.name }}. Usá las flechas para navegar." style="position:relative;padding-left:clamp(20px,4vw,56px);overflow:hidden;touch-action:pan-y;outline-offset:-3px">
+      <div style="display:flex;gap:16px;transform:translateX(calc({{ gi }} * -1 * ({{ slidePct }} + 16px)));transition:transform 1s cubic-bezier(.7,0,.15,1)">
+        <sc-for list="{{ gal }}" as="g" hint-placeholder-count="2">
+          <button onClick="{{ g.onClick }}" data-cursor="{{ g.cur }}" onMouseEnter="{{ curEnter }}" onMouseMove="{{ curMove }}" onMouseLeave="{{ curLeave }}" aria-label="{{ g.aria }}" style="flex:0 0 {{ slidePct }};position:relative;height:clamp(340px,68vh,740px);border:none;padding:0;overflow:hidden;background:#002E1D;border-radius:2px;cursor:{{ cursorCss }};opacity:{{ g.op }};transition:opacity .9s">
+            <span style="position:absolute;inset:0;background:#002E1D {{ g.img }} center/cover;transform:scale({{ g.sc }});filter:blur({{ g.bl }}px);transition:transform 1.2s cubic-bezier(.2,.7,.2,1),filter .9s"></span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="padding:0 clamp(20px,4vw,56px);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;font:400 15px/1.4 Barlow,sans-serif;color:var(--mute)">
+      <span style="max-width:520px">{{ galCap }}</span>
+      <span style="display:flex;align-items:center;gap:18px;font-weight:500"><button onClick="{{ galPrev }}" aria-label="Foto anterior" style="border:none;background:none;padding:8px;color:var(--head);font:400 20px/1 Barlow,sans-serif;transition:transform .4s cubic-bezier(.3,1.2,.4,1)" style-hover="transform:translateX(-4px)">←</button><span style="min-width:64px;text-align:center;color:var(--head)">{{ galTxt }}</span><button onClick="{{ galNext }}" aria-label="Foto siguiente" style="border:none;background:none;padding:8px;color:var(--head);font:400 20px/1 Barlow,sans-serif;transition:transform .4s cubic-bezier(.3,1.2,.4,1)" style-hover="transform:translateX(4px)">→</button><button onClick="{{ openLb }}" style="border:none;border-bottom:1px solid var(--head);background:none;padding:0 0 4px;color:var(--head);font:500 14px/1 Barlow,sans-serif">Pantalla completa</button></span>
+    </div>
+
+    <div style="padding:0 clamp(20px,4vw,56px);display:flex;flex-wrap:wrap;gap:clamp(40px,6vw,112px);align-items:flex-start;margin-top:56px">
+      <div style="flex:1.6 1 520px;display:flex;flex-direction:column;gap:72px;min-width:0">
+        <div data-rv="" style="display:flex;flex-direction:column;gap:22px;max-width:680px">
+          <h4 style="margin:0;font:500 clamp(30px,2.8vw,44px)/1.12 Barlow,sans-serif;color:var(--head);text-wrap:pretty">{{ cur.desc }}</h4>
+          <p style="margin:0;font:400 18px/1.65 Barlow,sans-serif;text-wrap:pretty">{{ cur.hist }}</p>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);grid-template-rows:auto auto;gap:14px">
+          <div style="grid-row:1 / span 2;position:relative;overflow:hidden;min-height:340px;border-radius:2px;background:#002E1D"><div data-par="" style="position:absolute;inset:-8% 0;background:#002E1D {{ col1 }} center/cover"></div></div>
+          <div style="position:relative;overflow:hidden;aspect-ratio:4/3;border-radius:2px;background:#002E1D"><div data-par="" style="position:absolute;inset:-8% 0;background:#002E1D {{ col2 }} center/cover"></div></div>
+          <div style="position:relative;overflow:hidden;aspect-ratio:4/3;border-radius:2px;background:#002E1D"><div data-par="" style="position:absolute;inset:-8% 0;background:#002E1D {{ col3 }} center/cover"></div></div>
+        </div>
+        <div data-rv="" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:40px">
+          <div style="display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--fg);padding-top:16px"><div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:var(--mute)">Qué hacer</div><sc-for list="{{ curActs }}" as="a" hint-placeholder-count="3"><div style="font:400 17px/1.35 Barlow,sans-serif">{{ a.t }}</div></sc-for></div>
+          <div style="display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--fg);padding-top:16px"><div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:var(--mute)">Puntos de interés</div><sc-for list="{{ curPoi }}" as="a" hint-placeholder-count="3"><div style="font:400 17px/1.35 Barlow,sans-serif">{{ a.t }}</div></sc-for></div>
+          <div style="display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--fg);padding-top:16px"><div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:var(--mute)">Dónde quedarse</div><sc-for list="{{ curAloj }}" as="a" hint-placeholder-count="3"><div style="font:400 17px/1.35 Barlow,sans-serif">{{ a.t }} <span style="color:var(--mute)">· {{ a.k }}</span></div></sc-for></div>
+        </div>
+        <div data-rv="" style="display:flex;flex-direction:column;gap:16px;max-width:620px;border-top:1px solid var(--rule);padding-top:28px">
+          <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:var(--mute)">El desafío de esta zona · {{ cur.prob }}</div>
+          <p style="margin:0;font:400 clamp(20px,1.6vw,24px)/1.45 Barlow,sans-serif;color:var(--head);text-wrap:pretty">{{ cur.probTxt }}</p>
+          <div style="display:flex;flex-wrap:wrap;gap:12px 32px;font:500 16px/1 Barlow,sans-serif">
+            <button onClick="{{ goJuegoCur }}" style="border:none;border-bottom:1px solid var(--head);background:none;padding:0 0 5px;color:var(--head)">Aprendelo jugando: {{ cur.juego }} →</button>
+            <button onClick="{{ goActuar }}" style="border:none;border-bottom:1px solid var(--head);background:none;padding:0 0 5px;color:var(--head)">Reportar en esta zona →</button>
+          </div>
+        </div>
+      </div>
+      <aside style="flex:1 1 300px;max-width:420px;position:sticky;top:112px;display:flex;flex-direction:column">
+        <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:var(--mute);padding-bottom:16px;border-bottom:1px solid var(--fg)">Antes de ir</div>
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--rule2);font:400 16px/1.4 Barlow,sans-serif"><span style="color:var(--mute)">Camino</span><span style="display:flex;align-items:center;gap:8px;font-weight:500"><span style="width:7px;height:7px;border-radius:50%;background:{{ cur.dot }}"></span>{{ cur.eLabel }}</span></div>
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--rule2);font:400 16px/1.4 Barlow,sans-serif"><span style="color:var(--mute)">Cómo llegar</span><span style="text-align:right">{{ cur.ruta }}</span></div>
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--rule2);font:400 16px/1.4 Barlow,sans-serif"><span style="color:var(--mute)">Señal</span><span style="text-align:right">{{ cur.senal }}</span></div>
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--rule2);font:400 16px/1.4 Barlow,sans-serif"><span style="color:var(--mute)">Combustible</span><span style="text-align:right">{{ cur.gas }}</span></div>
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--rule2);font:400 16px/1.4 Barlow,sans-serif"><span style="color:var(--mute)">Visitantes</span><span style="text-align:right">{{ cur.tel }}</span></div>
+        <div style="position:relative;margin-top:24px;aspect-ratio:16/10;overflow:hidden;background:#0B2A1C {{ imgSatS }} center/cover;filter:saturate(.55);border-radius:2px">
+          <span style="position:absolute;left:{{ cur.x }}%;top:{{ cur.y }}%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:#FFFFFF;box-shadow:0 0 0 6px rgba(255,255,255,.25);transition:left .8s cubic-bezier(.3,1.2,.4,1),top .8s cubic-bezier(.3,1.2,.4,1)"></span>
+        </div>
+        <button onClick="{{ toggleSave }}" style="margin-top:20px;align-self:flex-start;border:none;border-bottom:1px solid var(--head);background:none;padding:0 0 5px;color:var(--head);font:500 16px/1 Barlow,sans-serif;display:flex;align-items:center;gap:8px"><sc-if value="{{ saved }}" hint-placeholder-val="{{ false }}"><span style="width:7px;height:7px;border-radius:50%;background:#00D58A"></span></sc-if>{{ saveLabel }}</button>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSISTEMA -->
+<section id="ecosistema" data-tone="surface" data-screen-label="Ecosistema" style="background:var(--bg);padding-top:clamp(104px,12vw,176px)">
+  <div style="max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,56px) clamp(56px,6vw,96px);display:flex;flex-direction:column;gap:24px">
+    <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:var(--mute)">Ecosistema</div>
+    <h2 data-lines="" style="margin:0;font:800 clamp(64px,9vw,156px)/0.84 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:var(--head)"><span style="display:block;overflow:hidden"><span data-line="" style="display:block">El estero</span></span><span style="display:block;overflow:hidden"><span data-line="" style="display:block">respira</span></span></h2>
+    <p style="margin:0;max-width:520px;font:400 18px/1.55 Barlow,sans-serif;color:var(--mute);text-wrap:pretty">Más de 4.000 especies comparten el agua. Algunas estuvieron a punto de desaparecer, y volvieron.</p>
+  </div>
+  <div style="display:flex">
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:0 0 58%;position:sticky;top:0;height:100vh;overflow:hidden;background:#002E1D">
+        <sc-for list="{{ fauna }}" as="f" hint-placeholder-count="1">
+          <div style="position:absolute;inset:0;background:#002E1D {{ f.img }} center/cover;transform:scale({{ f.sc }});clip-path:{{ f.clip }};transition:transform 1.6s cubic-bezier(.2,.7,.2,1),clip-path 1.2s cubic-bezier(.7,0,.2,1)"></div>
+        </sc-for>
+        <div style="position:absolute;left:24px;bottom:24px;padding:10px 14px;border-radius:10px;background:rgba(12,20,16,.55);backdrop-filter:blur(18px) saturate(120%);-webkit-backdrop-filter:blur(18px) saturate(120%);border:1px solid rgba(255,255,255,.1);color:#FFFFFF;font:500 13px/1 Barlow,sans-serif">{{ faunaCap }}</div>
+      </div>
+    </sc-if>
+    <div style="flex:1 1 42%;display:flex;flex-direction:column;padding:0 clamp(20px,4vw,72px)">
+      <sc-for list="{{ fauna }}" as="f" hint-placeholder-count="2">
+        <div data-fauna="" style="min-height:{{ faunaH }};display:flex;flex-direction:column;justify-content:center;gap:20px;padding:48px 0;opacity:{{ f.tOp }};transition:opacity .7s">
+          <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}"><div style="margin:0 calc(-1 * clamp(20px,4vw,72px)) 12px;aspect-ratio:4/5;background:#002E1D {{ f.img }} center/cover"></div></sc-if>
+          <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:var(--mute)">{{ f.name }} · <span style="font-style:italic;text-transform:none">{{ f.sci }}</span></div>
+          <h3 style="margin:0;font:500 clamp(32px,3vw,48px)/1.08 Barlow,sans-serif;color:var(--head);text-wrap:balance">{{ f.line }}</h3>
+          <p style="margin:0;max-width:440px;font:400 17px/1.6 Barlow,sans-serif;text-wrap:pretty">{{ f.txt }}</p>
+          <div style="font:400 15px/1.3 Barlow,sans-serif;color:var(--mute)">Dónde verlo: {{ f.where }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- FRAGILIDAD -->
+<section id="fragilidad" data-tone="photo" data-screen-label="Fragilidad" style="background:#0B100E;color:#FFFFFF">
+  <div data-litsec="" data-dimsec="" style="position:relative;height:{{ fragIntroH }}">
+    <div style="position:sticky;top:0;height:100vh;overflow:hidden">
+      <div data-dim="" style="position:absolute;inset:-2%;background:#0B100E {{ imgFrag }} center/cover"></div>
+      <div data-dimov="" style="position:absolute;inset:0;background:#0B100E;opacity:.2"></div>
+      <div style="position:relative;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(20px,6vw,120px);gap:28px">
+        <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase">Fragilidad</div>
+        <p data-on="#FFFFFF" data-off="rgba(255,255,255,.26)" style="margin:0;max-width:1000px;font:800 clamp(48px,6.6vw,112px)/0.9 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:rgba(255,255,255,.26);text-wrap:balance">
+          <sc-for list="{{ litB }}" as="w" hint-placeholder-count="0"><span data-w="" style="transition:color .35s">{{ w.t }} </span></sc-for>
+        </p>
+      </div>
+    </div>
+  </div>
+  <div style="position:relative">
+    <div style="position:sticky;top:0;height:100vh;overflow:hidden">
+      <sc-for list="{{ frags }}" as="f" hint-placeholder-count="1">
+        <div style="position:absolute;inset:0;background:#0B100E {{ f.img }} center/cover;filter:grayscale(.9) contrast(1.05) brightness(.78) blur({{ f.bl }}px);opacity:{{ f.op }};transform:scale({{ f.sc }});transition:opacity .95s,transform 1.2s cubic-bezier(.2,.7,.2,1),filter .95s"></div>
+      </sc-for>
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,16,14,.92) 0%,rgba(11,16,14,.7) 50%,rgba(11,16,14,.28) 100%)"></div>
+    </div>
+    <div style="position:relative;margin-top:-100vh;z-index:1">
+      <sc-for list="{{ frags }}" as="f" hint-placeholder-count="2">
+        <div data-frag="" style="min-height:100vh;display:flex;align-items:center;padding:120px clamp(20px,6vw,120px)">
+          <div style="max-width:560px;display:flex;flex-direction:column;gap:20px;opacity:{{ f.tOp }};transform:translateY({{ f.ty }}px);transition:opacity .8s,transform 1s cubic-bezier(.2,.7,.2,1)">
+            <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#8FA89A">{{ f.t }}</div>
+            <h3 style="margin:0;font:500 clamp(32px,3.2vw,50px)/1.08 Barlow,sans-serif;text-wrap:balance">{{ f.line }}</h3>
+            <p style="margin:0;font:400 18px/1.6 Barlow,sans-serif;color:#DDE3DF;text-wrap:pretty">{{ f.d }}</p>
+            <div style="font:400 15px/1.4 Barlow,sans-serif;color:#8FA89A">Pasa en {{ f.where }} · Se aprende en {{ f.game }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- JUGAR -->
+<section id="jugar" data-tone="surface" data-screen-label="Aprender jugando" style="background:var(--bg2);padding:clamp(120px,13vw,192px) clamp(20px,4vw,56px) clamp(104px,12vw,176px)">
+  <div style="max-width:1440px;margin:0 auto;display:flex;flex-direction:column;gap:clamp(56px,6vw,96px)">
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:32px">
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:var(--mute)">Aprender · Desafío Iberá</div>
+        <h2 data-lines="" style="margin:0;font:800 clamp(52px,6.4vw,112px)/0.86 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:var(--head)"><span style="display:block;overflow:hidden"><span data-line="" style="display:block">Lo que se hace en el estero,</span></span><span style="display:block;overflow:hidden"><span data-line="" style="display:block">se aprende jugando</span></span></h2>
+      </div>
+      <p style="margin:0;max-width:400px;font:400 17px/1.55 Barlow,sans-serif;color:var(--mute);text-wrap:pretty">Cuatro escenas del modo historia, jugables acá mismo. Cada una enseña el problema del lugar donde sucede.</p>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:clamp(24px,3vw,48px);align-items:stretch">
+      <div style="flex:3 1 640px;position:relative;aspect-ratio:{{ gAspect }};overflow:hidden;border-radius:4px;background:#0B100E;color:#FFFFFF;user-select:none">
+
+        <!-- G1 CANALES -->
+        <div style="position:absolute;inset:0;opacity:{{ gs.canales.op }};transform:scale({{ gs.canales.sc }});filter:blur({{ gs.canales.bl }}px);pointer-events:{{ gs.canales.pe }};transition:opacity .8s,transform 1s cubic-bezier(.2,.7,.2,1),filter .8s">
+          <div style="position:absolute;inset:0;background:#0B100E {{ imgG1 }} center/cover;filter:saturate(.8) brightness(.72)"></div>
+          <sc-for list="{{ g1Items }}" as="it" hint-placeholder-count="0">
+            <button onClick="{{ it.onClick }}" aria-label="Recolectar residuo" style="position:absolute;left:{{ it.x }}%;top:{{ it.y }}%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;border:1px solid rgba(255,255,255,.22);background:rgba(12,20,16,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:{{ it.op }};transform:scale({{ it.sc }});pointer-events:{{ it.pe }};transition:opacity .45s,transform .5s cubic-bezier(.3,1.5,.4,1)"><span style="display:flex;animation:ib-bob {{ it.dur }} ease-in-out infinite"><dc-import name="Icon" n="{{ it.icon }}" c="#EEF2EE" k="#1B2A22" s="26" hint-size="26px,26px"></dc-import></span></button>
+          </sc-for>
+          <div style="position:absolute;left:20px;top:20px;padding:14px 16px;border-radius:12px;background:rgba(12,20,16,.55);backdrop-filter:blur(18px) saturate(120%);-webkit-backdrop-filter:blur(18px) saturate(120%);border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 1px rgba(255,255,255,.05);display:flex;flex-direction:column;gap:10px;min-width:180px">
+            <div style="display:flex;justify-content:space-between;gap:16px;font:500 12px/1 Barlow,sans-serif;text-transform:uppercase;color:#B5C4BB"><span>Residuos</span><span style="color:#FFFFFF">{{ g1Count }} / 5</span></div>
+            <div style="height:2px;background:rgba(255,255,255,.14)"><div style="height:100%;width:{{ g1Pct }}%;background:#00D58A;transition:width .6s cubic-bezier(.3,1.2,.4,1)"></div></div>
+          </div>
+          <sc-if value="{{ g1Done }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;inset:0;background:rgba(11,16,14,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;flex-direction:column;justify-content:center;gap:14px;padding:clamp(24px,5vw,72px)">
+              <div style="font:800 clamp(34px,4vw,64px)/0.9 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;opacity:{{ g1m1 }};transform:translateY({{ g1t1 }}px);transition:opacity .8s,transform .9s cubic-bezier(.2,.7,.2,1)">Limpiaste el canal.</div>
+              <div style="font:400 clamp(18px,1.6vw,24px)/1.35 Barlow,sans-serif;color:#DDE3DF;opacity:{{ g1m2 }};transform:translateY({{ g1t2 }}px);transition:opacity .8s,transform .9s cubic-bezier(.2,.7,.2,1)">Pero mañana puede volver a estar igual.</div>
+              <div style="font:500 clamp(18px,1.6vw,24px)/1.35 Barlow,sans-serif;opacity:{{ g1m3 }};transform:translateY({{ g1t3 }}px);transition:opacity .8s,transform .9s cubic-bezier(.2,.7,.2,1)">El problema está río arriba.</div>
+              <div style="display:flex;flex-wrap:wrap;gap:12px 28px;margin-top:12px;opacity:{{ g1m3 }};transition:opacity .8s .3s">
+                <button onClick="{{ goFrag }}" style="border:none;border-bottom:1px solid #FFFFFF;background:none;padding:0 0 5px;color:#FFFFFF;font:500 16px/1 Barlow,sans-serif">Entender por qué →</button>
+                <button onClick="{{ g1Reset }}" style="border:none;background:none;padding:0 0 5px;color:#B5C4BB;font:500 16px/1 Barlow,sans-serif">Jugar de nuevo</button>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- G2 SEÑALES -->
+        <div style="position:absolute;inset:0;opacity:{{ gs.senales.op }};transform:scale({{ gs.senales.sc }});filter:blur({{ gs.senales.bl }}px);pointer-events:{{ gs.senales.pe }};transition:opacity .8s,transform 1s cubic-bezier(.2,.7,.2,1),filter .8s">
+          <div style="position:absolute;inset:0;background:#0B100E {{ imgG2 }} center/cover;filter:saturate(.85) brightness(.78)"></div>
+          <sc-for list="{{ g2Spots }}" as="h" hint-placeholder-count="0">
+            <button onClick="{{ h.onClick }}" aria-label="Observar" style="position:absolute;left:{{ h.x }}%;top:{{ h.y }}%;width:44px;height:44px;margin:-22px 0 0 -22px;border:none;background:none;padding:0;display:flex;align-items:center;justify-content:center">
+              <sc-if value="{{ h.idle }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;left:15px;top:15px;width:14px;height:14px;border-radius:50%;border:1px solid rgba(255,255,255,.7);animation:ib-pulse 2.6s cubic-bezier(.2,.7,.2,1) infinite {{ h.delay }}"></span></sc-if>
+              <span style="width:{{ h.dot }}px;height:{{ h.dot }}px;border-radius:50%;background:{{ h.bg }};border:1px solid rgba(255,255,255,.8);transition:all .5s cubic-bezier(.3,1.4,.4,1)"></span>
+            </button>
+          </sc-for>
+          <div style="position:absolute;left:20px;top:20px;padding:14px 16px;border-radius:12px;background:rgba(12,20,16,.55);backdrop-filter:blur(18px) saturate(120%);-webkit-backdrop-filter:blur(18px) saturate(120%);border:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;gap:6px">
+            <div style="font:500 12px/1 Barlow,sans-serif;text-transform:uppercase;color:#B5C4BB">Encontrá 3 señales</div>
+            <div style="font:800 26px/1 'Barlow Semi Condensed',sans-serif">{{ g2Count }} / 3</div>
+          </div>
+          <sc-if value="{{ g2Info }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;right:20px;bottom:20px;width:min(300px,calc(100% - 40px));padding:16px 18px;border-radius:12px;background:rgba(12,20,16,.6);backdrop-filter:blur(18px) saturate(120%);-webkit-backdrop-filter:blur(18px) saturate(120%);border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 1px rgba(255,255,255,.05);display:flex;flex-direction:column;gap:8px">
+              <div style="font:500 12px/1 Barlow,sans-serif;text-transform:uppercase;color:#00D58A">{{ g2Last.t }}</div>
+              <div style="font:400 15px/1.45 Barlow,sans-serif">{{ g2Last.d }}</div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ g2Done }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;left:0;right:0;top:0;padding:clamp(24px,5vw,56px);display:flex;flex-direction:column;align-items:flex-end;gap:12px;text-align:right">
+              <div style="font:800 clamp(32px,3.6vw,56px)/0.9 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Observar también es cuidar</div>
+              <button onClick="{{ g2Reset }}" style="border:none;border-bottom:1px solid #FFFFFF;background:none;padding:0 0 5px;color:#FFFFFF;font:500 15px/1 Barlow,sans-serif">Volver a mirar</button>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- G3 CIELO -->
+        <div style="position:absolute;inset:0;opacity:{{ gs.cielo.op }};transform:scale({{ gs.cielo.sc }});filter:blur({{ gs.cielo.bl }}px);pointer-events:{{ gs.cielo.pe }};transition:opacity .8s,transform 1s cubic-bezier(.2,.7,.2,1),filter .8s">
+          <div style="position:absolute;inset:0;background:#0B100E {{ imgSky }} center 30%/cover;filter:{{ skyFilter }}"></div>
+          <sc-for list="{{ stars }}" as="s" hint-placeholder-count="0"><span style="position:absolute;left:{{ s.x }}%;top:{{ s.y }}%;width:{{ s.r }}px;height:{{ s.r }}px;border-radius:50%;background:#FFFFFF;opacity:{{ s.op }}"></span></sc-for>
+          <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(246,160,60,.7) 0%,rgba(246,160,60,.18) 38%,rgba(246,160,60,0) 72%);opacity:{{ glowOp }};mix-blend-mode:screen"></div>
+          <div style="position:absolute;inset:0;background:rgba(120,110,95,.5);opacity:{{ hazeOp }};mix-blend-mode:screen"></div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:14%;background:#0B100E"></div>
+          <div style="position:absolute;left:20px;top:20px;display:flex;flex-direction:column;gap:6px">
+            <div style="font:500 12px/1 Barlow,sans-serif;text-transform:uppercase;color:#B5C4BB">{{ skyPlace }}</div>
+            <div style="font:800 clamp(40px,4.4vw,72px)/0.9 'Barlow Semi Condensed',sans-serif">{{ starsN }}</div>
+            <div style="font:400 14px/1.3 Barlow,sans-serif;color:#B5C4BB">estrellas visibles · cifra ilustrativa</div>
+          </div>
+          <div style="position:absolute;left:20px;right:20px;bottom:20px;padding:14px 18px;border-radius:12px;background:rgba(12,20,16,.55);backdrop-filter:blur(18px) saturate(120%);-webkit-backdrop-filter:blur(18px) saturate(120%);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:16px;font:500 13px/1 Barlow,sans-serif;text-transform:uppercase">
+            <span>Estero</span><input type="range" min="0" max="100" value="{{ sky }}" onChange="{{ onSky }}" onInput="{{ onSky }}" aria-label="Luz artificial" style="flex:1;accent-color:#EEF2EE"><span>Ciudad</span>
+          </div>
+        </div>
+
+        <!-- G4 VOCES -->
+        <div style="position:absolute;inset:0;opacity:{{ gs.voces.op }};transform:scale({{ gs.voces.sc }});filter:blur({{ gs.voces.bl }}px);pointer-events:{{ gs.voces.pe }};transition:opacity .8s,transform 1s cubic-bezier(.2,.7,.2,1),filter .8s">
+          <div style="position:absolute;inset:0;background:#0B100E {{ imgG4 }} center/cover;filter:brightness(.28) saturate(.4) hue-rotate(20deg)"></div>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(18px,3vw,32px);padding:24px">
+            <div style="font:500 12px/1 Barlow,sans-serif;text-transform:uppercase;color:#B5C4BB">Escuchá · ¿Quién es?</div>
+            <div style="display:flex;align-items:center;gap:3px;height:72px">
+              <sc-for list="{{ bars }}" as="b" hint-placeholder-count="0"><span style="width:3px;height:{{ b.h }}px;border-radius:2px;background:#EEF2EE;opacity:{{ b.op }};transform:scaleY(.25);animation:ib-wave {{ b.dur }} ease-in-out infinite {{ b.delay }};animation-play-state:{{ wavePlay }}"></span></sc-for>
+            </div>
+            <button onClick="{{ playSound }}" aria-label="Reproducir sonido" style="width:64px;height:64px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(12,20,16,.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);color:#FFFFFF;display:flex;align-items:center;justify-content:center;transition:transform .4s cubic-bezier(.3,1.4,.4,1)" style-hover="transform:scale(1.06)"><svg width="20" height="20" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M8 5.5v13l10.5-6.5Z"></path></svg></button>
+            <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px">
+              <sc-for list="{{ g4Opts }}" as="o" hint-placeholder-count="3">
+                <button onClick="{{ o.onClick }}" style="height:44px;padding:0 18px;border-radius:10px;border:1px solid {{ o.bd }};background:rgba(12,20,16,.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#FFFFFF;opacity:{{ o.op }};font:500 15px/1 Barlow,sans-serif;transition:border-color .4s,opacity .4s">{{ o.label }}</button>
+              </sc-for>
+            </div>
+            <div style="min-height:66px;max-width:460px;text-align:center;display:flex;flex-direction:column;gap:6px;opacity:{{ g4MsgOp }};transform:translateY({{ g4MsgY }}px);transition:opacity .6s,transform .7s cubic-bezier(.2,.7,.2,1)">
+              <div style="font:800 24px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:{{ g4MsgCol }}">{{ g4Title }}</div>
+              <div style="font:400 15px/1.45 Barlow,sans-serif;color:#DDE3DF">{{ g4Txt }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:1 1 280px;display:flex;flex-direction:column;justify-content:space-between;gap:32px">
+        <div style="display:flex;flex-direction:column;border-top:1px solid var(--rule)">
+          <sc-for list="{{ gIndex }}" as="g" hint-placeholder-count="4">
+            <button onClick="{{ g.onClick }}" style="position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:20px 0 20px 20px;border:none;border-bottom:1px solid var(--rule);background:none;text-align:left;color:var(--fg);opacity:{{ g.op }};transition:opacity .45s">
+              <span style="position:absolute;left:0;top:20px;bottom:20px;width:2px;background:var(--head);transform-origin:50% 0;transform:scaleY({{ g.sy }});transition:transform .5s cubic-bezier(.3,1.2,.4,1)"></span>
+              <span style="font:800 clamp(28px,2.4vw,36px)/0.9 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:var(--head)">{{ g.t }}</span>
+              <span style="font:500 13px/1.3 Barlow,sans-serif;text-transform:uppercase;color:var(--mute)">{{ g.meta }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <p style="margin:0;font:400 16px/1.55 Barlow,sans-serif;text-wrap:pretty">{{ gDesc }}</p>
+          <a href="Ibera Prototipo.dc.html" style="align-self:flex-start;text-decoration:none;border-bottom:1px solid var(--head);padding-bottom:5px;font:500 15px/1 Barlow,sans-serif">Modo historia completo →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACTUAR -->
+<section id="actuar" data-tone="photo" data-screen-label="Reportar" style="position:relative;overflow:hidden;background:#0B100E;color:#FFFFFF;padding:clamp(120px,13vw,192px) clamp(20px,4vw,56px)">
+  <div style="position:absolute;inset:0;overflow:hidden"><div data-par="" style="position:absolute;inset:-8% 0;background:#0B100E {{ imgReportBg }} center/cover;filter:brightness(.42) saturate(.7)"></div></div>
+  <div style="position:relative;max-width:1320px;margin:0 auto;display:flex;flex-wrap:wrap;gap:clamp(48px,7vw,120px);align-items:center">
+    <div style="flex:1 1 400px;display:flex;flex-direction:column;gap:26px">
+      <div style="font:500 13px/1 Barlow,sans-serif;text-transform:uppercase;color:#B5C4BB">Actuar</div>
+      <h2 data-lines="" style="margin:0;font:800 clamp(52px,6vw,104px)/0.86 'Barlow Semi Condensed',sans-serif;text-transform:uppercase"><span style="display:block;overflow:hidden"><span data-line="" style="display:block">¿Viste algo que</span></span><span style="display:block;overflow:hidden"><span data-line="" style="display:block">no debería</span></span><span style="display:block;overflow:hidden"><span data-line="" style="display:block">estar acá?</span></span></h2>
+      <p style="margin:0;max-width:440px;font:400 19px/1.5 Barlow,sans-serif;color:#DDE3DF;text-wrap:pretty">Reportalo incluso si no tenés señal. Llega a los guardaparques de la zona y seguís el caso con un código.</p>
+      <button onClick="{{ openRMap }}" style="align-self:flex-start;border:none;border-bottom:1px solid #FFFFFF;background:none;padding:0 0 5px;color:#FFFFFF;font:500 16px/1 Barlow,sans-serif">Ver reclamos en el mapa →</button>
+    </div>
+
+    <div style="flex:1 1 440px;max-width:560px;border-radius:16px;background:rgba(12,20,16,.55);backdrop-filter:blur(18px) saturate(120%);-webkit-backdrop-filter:blur(18px) saturate(120%);border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 1px rgba(255,255,255,.05);padding:clamp(20px,2.6vw,32px);display:flex;flex-direction:column;gap:22px;min-height:560px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <div style="display:flex;gap:6px"><sc-for list="{{ rDots }}" as="d" hint-placeholder-count="3"><span style="width:26px;height:2px;background:{{ d.bg }};transition:background-color .4s"></span></sc-for></div>
+        <button onClick="{{ toggleNet }}" style="display:flex;align-items:center;gap:8px;height:32px;padding:0 12px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#FFFFFF;font:500 13px/1 Barlow,sans-serif"><span style="width:7px;height:7px;border-radius:50%;background:{{ netDot }}"></span>{{ netLabel }}</button>
+      </div>
+
+      <sc-if value="{{ r0 }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="font:800 32px/0.95 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">¿Qué encontraste?</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px">
+            <sc-for list="{{ rTipos }}" as="t" hint-placeholder-count="5">
+              <button onClick="{{ t.onClick }}" style="display:flex;align-items:center;gap:12px;height:60px;padding:0 14px;border-radius:10px;border:1px solid {{ t.bd }};background:{{ t.bg }};color:#FFFFFF;text-align:left;font:500 15px/1.15 Barlow,sans-serif;transition:border-color .35s,background-color .35s"><dc-import name="Icon" n="{{ t.icon }}" c="#EEF2EE" k="#16211B" s="22" hint-size="22px,22px"></dc-import>{{ t.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ r1 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="font:800 32px/0.95 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Foto y ubicación</div>
+          <button onClick="{{ addFoto }}" style="position:relative;height:150px;border-radius:10px;border:1px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.03) {{ fotoImg }} center/cover;color:#FFFFFF;display:flex;align-items:center;justify-content:center;gap:10px;font:500 15px/1 Barlow,sans-serif;overflow:hidden">
+            <sc-if value="{{ fotoLoading }}" hint-placeholder-val="{{ false }}"><span>Cargando foto…</span></sc-if>
+            <sc-if value="{{ fotoEmpty }}" hint-placeholder-val="{{ true }}"><dc-import name="Icon" n="camara" c="#EEF2EE" k="#16211B" s="24" hint-size="24px,24px"></dc-import><span>Agregar foto · arrastrá o tocá</span></sc-if>
+            <sc-if value="{{ rFoto }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;right:10px;bottom:10px;padding:6px 10px;border-radius:8px;background:rgba(12,20,16,.6);font-size:13px">Cambiar</span></sc-if>
+          </button>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <button onClick="{{ detectLoc }}" style="flex:1 1 180px;height:44px;border-radius:10px;border:1px solid {{ locAutoBd }};background:transparent;color:#FFFFFF;font:500 14px/1 Barlow,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px"><dc-import name="Icon" n="ubicar" c="#EEF2EE" k="#16211B" s="18" hint-size="18px,18px"></dc-import>{{ detectLabel }}</button>
+            <button onClick="{{ manualLoc }}" style="flex:1 1 150px;height:44px;border-radius:10px;border:1px solid {{ locManBd }};background:transparent;color:#FFFFFF;font:500 14px/1 Barlow,sans-serif">Marcar manualmente</button>
+          </div>
+          <sc-if value="{{ hasLoc }}" hint-placeholder-val="{{ false }}">
+            <div onPointerDown="{{ pinDown }}" onPointerMove="{{ pinMove }}" onPointerUp="{{ pinUp }}" style="position:relative;height:150px;border-radius:10px;overflow:hidden;background:#0B2A1C {{ imgSatS }} 50% 55%/260% auto;filter:saturate(.6);cursor:crosshair;touch-action:none">
+              <span style="position:absolute;left:{{ pinX }}%;top:{{ pinY }}%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#FFFFFF;box-shadow:0 0 0 7px rgba(255,255,255,.25);transition:{{ pinTr }}"></span>
+              <span style="position:absolute;left:10px;bottom:10px;padding:5px 9px;border-radius:6px;background:rgba(12,20,16,.6);font:500 12px/1 Barlow,sans-serif">Arrastrá para ajustar</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font:500 15px/1.35 Barlow,sans-serif"><span style="width:7px;height:7px;border-radius:50%;background:#00D58A"></span>{{ locText }}</div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ r2 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="font:800 32px/0.95 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Revisá y enviá</div>
+          <div style="display:flex;gap:14px;align-items:stretch">
+            <div style="width:110px;flex:none;border-radius:8px;background:rgba(255,255,255,.05) {{ fotoImg }} center/cover;min-height:110px;display:flex;align-items:center;justify-content:center;font:400 12px/1.2 Barlow,sans-serif;color:#8FA89A;text-align:center">{{ noFotoTxt }}</div>
+            <div style="flex:1;display:flex;flex-direction:column;font:400 14px/1.35 Barlow,sans-serif">
+              <div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.1)"><span style="color:#8FA89A">Tipo</span><span style="font-weight:500">{{ tipoLabel }}</span></div>
+              <div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.1)"><span style="color:#8FA89A">Lugar</span><span style="font-weight:500;text-align:right">{{ locShort }}</span></div>
+              <div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0"><span style="color:#8FA89A">Fecha</span><span style="font-weight:500">{{ nowTxt }}</span></div>
+            </div>
+          </div>
+          <textarea value="{{ note }}" onChange="{{ onNote }}" placeholder="Agregar descripción (opcional)" rows="3" style="width:100%;resize:none;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:#FFFFFF;padding:12px 14px;font:400 15px/1.45 Barlow,sans-serif;outline:none"></textarea>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ r3 }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;gap:18px;justify-content:center">
+          <sc-if value="{{ rPending }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="font:800 32px/0.95 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">{{ pendTitle }}</div>
+              <p style="margin:0;font:400 16px/1.5 Barlow,sans-serif;color:#DDE3DF">{{ pendTxt }}</p>
+              <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
+                <sc-for list="{{ pipe }}" as="p" hint-placeholder-count="3">
+                  <span style="display:flex;align-items:center;gap:10px"><span style="display:flex;align-items:center;gap:8px;font:500 14px/1 Barlow,sans-serif;opacity:{{ p.op }};transition:opacity .5s"><span style="width:7px;height:7px;border-radius:50%;background:{{ p.dot }};transition:background-color .5s"></span>{{ p.t }}</span><span style="width:24px;height:1px;background:rgba(255,255,255,.2);display:{{ p.line }}"></span></span>
+                </sc-for>
+              </div>
+              <sc-if value="{{ canRecover }}" hint-placeholder-val="{{ false }}"><button onClick="{{ recover }}" style="align-self:flex-start;margin-top:10px;height:48px;padding:0 20px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:transparent;color:#FFFFFF;font:500 15px/1 Barlow,sans-serif">Recuperar conexión</button></sc-if>
+            </div>
+          </sc-if>
+          <sc-if value="{{ rReceived }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:18px">
+              <div style="font:800 clamp(40px,4vw,56px)/0.88 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Reporte recibido</div>
+              <div style="display:flex;flex-direction:column;gap:4px"><span style="font:500 12px/1 Barlow,sans-serif;text-transform:uppercase;color:#8FA89A">Código de seguimiento</span><span style="font:800 36px/1 'Barlow Semi Condensed',sans-serif">IB-0427</span></div>
+              <div style="display:flex;flex-direction:column">
+                <sc-for list="{{ track }}" as="t" hint-placeholder-count="3">
+                  <div style="display:flex;gap:12px;padding:10px 0;border-top:1px solid rgba(255,255,255,.1)"><span style="margin-top:5px;width:8px;height:8px;border-radius:50%;flex:none;background:{{ t.fill }};border:1px solid {{ t.bd }}"></span><span style="display:flex;flex-direction:column;gap:3px"><span style="font:500 15px/1.2 Barlow,sans-serif;color:{{ t.fg }}">{{ t.t }}</span><sc-if value="{{ t.show }}" hint-placeholder-val="{{ false }}"><span style="font:400 13px/1.3 Barlow,sans-serif;color:#8FA89A">{{ t.d }}</span></sc-if></span></div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <div style="margin-top:auto;display:flex;align-items:center;gap:16px">
+        <sc-if value="{{ rBackOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ rBack }}" style="border:none;background:none;padding:10px 0;color:#B5C4BB;font:500 15px/1 Barlow,sans-serif">← Atrás</button></sc-if>
+        <sc-if value="{{ rReceived }}" hint-placeholder-val="{{ false }}"><button onClick="{{ toggleTrack }}" style="border:none;border-bottom:1px solid #FFFFFF;background:none;padding:0 0 4px;color:#FFFFFF;font:500 15px/1 Barlow,sans-serif">{{ trackLabel }}</button></sc-if>
+        <sc-if value="{{ rMainOn }}" hint-placeholder-val="{{ true }}"><button onClick="{{ rNext }}" style="margin-left:auto;height:52px;padding:0 26px;border:none;border-radius:10px;background:{{ nextBg }};color:{{ nextFg }};font:500 16px/1 Barlow,sans-serif;transition:background-color .3s,color .3s">{{ nextLabel }}</button></sc-if>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CIERRE -->
+<section id="futuro" data-tone="photo" data-screen-label="Cierre" style="position:relative;height:110vh;min-height:640px;overflow:hidden;background:#0B100E;color:#FFFFFF">
+  <div data-heal="" style="position:absolute;inset:-4% 0;background:#0B100E {{ imgJag }} 60% center/cover;filter:grayscale(1) brightness(.55)"></div>
+  <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,16,14,.35) 0%,rgba(11,16,14,0) 40%,rgba(11,16,14,.8) 100%)"></div>
+  <div style="position:absolute;left:0;right:0;bottom:0;padding:0 clamp(20px,4vw,56px) clamp(48px,8vh,96px);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:32px">
+    <h2 data-drift="-0.1" style="margin:0;max-width:900px;font:800 clamp(64px,10vw,176px)/0.82 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Conocer para cuidar</h2>
+    <div style="display:flex;flex-direction:column;gap:20px;max-width:320px">
+      <p style="margin:0;font:400 17px/1.5 Barlow,sans-serif">El yaguareté volvió a nacer en el Iberá después de más de setenta años. El estero es de todos. Cuidarlo también.</p>
+      <button onClick="{{ goTerritorio }}" style="align-self:flex-start;border:none;border-bottom:1px solid #FFFFFF;background:none;padding:0 0 6px;color:#FFFFFF;font:500 16px/1 Barlow,sans-serif">Explorar el Iberá →</button>
+    </div>
+  </div>
+</section>
+
+<footer data-tone="photo" style="background:#0B100E;color:#FFFFFF;padding:64px clamp(20px,4vw,56px) 88px">
+  <div style="max-width:1440px;margin:0 auto;display:flex;flex-wrap:wrap;gap:40px;justify-content:space-between;align-items:flex-start">
+    <div style="display:flex;align-items:center;gap:14px"><span style="display:block;width:60px;height:32px;background:#FFFFFF;-webkit-mask:url(uploads/iso.svg) left center/contain no-repeat;mask:url(uploads/iso.svg) left center/contain no-repeat"></span><span style="font:400 14px/1.5 Barlow,sans-serif;color:#8FA89A;max-width:300px">Turismo, educación ambiental y participación ciudadana. Proyecto no oficial.</span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:28px;font:400 15px/1 Barlow,sans-serif">
+      <a href="#portales" style="color:#FFFFFF;text-decoration:none">Portales</a><a href="#caminos" style="color:#FFFFFF;text-decoration:none">Accesos</a><a href="#ecosistema" style="color:#FFFFFF;text-decoration:none">Ecosistema</a><a href="#jugar" style="color:#FFFFFF;text-decoration:none">Aprender</a><a href="https://parqueibera.gob.ar/" style="color:#FFFFFF;text-decoration:none">Prensa</a><a href="https://parqueibera.gob.ar/" style="color:#FFFFFF;text-decoration:none">Contacto</a>
+    </div>
+  </div>
+  <div style="max-width:1440px;margin:48px auto 0;font:400 13px/1.5 Barlow,sans-serif;color:#8FA89A">Estados de camino, reclamos, teléfonos, alojamientos y cifras de los juegos: datos de ejemplo. Fotos: Wikimedia Commons.</div>
+</footer>
+
+<!-- LIGHTBOX -->
+<sc-if value="{{ lbOpen }}" hint-placeholder-val="{{ false }}">
+  <div onPointerDown="{{ galDown }}" onPointerUp="{{ galUp }}" style="position:fixed;inset:0;z-index:90;background:#0B100E;color:#FFFFFF;touch-action:pan-y">
+    <sc-for list="{{ lbImgs }}" as="g" hint-placeholder-count="1">
+      <div style="position:absolute;inset:88px clamp(16px,6vw,120px) 150px;background:{{ g.img }} center/contain no-repeat;opacity:{{ g.op }};transform:scale({{ g.sc }});filter:blur({{ g.bl }}px);transition:opacity .9s,transform 1s cubic-bezier(.2,.7,.2,1),filter .9s"></div>
+    </sc-for>
+    <div style="position:absolute;left:0;right:0;top:0;height:76px;padding:0 clamp(20px,4vw,56px);display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:14px"><span style="display:block;width:52px;height:28px;background:#FFFFFF;-webkit-mask:url(uploads/iso.svg) left center/contain no-repeat;mask:url(uploads/iso.svg) left center/contain no-repeat"></span><span style="font:800 18px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;border-left:1px solid rgba(255,255,255,.3);padding-left:14px">{{ cur.name }}</span></div>
+      <button onClick="{{ closeLb }}" style="border:none;background:none;padding:10px 0;color:#FFFFFF;font:500 15px/1 Barlow,sans-serif">Cerrar ✕</button>
+    </div>
+    <button onClick="{{ galPrev }}" aria-label="Anterior" style="position:absolute;left:clamp(8px,2vw,32px);top:50%;margin-top:-28px;width:56px;height:56px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:rgba(12,20,16,.45);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#FFFFFF;font:400 20px/1 Barlow,sans-serif">←</button>
+    <button onClick="{{ galNext }}" aria-label="Siguiente" style="position:absolute;right:clamp(8px,2vw,32px);top:50%;margin-top:-28px;width:56px;height:56px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:rgba(12,20,16,.45);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#FFFFFF;font:400 20px/1 Barlow,sans-serif">→</button>
+    <div style="position:absolute;left:0;right:0;bottom:0;padding:0 clamp(20px,4vw,56px) 28px;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:6px;max-width:520px"><span style="font:500 13px/1 Barlow,sans-serif;color:#8FA89A">{{ galTxt }}</span><span style="font:400 16px/1.4 Barlow,sans-serif">{{ galCap }}</span></div>
+      <div style="display:flex;gap:8px">
+        <sc-for list="{{ thumbs }}" as="t" hint-placeholder-count="4"><button onClick="{{ t.onClick }}" aria-label="{{ t.aria }}" style="width:64px;height:44px;border-radius:4px;border:1px solid {{ t.bd }};padding:0;background:#002E1D {{ t.img }} center/cover;opacity:{{ t.op }};transition:opacity .4s,border-color .4s"></button></sc-for>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- REPORT MAP -->
+<sc-if value="{{ rMapOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:90;background:#0B100E;color:#FFFFFF">
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:88px clamp(12px,4vw,56px) 24px">
+      <div style="position:relative;width:min(100%,calc((100vh - 112px) * 1.6));aspect-ratio:16/10;border-radius:4px;overflow:hidden;background:#0B2A1C {{ imgSat }} center/cover">
+        <div style="position:absolute;inset:0;background:rgba(11,16,14,.25)"></div>
+        <sc-for list="{{ rMarks }}" as="m" hint-placeholder-count="0">
+          <button onClick="{{ m.onClick }}" aria-label="{{ m.titulo }}" style="position:absolute;left:{{ m.x }}%;top:{{ m.y }}%;width:32px;height:32px;margin:-16px 0 0 -16px;border:none;background:none;padding:0;display:flex;align-items:center;justify-content:center">
+            <span style="width:{{ m.dot }}px;height:{{ m.dot }}px;border-radius:50%;background:{{ m.col }};border:2px solid #FFFFFF;transition:width .4s cubic-bezier(.3,1.4,.4,1),height .4s cubic-bezier(.3,1.4,.4,1)"></span>
+          </button>
+        </sc-for>
+        <sc-if value="{{ hasRSel }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;left:16px;bottom:16px;width:min(300px,calc(100% - 32px));padding:16px 18px;border-radius:12px;background:rgba(12,20,16,.6);backdrop-filter:blur(18px) saturate(120%);-webkit-backdrop-filter:blur(18px) saturate(120%);border:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;gap:8px">
+            <div style="font:500 12px/1 Barlow,sans-serif;text-transform:uppercase;color:#8FA89A">{{ rSel.tipo }}</div>
+            <div style="font:800 24px/0.95 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">{{ rSel.titulo }}</div>
+            <div style="font:400 14px/1.3 Barlow,sans-serif;color:#B5C4BB">{{ rSel.lugar }} · {{ rSel.fecha }}</div>
+            <div style="display:flex;align-items:center;gap:8px;font:500 14px/1 Barlow,sans-serif"><span style="width:7px;height:7px;border-radius:50%;background:{{ rSel.col }}"></span>{{ rSel.est }}</div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+    <div style="position:absolute;left:0;right:0;top:0;height:76px;padding:0 clamp(20px,4vw,56px);display:flex;align-items:center;justify-content:space-between;gap:16px">
+      <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap"><span style="font:800 22px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Reclamos en el mapa</span><span style="display:flex;gap:14px;font:500 13px/1 Barlow,sans-serif;color:#B5C4BB"><span style="display:flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:#FACD05"></span>Recibido</span><span style="display:flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:#90B4E1"></span>Derivado</span><span style="display:flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:#00B96C"></span>Resuelto</span></span></div>
+      <button onClick="{{ closeRMap }}" style="border:none;background:none;padding:10px 0;color:#FFFFFF;font:500 15px/1 Barlow,sans-serif">Cerrar ✕</button>
+    </div>
+  </div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;heroCopy&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Un paisaje hecho de agua&quot;,&quot;options&quot;:[&quot;Un paisaje hecho de agua&quot;,&quot;El estero es de todos&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Portada&quot;},&quot;tilt&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:58,&quot;min&quot;:46,&quot;max&quot;:68,&quot;step&quot;:1,&quot;unit&quot;:&quot;°&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Mapa&quot;},&quot;showBand&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Utilidad&quot;}}">
+class Component extends DCLogic {
+  state = { theme: 'dark', narrow: false, mobile: false, tone: 'photo', scrolled: false, mapIdx: 0, hov: null, pick: null, portal: 'laguna', gi: 0, lb: false, fauna: 0, frag: 0, menu: false, navAct: -1, band: false, saved: false,
+    game: 'canales', g1: [0, 0, 0, 0, 0], g1m: 0, g2: [], g2last: null, sky: 8, g4play: false, g4pick: null, g4ok: false,
+    rStep: 0, rTipo: null, rFoto: false, fotoLoading: false, rLoc: null, pin: { x: 50, y: 56 }, dragging: false, note: '', online: false, rState: null, rTrack: false, rMap: false, rSel: null };
+  railRef = React.createRef();
+  cursorRef = React.createRef();
+
+  static U(n, w) { return "url('https://commons.wikimedia.org/wiki/Special:FilePath/" + encodeURIComponent(n.replace(/ /g, '_')) + "?width=" + (w || 1400) + "')"; }
+  static I = {
+    A: 'Esteros_del_Ibera_Laguna.JPG', B: 'Esteros Del Ibera, Corrientes, Argentina, 2nd. Jan 2011 - Flickr - PhillipC (4).jpg',
+    C: 'Urupe, Esteros Del Ibera, Corrientes, Argentina, 2nd. Jan 2011 - Flickr - PhillipC.jpg', D: 'Avifauna_en_los_esteros_del_Iberá,_cormoranes.JPG',
+    E: 'Yacaré_-_Esteros_del_Iberá_-_Argentina_02.jpg', F: 'Gubernatrix cristata - Yellow cardinal (male); Iberá marshes, Corrientes, Argentina.jpg',
+    G: 'Yacare con flor (26389548324).jpg', H: 'Esteros_Ibera_Caiman_Yacare.jpg', SAT: 'Esteros del Iberá, Argentina.jpg',
+    JAG: 'Jaguar (Panthera onca palustris) male Three Brothers River 2.jpg', JAG2: 'Standing jaguar.jpg', CAP: 'Capybara (Hydrochoerus hydrochaeris).JPG',
+    CIE: 'Blastocerus dichotomus.jpg', CAM: 'Pontederia crassipes.jpg', SKY: 'Milky Way Night Sky Black Rock Desert Nevada.jpg',
+    WASTE: 'Plastic Pollution.jpg', WATER: 'Water pollution.jpg', FIRE: 'Grass fire.jpg', LIGHT: 'Light pollution.jpg'
+  };
+  static E = { ok: { eLabel: 'Transitable', dot: '#00B96C' }, barro: { eLabel: 'Con precaución', dot: '#FACD05' }, x4: { eLabel: 'Solo 4×4', dot: '#F68E13' } };
+  static P = [
+    { id: 'laguna', name: 'Laguna Iberá', loc: 'Colonia Carlos Pellegrini', est: 'ok', x: 52, y: 58, ruta: 'RP 40 desde Mercedes · 120 km de ripio', img: 'A', gal: [['A', 'La laguna al atardecer, desde la costanera del pueblo.'], ['D', 'Cormoranes sobre los camalotes.'], ['H', 'Yacaré en la orilla, a metros del sendero.'], ['CAP', 'Carpinchos junto al agua, habituales en el pueblo.']], col: ['B', 'G', 'F'], tag: 'El pueblo y la laguna comparten orilla.', desc: 'Un pueblo de calles de arena a orillas de la laguna, y el portal más visitado del sistema.', hist: 'Colonia Carlos Pellegrini nació como un asentamiento de pescadores y mariscadores. Hoy vive del turismo de naturaleza, y muchos de sus guías son hijos de quienes antes cazaban en el estero.', acts: ['Kayak y lancha por la laguna', 'Sendero de los monos', 'Observación nocturna'], poi: ['Centro de interpretación', 'Puente sobre la laguna', 'Sendero de los monos'], aloj: [['Posadas y hosterías', 'En el pueblo'], ['Camping municipal', 'Costanera'], ['Estancias', 'RP 40']], senal: 'Solo en el pueblo', gas: 'Última carga en Mercedes', tel: '+54 3773 000 000', prob: 'Residuos', probTxt: 'En temporada alta llegan visitantes todos los días. Lo que no se recolecta termina en los canales.', juego: 'Canales limpios', g: 'canales' },
+    { id: 'galarza', name: 'Galarza', loc: 'Gdor. Virasoro', est: 'barro', x: 84, y: 42, ruta: 'RP 41 · ripio con barro tras lluvias', img: 'E', gal: [['E', 'Yacaré en la laguna Galarza.'], ['B', 'Esteros abiertos hacia el oeste.'], ['G', 'Yacaré entre camalotes en flor.']], col: ['C', 'D', 'CIE'], tag: 'La puerta del este, entre el estero y el monte.', desc: 'La puerta del este: lagunas rodeadas de monte, cerca de Misiones.', hist: 'Una zona de estancias ganaderas que se abrió a la conservación. Todavía muestra las huellas del incendio de 2022.', acts: ['Avistaje de fauna', 'Paseo en canoa', 'Sendero del monte'], poi: ['Laguna Galarza', 'Mirador del monte', 'Zona en recuperación'], aloj: [['Camping del portal', 'Con reserva'], ['Hospedajes', 'Gdor. Virasoro']], senal: 'Intermitente', gas: 'Última carga en Gdor. Virasoro', tel: '+54 3756 000 000', prob: 'Fuego', probTxt: 'Zona afectada por los incendios de 2022. La fauna todavía se está recuperando.', juego: 'Voces de la noche', g: 'voces' },
+    { id: 'cambyreta', name: 'Cambyretá', loc: 'Ituzaingó', est: 'ok', x: 70, y: 24, ruta: 'Desde Ituzaingó · camino de tierra', img: 'B', gal: [['B', 'Esteros abiertos al norte del sistema.'], ['C', 'Urupé, la planta que cubre los bañados.'], ['D', 'Aves acuáticas sobre la vegetación flotante.']], col: ['A', 'H', 'CAM'], tag: 'Palmares y esteros abiertos al norte.', desc: 'La puerta norte, entre palmares y esteros abiertos.', hist: 'Un paisaje de transición entre el estero y los campos altos, donde se cruzan especies del monte y del agua.', acts: ['Safari nocturno', 'Sendero del palmar', 'Canoa por el estero'], poi: ['Palmar', 'Mirador del estero', 'Centro de visitantes'], aloj: [['Camping del portal', 'Con reserva'], ['Hoteles', 'Ituzaingó']], senal: 'Nula en el último tramo', gas: 'Última carga en Ituzaingó', tel: '+54 3786 000 000', prob: 'Fuego', probTxt: 'Las quemas de pastizales avanzan con la sequía y ponen en riesgo a la fauna del palmar.', juego: 'Voces de la noche', g: 'voces' },
+    { id: 'sannicolas', name: 'San Nicolás', loc: 'Ituzaingó', est: 'x4', x: 62, y: 34, ruta: 'Tramo final de arena · solo 4×4', img: 'C', gal: [['C', 'Bañados cubiertos de urupé.'], ['B', 'El estero visto desde el sendero.'], ['A', 'Laguna de agua clara.']], col: ['CIE', 'D', 'G'], tag: 'El más aislado, con lagunas de agua clara.', desc: 'Uno de los portales más aislados, con lagunas de agua muy clara.', hist: 'Un antiguo campo ganadero hoy dedicado a la reintroducción de especies. Llegar cuesta, y eso lo protege.', acts: ['Senderos de observación', 'Kayak en laguna', 'Avistaje de aves'], poi: ['Laguna de agua clara', 'Sendero interpretativo', 'Área de reintroducción'], aloj: [['Refugio del portal', 'Con reserva'], ['Hoteles', 'Ituzaingó']], senal: 'Sin señal', gas: 'Última carga en Ituzaingó', tel: '+54 3786 000 001', prob: 'Lixiviados', probTxt: 'El líquido que se filtra de la basura acumulada viaja bajo tierra hasta el agua.', juego: 'Señales del agua', g: 'senales' },
+    { id: 'uguay', name: 'Uguay', loc: 'Villa Olivari', est: 'ok', x: 46, y: 20, ruta: 'Desde RN 12 · camino de tierra', img: 'D', gal: [['D', 'Cormoranes en la laguna Uguay.'], ['A', 'La costa al caer la tarde.'], ['E', 'Yacaré tomando sol.']], col: ['B', 'CAM', 'H'], tag: 'Aves acuáticas a un paso de la ruta.', desc: 'El acceso más directo desde la ruta nacional, con aves acuáticas.', hist: 'Un buen primer contacto con el estero para quien viene de paso por la RN 12.', acts: ['Avistaje de aves', 'Kayak', 'Sendero costero'], poi: ['Muelle', 'Laguna Uguay', 'Sendero costero'], aloj: [['Camping del portal', 'Sin reserva'], ['Hospedajes', 'Villa Olivari']], senal: 'Buena cerca de la ruta', gas: 'Sobre la RN 12', tel: '+54 3786 000 002', prob: 'Residuos', probTxt: 'Los residuos de pesca y camping quedan en la costa y llegan al agua con la crecida.', juego: 'Canales limpios', g: 'canales' },
+    { id: 'sanantonio', name: 'San Antonio', loc: 'Concepción', est: 'ok', x: 38, y: 36, ruta: 'Camino vecinal · tierra', img: 'G', gal: [['G', 'Yacaré entre camalotes.'], ['H', 'Orillas del estero.'], ['C', 'Vegetación de bañado.']], col: ['A', 'B', 'D'], tag: 'Pequeño y ligado a su comunidad.', desc: 'Un portal pequeño, gestionado junto a los vecinos.', hist: 'Aquí el estero y la vida rural se tocan: la gestión del portal se hace con la comunidad.', acts: ['Sendero comunitario', 'Avistaje de yacarés', 'Cielo nocturno'], poi: ['Sendero comunitario', 'Laguna', 'Feria local'], aloj: [['Casas de familia', 'Concepción'], ['Camping', 'Con reserva']], senal: 'Intermitente', gas: 'Última carga en Concepción', tel: '+54 3782 000 000', prob: 'Lixiviados', probTxt: 'Basurales cercanos a cursos de agua contaminan lagunas y peces.', juego: 'Señales del agua', g: 'senales' },
+    { id: 'carambola', name: 'Carambola', loc: 'Concepción', est: 'ok', x: 28, y: 48, ruta: 'Desde Concepción · ripio', img: 'F', gal: [['F', 'Cardenal amarillo, especie amenazada del monte.'], ['B', 'El estero desde el mirador.'], ['SKY', 'Cielo nocturno sin contaminación lumínica (imagen de referencia).']], col: ['D', 'C', 'A'], tag: 'Monte, senderos y un cielo muy oscuro.', desc: 'Senderos de monte y uno de los cielos más oscuros de la provincia.', hist: 'Lejos de las ciudades, Carambola es el lugar del Iberá para mirar hacia arriba.', acts: ['Astroturismo', 'Senderos de monte', 'Avistaje del cardenal amarillo'], poi: ['Mirador nocturno', 'Sendero del monte', 'Laguna'], aloj: [['Camping del portal', 'Con reserva'], ['Hospedajes', 'Concepción']], senal: 'Nula en el portal', gas: 'Última carga en Concepción', tel: '+54 3782 000 001', prob: 'Luz artificial', probTxt: 'La luz de los pueblos cercanos apaga el cielo nocturno y desorienta a la fauna.', juego: 'Cielo oscuro', g: 'cielo' },
+    { id: 'mburucuya', name: 'Mburucuyá', loc: 'Parque Nacional', est: 'ok', x: 14, y: 74, ruta: 'RP 86 · ripio', img: 'H', gal: [['H', 'Yacaré en el estero Santa Lucía.'], ['CIE', 'Ciervo de los pantanos en los bañados.'], ['E', 'Orillas del parque.']], col: ['G', 'B', 'CAM'], tag: 'Bosque, palmar y estero en un parque nacional.', desc: 'Parque nacional vecino, con bosques, palmares y esteros.', hist: 'Donado por un botánico que dedicó su vida a estudiar sus plantas. Protege ambientes que en el resto de la provincia desaparecieron.', acts: ['Senderos del bosque', 'Avistaje de ciervos', 'Noche en el parque'], poi: ['Sendero Yatay', 'Sendero Che Roga', 'Estero Santa Lucía'], aloj: [['Camping del parque', 'Gratuito'], ['Hospedajes', 'Mburucuyá']], senal: 'Solo en el pueblo', gas: 'Última carga en Mburucuyá', tel: '+54 3782 000 002', prob: 'Residuos', probTxt: 'El crecimiento del turismo exige separar y retirar los residuos del parque.', juego: 'Canales limpios', g: 'canales' }
+  ];
+  static FAUNA = [
+    { name: 'Yaguareté', sci: 'Panthera onca', img: 'JAG', line: 'Volvió después de setenta años de ausencia.', txt: 'Desapareció de Corrientes a mediados del siglo XX. Desde 2021 vuelve a vivir en libertad en el Iberá.', where: 'San Nicolás' },
+    { name: 'Ciervo de los pantanos', sci: 'Blastocerus dichotomus', img: 'CIE', line: 'Camina donde el suelo es agua.', txt: 'El ciervo más grande de Sudamérica. Sus pezuñas se abren para no hundirse en los bañados.', where: 'Mburucuyá' },
+    { name: 'Carpincho', sci: 'Hydrochoerus hydrochaeris', img: 'CAP', line: 'El vecino más tranquilo del pueblo.', txt: 'El roedor más grande del mundo vive en grupos junto al agua; en Pellegrini cruza las calles de arena.', where: 'Laguna Iberá' },
+    { name: 'Embalsados', sci: 'Islas flotantes', img: 'CAM', line: 'Islas que flotan y sostienen un bosque.', txt: 'La vegetación se acumula sobre el agua hasta formar suelo firme, donde crecen árboles y viven animales.', where: 'Todo el estero' }
+  ];
+  static FRAG = [
+    { t: 'Residuos', img: 'WASTE', line: 'Lo que se tira en el pueblo llega al canal.', d: 'Plásticos y bolsas que no se recolectan viajan con la crecida hasta la laguna y los animales que viven en ella.', where: 'Laguna Iberá y Uguay', game: 'Canales limpios' },
+    { t: 'Lixiviados', img: 'WATER', line: 'Lo que no se ve también contamina.', d: 'El líquido que se filtra de la basura acumulada viaja bajo tierra hasta el agua y cambia plantas y peces.', where: 'San Nicolás y San Antonio', game: 'Señales del agua' },
+    { t: 'Fuego', img: 'FIRE', line: 'Hay daños que no se revierten.', d: 'En 2022 los incendios afectaron una porción enorme de la reserva. Solo se pueden prevenir y mitigar.', where: 'Galarza y Cambyretá', game: 'Voces de la noche' },
+    { t: 'Luz artificial', img: 'LIGHT', line: 'Cada luz de más apaga una estrella.', d: 'La luz de los pueblos borra el cielo nocturno y desorienta a aves e insectos.', where: 'Carambola', game: 'Cielo oscuro' }
+  ];
+  static GAMES = [
+    { id: 'canales', t: 'Canales limpios', meta: 'Kayak · Residuos · Laguna Iberá', d: 'Tocá los residuos que flotan en el canal. Cinco piezas, y una pregunta: ¿de dónde vienen?' },
+    { id: 'senales', t: 'Señales del agua', meta: 'Senderismo · Lixiviados · San Nicolás', d: 'Recorré la imagen y encontrá tres señales de que el agua está cambiando.' },
+    { id: 'cielo', t: 'Cielo oscuro', meta: 'Astroturismo · Luz artificial · Carambola', d: 'Mové el control del estero a la ciudad y mirá cuántas estrellas se pierden.' },
+    { id: 'voces', t: 'Voces de la noche', meta: 'Safari nocturno · Fauna · Cambyretá', d: 'Escuchá el sonido y adiviná quién lo hace, como los guías en las salidas nocturnas.' }
+  ];
+  static G1 = [{ x: 22, y: 62, icon: 'basura', dur: '3.1s' }, { x: 38, y: 76, icon: 'gota', dur: '2.6s' }, { x: 56, y: 58, icon: 'basura', dur: '3.4s' }, { x: 71, y: 74, icon: 'basura', dur: '2.9s' }, { x: 84, y: 60, icon: 'gota', dur: '3.2s' }];
+  static G2 = [
+    { k: 'turbia', x: 30, y: 72, t: 'Agua turbia', d: 'Puede indicar sedimentos o contaminación.' },
+    { k: 'veg', x: 64, y: 44, t: 'Vegetación inusual', d: 'Algunas plantas crecen de más cuando el agua recibe nutrientes de la basura.' },
+    { k: 'peces', x: 48, y: 84, t: 'Sin peces', d: 'Si los peces se van de una zona, algo cambió en el agua.' },
+    { k: 'res', x: 82, y: 66, t: 'Residuos cerca', d: 'La basura acumulada cerca del agua es el origen de los lixiviados.' }
+  ];
+  static TIPOS = [['basura', 'Minibasural', 'basura'], ['agua', 'Agua contaminada', 'gota'], ['fuego', 'Humo o fuego', 'fuego'], ['fauna', 'Fauna afectada', 'ojo'], ['otro', 'Otro', 'info']];
+  static R = [
+    { titulo: 'Bolsas en la costanera', tipo: 'Minibasural', lugar: 'Laguna Iberá', fecha: '2 sep', est: 'Resuelto', col: '#00B96C', x: 50, y: 60 },
+    { titulo: 'Humo en pastizal', tipo: 'Humo o fuego', lugar: 'Galarza', fecha: 'hoy', est: 'Recibido', col: '#FACD05', x: 80, y: 38 },
+    { titulo: 'Descampado junto al arroyo', tipo: 'Minibasural', lugar: 'Laguna Iberá', fecha: '12 sep', est: 'Derivado', col: '#90B4E1', x: 56, y: 52 },
+    { titulo: 'Agua oscura cerca del basural', tipo: 'Agua contaminada', lugar: 'San Antonio', fecha: '9 sep', est: 'Derivado', col: '#90B4E1', x: 38, y: 40 },
+    { titulo: 'Restos de camping', tipo: 'Minibasural', lugar: 'Uguay', fecha: 'ayer', est: 'Recibido', col: '#FACD05', x: 44, y: 22 }
+  ];
+  static LIT_A = 'En el Iberá todo está conectado por el agua. Lo que pasa en el pueblo llega a la laguna, y de la laguna a cada animal que vive en ella.';
+  static LIT_B = 'Pero un ecosistema tan vivo también es vulnerable.';
+  static STARS = Array.from({ length: 140 }, (_, i) => { const f = n => { const v = Math.sin(i * 12.9898 + n * 78.233) * 43758.5453; return v - Math.floor(v); }; return { x: +(f(1) * 100).toFixed(2), y: +(f(2) * 82).toFixed(2), b: f(3), r: f(4) > 0.88 ? 2.6 : f(4) > 0.55 ? 1.8 : 1.2 }; });
+  static BARS = Array.from({ length: 44 }, (_, i) => { const f = n => { const v = Math.sin(i * 7.13 + n * 3.7) * 9137.13; return v - Math.floor(v); }; const env = Math.sin((i / 43) * Math.PI); return { h: Math.round(14 + env * 58 * (.5 + f(1) * .5)), dur: (0.7 + f(2) * .7).toFixed(2) + 's', delay: (-f(3)).toFixed(2) + 's', op: (.45 + env * .55).toFixed(2) }; });
+
+  componentDidMount() {
+    this.rm = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    this.hover = !!(window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches);
+    let t = null; try { t = localStorage.getItem('ibera-theme'); } catch (e) {}
+    const theme = t === 'light' || t === 'dark' ? t : 'dark';
+    document.documentElement.setAttribute('data-theme', theme);
+    if (theme !== this.state.theme) this.setState({ theme });
+    this.onScroll = () => { if (this.tk) return; this.tk = requestAnimationFrame(() => { this.tk = 0; this.update(); }); };
+    this.onKey = e => { if (!this.state.lb) return; if (e.key === 'Escape') this.setState({ lb: false }); if (e.key === 'ArrowRight') this.galStep(1); if (e.key === 'ArrowLeft') this.galStep(-1); };
+    addEventListener('scroll', this.onScroll, { passive: true });
+    addEventListener('resize', this.onScroll);
+    addEventListener('keydown', this.onKey);
+    if ('IntersectionObserver' in window) this.io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      if (el.hasAttribute('data-lines')) el.querySelectorAll('[data-line]').forEach(l => { l.style.transform = 'none'; });
+      else { el.style.opacity = '1'; el.style.transform = 'none'; }
+      this.io.unobserve(el);
+    }), { rootMargin: '0px 0px -12% 0px' });
+    this.scanRv(); this.update(); this.onRailScroll();
+  }
+  componentDidUpdate(pp, ps) {
+    this.scanRv();
+    if (ps.narrow !== this.state.narrow) this.onScroll();
+    if (ps.lb !== this.state.lb) document.body.style.overflow = (this.state.lb || this.state.rMap) ? 'hidden' : '';
+    if (ps.rMap !== this.state.rMap) document.body.style.overflow = (this.state.lb || this.state.rMap) ? 'hidden' : '';
+  }
+  componentWillUnmount() { removeEventListener('scroll', this.onScroll); removeEventListener('resize', this.onScroll); removeEventListener('keydown', this.onKey); cancelAnimationFrame(this.tk); cancelAnimationFrame(this.cr); cancelAnimationFrame(this.rp); (this.timers || []).forEach(clearTimeout); this.io && this.io.disconnect(); }
+  later(fn, ms) { this.timers = this.timers || []; this.timers.push(setTimeout(fn, ms)); }
+
+  scanRv() {
+    if (this.rm || !this.io) return;
+    const vh = innerHeight;
+    document.querySelectorAll('[data-rv]:not([data-rvi])').forEach(el => {
+      el.setAttribute('data-rvi', '');
+      if (el.getBoundingClientRect().top < vh * .9) return;
+      el.style.opacity = '0'; el.style.transform = 'translateY(28px)';
+      el.style.transition = 'opacity 1.2s cubic-bezier(.2,.7,.2,1), transform 1.2s cubic-bezier(.2,.7,.2,1)';
+      this.io.observe(el);
+    });
+    document.querySelectorAll('[data-lines]:not([data-li])').forEach(g => {
+      g.setAttribute('data-li', '');
+      if (g.getBoundingClientRect().top < vh * .9) return;
+      g.querySelectorAll('[data-line]').forEach((l, i) => { l.style.transform = 'translateY(108%)'; l.style.transition = `transform 1.15s cubic-bezier(.2,.75,.15,1) ${(i * .12).toFixed(2)}s`; });
+      this.io.observe(g);
+    });
+  }
+
+  ripple() {
+    const disp = document.getElementById('ibera-disp'), turb = document.getElementById('ibera-turb'), im = document.querySelector('[data-dim]');
+    if (!disp || !im) return;
+    const t0 = performance.now(); this.rippling = true;
+    const step = now => {
+      const t = Math.min(1, (now - t0) / 850);
+      disp.setAttribute('scale', (48 * Math.sin(Math.PI * t) * (1 - t * .4)).toFixed(2));
+      if (turb) turb.setAttribute('baseFrequency', `${(0.008 + t * .004).toFixed(4)} ${(0.03 - t * .01).toFixed(4)}`);
+      if (t < 1) this.rp = requestAnimationFrame(step); else { this.rippling = false; disp.setAttribute('scale', '0'); this.update(); }
+      this.applyDim();
+    };
+    this.rp = requestAnimationFrame(step);
+  }
+  applyDim() {
+    const im = document.querySelector('[data-dim]'); if (!im) return;
+    const p = this.dimP || 0;
+    im.style.filter = (this.rippling ? 'url(#ibera-ripple) ' : '') + `saturate(${(1 - p * .75).toFixed(3)}) brightness(${(1 - p * .35).toFixed(3)})`;
+  }
+
+  update() {
+    const vh = innerHeight, y = scrollY, q = s => document.querySelector(s), cl = (v, a, b) => Math.max(a, Math.min(b, v));
+    const W = innerWidth, narrow = W < 1024, mobile = W < 700, rm = this.rm;
+    const secP = el => { const r = el.getBoundingClientRect(); return cl(-r.top / Math.max(1, r.height - vh), 0, 1); };
+    const viewP = el => { const r = el.getBoundingClientRect(); return cl((vh - r.top) / (vh + r.height), 0, 1); };
+    if (!rm) {
+      const hp = cl(y / vh, 0, 1);
+      const hi = q('[data-hero-img]'); if (hi) hi.style.transform = `translateY(${(hp * 10).toFixed(2)}%) scale(${(1.08 - hp * .08).toFixed(4)})`;
+      const ht = q('[data-hero-txt]'); if (ht) { ht.style.transform = `translateY(${(-hp * 130).toFixed(1)}px)`; ht.style.opacity = String(cl(1 - hp * 1.4, 0, 1)); }
+      const hm = q('[data-hero-meta]'); if (hm) hm.style.transform = `translateY(${(hp * 90).toFixed(1)}px)`;
+      document.querySelectorAll('[data-par]').forEach(el => { const p = viewP(el.parentElement); el.style.transform = `translateY(${(-4 + p * 8).toFixed(2)}%) scale(${(1.06 - p * .06).toFixed(4)})`; });
+      document.querySelectorAll('[data-drift]').forEach(el => { const r = el.parentElement.getBoundingClientRect(), f = +el.getAttribute('data-drift'); el.style.transform = `translateY(${((r.top + r.height / 2 - vh / 2) * f).toFixed(1)}px)`; });
+    }
+    document.querySelectorAll('[data-litsec]').forEach(sec => {
+      const p = rm ? 1 : secP(sec), words = sec.querySelectorAll('[data-w]'), par = words[0] && words[0].parentElement;
+      if (!par) return;
+      const on = par.getAttribute('data-on'), off = par.getAttribute('data-off'), n = Math.round(cl((p - .08) / .7, 0, 1) * words.length);
+      words.forEach((w, i) => { const c = i < n ? on : off; if (w.getAttribute('data-c') !== c) { w.style.color = c; w.setAttribute('data-c', c); } });
+    });
+    document.querySelectorAll('[data-reveal]').forEach(el => {
+      if (rm) { el.style.clipPath = 'none'; return; }
+      const r = el.getBoundingClientRect(), p = cl((vh - r.top) / (vh * .85), 0, 1), e = 1 - Math.pow(1 - p, 2);
+      el.style.clipPath = `inset(${((1 - e) * 10).toFixed(2)}% ${((1 - e) * 8).toFixed(2)}% round 2px)`;
+      const img = el.querySelector('[data-reveal-img]'); if (img) { const vp = viewP(el); img.style.transform = `translateY(${(-4 + vp * 8).toFixed(2)}%) scale(${(1.08 - e * .08).toFixed(4)})`; }
+    });
+    const tilt = Number(this.props.tilt ?? 58);
+    const T = document.getElementById('territorio'); let mp = 1;
+    if (T && !narrow && !rm) mp = secP(T);
+    const pl = q('[data-map-plane]');
+    if (pl) {
+      const still = narrow || rm, e = 1 - Math.pow(1 - mp, 2);
+      const rx = still ? (mobile ? 30 : 38) : tilt - e * (tilt - 46), rz = still ? -6 : -20 + e * 12, sc = still ? 1 : .82 + e * .14, ty = still ? 0 : (1 - e) * 40;
+      pl.style.setProperty('--rx', rx.toFixed(2)); pl.style.setProperty('--rz', rz.toFixed(2));
+      pl.style.transform = `translateY(${ty.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg) rotateZ(${rz.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
+    }
+    const rt = q('[data-route]'); if (rt) rt.setAttribute('stroke-dashoffset', (100 - (narrow || rm ? 1 : cl((mp - .04) / .82, 0, 1)) * 100).toFixed(2));
+    const mapIdx = narrow || rm ? this.state.mapIdx : Math.min(7, Math.floor(cl((mp - .04) / .86, 0, .999) * 8));
+    const idx = sel => { let a = 0; document.querySelectorAll(sel).forEach((el, i) => { if (el.getBoundingClientRect().top < vh * .5) a = i; }); return a; };
+    const fauna = idx('[data-fauna]'), frag = idx('[data-frag]');
+    const ds = q('[data-dimsec]');
+    if (ds) {
+      const r = ds.getBoundingClientRect();
+      this.dimP = rm ? 1 : secP(ds);
+      const ov = q('[data-dimov]'); if (ov) ov.style.opacity = (.2 + this.dimP * .45).toFixed(3);
+      if (!rm && r.top < vh * .35 && r.top > -vh * .5 && !this.rippled) { this.rippled = true; this.ripple(); }
+      if (r.top > vh) this.rippled = false;
+      if (!rm) { const im = q('[data-dim]'); if (im) im.style.transform = `scale(${(1.08 - this.dimP * .08).toFixed(4)})`; }
+      this.applyDim();
+    }
+    const H = q('[data-heal]');
+    if (H) { const r = H.getBoundingClientRect(); const p = cl((vh - r.top) / (vh * 1.1), 0, 1); H.style.filter = `grayscale(${(1 - p).toFixed(3)}) brightness(${(.55 + p * .45).toFixed(3)})`; if (!rm) H.style.transform = `translateY(${(-3 + p * 6).toFixed(2)}%) scale(${(1.06 - p * .06).toFixed(4)})`; }
+    let tone = 'photo';
+    document.querySelectorAll('[data-tone]').forEach(el => { const r = el.getBoundingClientRect(); if (r.top <= 38 && r.bottom > 38) tone = el.getAttribute('data-tone'); });
+    const ids = ['territorio', 'portales', 'ecosistema', 'jugar'];
+    let navAct = -1; ids.forEach((id, i) => { const el = document.getElementById(id); if (el && el.getBoundingClientRect().top < vh * .4) navAct = i; });
+    if (navAct === 3) { const f = document.getElementById('actuar'); if (f && f.getBoundingClientRect().top < vh * .4) navAct = -1; }
+    const C = document.getElementById('caminos'), A = document.getElementById('actuar'); let hide = true;
+    if (C && A) { const rc = C.getBoundingClientRect(), ra = A.getBoundingClientRect(); hide = (rc.top < vh && rc.bottom > 0) || ra.top < vh * .8 || y < vh * 1.5; }
+    const n = { narrow, mobile, mapIdx, fauna, frag, tone, navAct, band: !hide, scrolled: y > 40 };
+    if (Object.keys(n).some(k => n[k] !== this.state[k])) this.setState(n);
+  }
+
+  onRailScroll() {
+    const r = this.railRef.current, b = document.querySelector('[data-railbar]'); if (!r || !b) return;
+    const vis = r.clientWidth / r.scrollWidth, p = r.scrollLeft / Math.max(1, r.scrollWidth - r.clientWidth);
+    b.style.width = (vis * 100).toFixed(1) + '%'; b.style.left = (p * (1 - vis) * 100).toFixed(1) + '%';
+  }
+  cursorLoop() {
+    const el = this.cursorRef.current; if (!el) return;
+    this.px += (this.cx - this.px) * .16; this.py += (this.cy - this.py) * .16;
+    el.style.transform = `translate3d(${(this.px - 48).toFixed(1)}px,${(this.py - 48).toFixed(1)}px,0) scale(${this.curOn ? 1 : .5})`;
+    if (this.curOn || Math.abs(this.cx - this.px) > .5) this.cr = requestAnimationFrame(() => this.cursorLoop());
+  }
+  scrollToId(id) {
+    this.setState({ menu: false });
+    const el = document.getElementById(id); if (!el) return;
+    const top = el.getBoundingClientRect().top + scrollY;
+    try { window.scrollTo({ top, behavior: this.rm ? 'auto' : 'smooth' }); } catch (e) { window.scrollTo(0, top); }
+  }
+  openPortal(id) { this.setState({ portal: id, gi: 0, saved: false }); setTimeout(() => this.scrollToId('ficha'), 30); }
+  curP() { return Component.P.find(p => p.id === this.state.portal) || Component.P[0]; }
+  galStep(d) { const n = this.curP().gal.length; this.setState(s => ({ gi: (s.gi + d + n) % n })); }
+  setGame(id) { this.setState({ game: id }); }
+  playSound() {
+    if (this.state.g4play) return;
+    this.setState({ g4play: true });
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext; this.ac = this.ac || new AC(); const ac = this.ac, t0 = ac.currentTime + .05;
+      [[880, 700], [760, 560], [640, 470], [520, 400]].forEach(([f1, f2], i) => {
+        const o = ac.createOscillator(), g = ac.createGain(), st = t0 + i * .62;
+        o.type = 'sine'; o.frequency.setValueAtTime(f1, st); o.frequency.exponentialRampToValueAtTime(f2, st + .5);
+        g.gain.setValueAtTime(0, st); g.gain.linearRampToValueAtTime(.12, st + .06); g.gain.exponentialRampToValueAtTime(.0008, st + .55);
+        o.connect(g); g.connect(ac.destination); o.start(st); o.stop(st + .6);
+      });
+    } catch (e) {}
+    this.later(() => this.setState({ g4play: false }), 2700);
+  }
+  sendReport() {
+    if (this.state.online) { this.setState({ rStep: 3, rState: 'sending' }); this.later(() => this.setState({ rState: 'received' }), 1300); }
+    else this.setState({ rStep: 3, rState: 'saved' });
+  }
+  recover() {
+    this.setState({ online: true, rState: 'sending' });
+    this.later(() => this.setState({ rState: 'received' }), 1500);
+  }
+  pinAt(e) {
+    const r = e.currentTarget.getBoundingClientRect();
+    const x = Math.max(4, Math.min(96, (e.clientX - r.left) / r.width * 100)), y = Math.max(6, Math.min(94, (e.clientY - r.top) / r.height * 100));
+    this.setState({ pin: { x, y }, rLoc: 'manual' });
+  }
+
+  renderVals() {
+    const s = this.state, C = Component, U = C.U, I = C.I;
+    const P = C.P.map(p => ({ ...p, ...C.E[p.est], onOpen: () => this.openPortal(p.id) }));
+    const narrow = s.narrow, mobile = s.mobile, isDark = s.theme === 'dark';
+    const photo = s.tone === 'photo';
+    const navFg = photo || isDark ? '#FFFFFF' : 'var(--head)';
+    const links = [['Explorar', 'territorio'], ['Visitar', 'portales'], ['Ecosistema', 'ecosistema'], ['Aprender', 'jugar']];
+    const actI = s.hov ? P.findIndex(p => p.id === s.hov) : (s.pick != null ? P.findIndex(p => p.id === s.pick) : s.mapIdx);
+    const act = P[Math.max(0, actI)];
+    const cur = P.find(p => p.id === s.portal) || P[0];
+    const n = cur.gal.length, gi = s.gi % n;
+    const morph = (i, a) => i === a ? { op: 1, sc: 1, bl: 0 } : i < a ? { op: 0, sc: 1.035, bl: 3 } : { op: 0, sc: 1.06, bl: 3 };
+    const v = s.sky, stars = Math.round(2400 - (2400 - 150) * Math.pow(v / 100, .7));
+    const gIdx = C.GAMES.findIndex(g => g.id === s.game);
+    const g1Count = s.g1.filter(Boolean).length;
+    const g4Correct = s.g4pick === 'ave';
+    const tipoSel = C.TIPOS.find(t => t[0] === s.rTipo);
+    const locAuto = 'Colonia Carlos Pellegrini · 300 m de Laguna Iberá';
+    const lat = (28.3 + s.pin.y * .006).toFixed(3).replace('.', ','), lon = (57.4 - s.pin.x * .004).toFixed(3).replace('.', ',');
+    const locText = s.rLoc === 'auto' ? locAuto : 'Punto marcado · ' + lat + '° S, ' + lon + '° O';
+    const canNext = s.rStep === 0 ? !!s.rTipo : s.rStep === 1 ? !!s.rLoc : true;
+    const receivedMark = s.rState === 'received' ? [{ titulo: 'Tu reporte · IB-0427', tipo: tipoSel ? tipoSel[1] : 'Reporte', lugar: s.rLoc === 'auto' ? 'Laguna Iberá' : 'Punto marcado', fecha: 'hoy', est: 'Recibido', col: '#FACD05', x: 40 + s.pin.x * .2, y: 48 + s.pin.y * .2, mine: true }] : [];
+    const R = [...C.R, ...receivedMark];
+    const rSel = s.rSel != null ? R[s.rSel] : null;
+    const pipeIdx = { saved: 0, sending: 1, received: 2 }[s.rState] ?? 0;
+
+    return {
+      wide: !narrow, narrow, isDark, isLight: !isDark, themeAria: isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro',
+      toggleTheme: () => { const t = isDark ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', t); try { localStorage.setItem('ibera-theme', t); } catch (e) {} this.setState({ theme: t }); },
+      menuOpen: s.menu, toggleMenu: () => this.setState({ menu: !s.menu }),
+      navFg, navLineStrong: photo || isDark ? 'rgba(255,255,255,.3)' : 'rgba(0,62,37,.3)',
+      navBg: !s.scrolled ? 'rgba(11,16,14,0)' : (photo ? 'rgba(11,16,14,.42)' : 'var(--navglass)'), navBlur: s.scrolled ? 'blur(18px) saturate(120%)' : 'none', navLine: s.scrolled ? (photo ? 'rgba(255,255,255,.08)' : 'var(--navline)') : 'rgba(255,255,255,0)',
+      nav: links.map(([label, id], i) => ({ label, sx: i === s.navAct ? 1 : 0, onClick: () => this.scrollToId(id) })),
+      navM: [...links, ['Reportar', 'actuar']].map(([label, id]) => ({ label, onClick: () => this.scrollToId(id) })),
+      goTop: () => this.scrollToId('descubrir'), goIntro: () => this.scrollToId('intro'), goTerritorio: () => this.scrollToId('territorio'),
+      goCaminos: () => this.scrollToId('caminos'), goActuar: () => this.scrollToId('actuar'), goFrag: () => this.scrollToId('fragilidad'),
+      goJuegoCur: () => { this.setGame(cur.g); this.scrollToId('jugar'); },
+      bandOn: s.band && this.props.showBand !== false, cntOk: P.filter(p => p.est === 'ok').length,
+      heroLine: this.props.heroCopy === 'El estero es de todos' ? 'El estero es de todos. Cuidarlo también.' : 'Un paisaje hecho de agua. Para descubrir, entender y cuidar.',
+      imgHero: U(I.B, 2200), imgSat: U(I.SAT, 1800), imgSatS: U(I.SAT, 900), imgPause: U(I.D, 2200), imgFrag: U(I.A, 2000), imgJag: U(I.JAG2, 2200),
+      imgG1: U(I.A, 1600), imgG2: U(I.C, 1600), imgSky: U(I.SKY, 1600), imgG4: U(I.B, 1400), imgReportBg: U(I.E, 2000),
+      litA: C.LIT_A.split(' ').map(t => ({ t })), litB: C.LIT_B.split(' ').map(t => ({ t })), litH: narrow ? '160vh' : '190vh', fragIntroH: narrow ? '170vh' : '210vh',
+
+      terrH: narrow ? 'auto' : '320vh', terrPos: narrow ? 'relative' : 'sticky', terrInnerH: narrow ? 'auto' : '100vh',
+      terrDir: narrow ? 'column' : 'row', terrPad: narrow ? (mobile ? '112px clamp(20px,4vw,56px) 170px' : '120px clamp(20px,4vw,56px) 190px') : '0 clamp(20px,4vw,56px)', terrTextW: narrow ? '100%' : 'min(30vw,400px)',
+      listDir: narrow ? 'row' : 'column', listGap: narrow ? '0 20px' : '0',
+      sceneMinH: narrow ? (mobile ? '68vw' : '56vw') : '0px',
+      sb: narrow ? { l: '0px', t: 'auto', b: mobile ? '150px' : '170px', h: mobile ? '68vw' : '56vw' } : { l: '32%', t: '6%', b: '6%', h: 'auto' },
+      persp: narrow ? '1200px' : '1800px', planeW: narrow ? (mobile ? '84vw' : 'min(80vw,680px)') : 'min(54vw,880px)',
+      mc: narrow ? { l: 'clamp(20px,4vw,56px)', r: 'auto', b: '24px' } : { l: 'auto', r: 'clamp(20px,4vw,56px)', b: 'clamp(24px,5vh,48px)' },
+      pins: P.map((p, i) => { const on = i === actI; return { ...p, on, dot: on ? 12 : 7, ring: on ? 6 : 0, lbl: on ? 1 : 0, lx: on ? 0 : -8, fg: on ? '#FFFFFF' : '#8FA89A', bar: on ? 18 : 0, tx: 0, onPick: () => this.setState({ pick: p.id, mapIdx: i }), onEnter: () => this.setState({ hov: p.id }), onLeave: () => this.setState({ hov: null }) }; }),
+      act, routePts: P.map(p => p.x + ',' + p.y).join(' '),
+
+      caminos: P,
+      cards: P.map(p => ({ ...p, img: U(I[p.img], 1400) })), cardW: narrow ? 'min(84vw,640px)' : 'min(58vw,880px)',
+      railRef: this.railRef, cursorRef: this.cursorRef, onRail: () => this.onRailScroll(), cursorCss: this.hover && !this.rm ? 'none' : 'pointer',
+      railPrev: () => { const r = this.railRef.current; r && r.scrollBy({ left: -r.clientWidth * .6, behavior: 'smooth' }); },
+      railNext: () => { const r = this.railRef.current; r && r.scrollBy({ left: r.clientWidth * .6, behavior: 'smooth' }); },
+      curEnter: e => { if (!this.hover || this.rm) return; const el = this.cursorRef.current; if (!el) return; el.textContent = e.currentTarget.getAttribute('data-cursor') || 'Ver'; this.curOn = true; this.cx = e.clientX; this.cy = e.clientY; if (this.px == null) { this.px = this.cx; this.py = this.cy; } el.style.opacity = '1'; cancelAnimationFrame(this.cr); this.cursorLoop(); },
+      curMove: e => { this.cx = e.clientX; this.cy = e.clientY; },
+      curLeave: () => { this.curOn = false; const el = this.cursorRef.current; if (el) el.style.opacity = '0'; },
+
+      chips: P.map(p => { const on = p.id === cur.id; return { name: p.name, fg: on ? 'var(--head)' : 'var(--mute)', sx: on ? 1 : 0, onClick: () => this.setState({ portal: p.id, gi: 0, saved: false }) }; }),
+      cur, gi, slidePct: narrow ? '86%' : '74%',
+      gal: cur.gal.map(([k], i) => ({ img: U(I[k], 2000), op: i === gi ? 1 : Math.abs(i - gi) === 1 ? .55 : .25, sc: i === gi ? 1 : 1.04, bl: i === gi ? 0 : 1.5, cur: i === gi ? 'Abrir' : i > gi ? 'Siguiente' : 'Anterior', aria: i === gi ? 'Abrir en pantalla completa' : 'Ir a la foto ' + (i + 1), onClick: () => { if (this.dragged) return; if (i === gi) this.setState({ lb: true }); else this.setState({ gi: i }); } })),
+      galTxt: String(gi + 1).padStart(2, '0') + ' / ' + String(n).padStart(2, '0'), galCap: cur.gal[gi][1],
+      galPrev: () => this.galStep(-1), galNext: () => this.galStep(1), openLb: () => this.setState({ lb: true }), closeLb: () => this.setState({ lb: false }),
+      galKey: e => { if (e.key === 'ArrowRight') { e.preventDefault(); this.galStep(1); } if (e.key === 'ArrowLeft') { e.preventDefault(); this.galStep(-1); } if (e.key === 'Enter') this.setState({ lb: true }); },
+      galWheel: e => { if (Math.abs(e.deltaX) < Math.abs(e.deltaY) || Math.abs(e.deltaX) < 18) return; const t = Date.now(); if (t - (this.lastWheel || 0) < 750) return; this.lastWheel = t; this.galStep(e.deltaX > 0 ? 1 : -1); },
+      galDown: e => { this.dx0 = e.clientX; this.dragged = false; },
+      galUp: e => { if (this.dx0 == null) return; const dx = e.clientX - this.dx0; this.dx0 = null; if (Math.abs(dx) > 50) { this.dragged = true; this.galStep(dx < 0 ? 1 : -1); setTimeout(() => { this.dragged = false; }, 60); } },
+      col1: U(I[cur.col[0]], 1400), col2: U(I[cur.col[1]], 900), col3: U(I[cur.col[2]], 900),
+      curActs: cur.acts.map(t => ({ t })), curPoi: cur.poi.map(t => ({ t })), curAloj: cur.aloj.map(([t, k]) => ({ t, k })),
+      saved: s.saved, saveLabel: s.saved ? 'Guardada para usar sin conexión' : 'Guardar sin conexión ↓', toggleSave: () => this.setState({ saved: !s.saved }),
+      lbOpen: s.lb, lbImgs: cur.gal.map(([k], i) => ({ img: U(I[k], 2400), ...morph(i, gi) })),
+      thumbs: cur.gal.map(([k], i) => ({ img: U(I[k], 200), op: i === gi ? 1 : .45, bd: i === gi ? '#FFFFFF' : 'rgba(255,255,255,0)', aria: 'Foto ' + (i + 1), onClick: () => this.setState({ gi: i }) })),
+
+      fauna: C.FAUNA.map((f, i) => ({ ...f, img: U(I[f.img], 1800), sc: i === s.fauna ? 1 : i < s.fauna ? 1.035 : 1.06, clip: i <= s.fauna ? 'inset(0 0 0 0)' : 'inset(0 0 100% 0)', tOp: narrow || i === s.fauna ? 1 : .22 })),
+      faunaH: narrow ? 'auto' : '100vh', faunaCap: C.FAUNA[s.fauna].name + ' · Foto: Wikimedia Commons',
+      frags: C.FRAG.map((f, i) => ({ ...f, img: U(I[f.img], 1800), ...morph(i, s.frag), tOp: i === s.frag ? 1 : .2, ty: i === s.frag ? 0 : 20 })),
+
+      gAspect: mobile ? '4 / 5' : '16 / 9',
+      gs: Object.fromEntries(C.GAMES.map((g, i) => { const m = morph(i, gIdx); return [g.id, { ...m, pe: i === gIdx ? 'auto' : 'none' }]; })),
+      gIndex: C.GAMES.map((g, i) => ({ ...g, op: i === gIdx ? 1 : .45, sy: i === gIdx ? 1 : 0, onClick: () => this.setGame(g.id) })),
+      gDesc: C.GAMES[gIdx].d,
+      g1Items: C.G1.map((it, i) => ({ ...it, op: s.g1[i] ? 0 : 1, sc: s.g1[i] ? .2 : 1, pe: s.g1[i] ? 'none' : 'auto', onClick: () => {
+        const g1 = s.g1.slice(); g1[i] = 1; this.setState({ g1 });
+        if (g1.every(Boolean)) { this.later(() => this.setState({ g1m: 1 }), 350); this.later(() => this.setState({ g1m: 2 }), 1400); this.later(() => this.setState({ g1m: 3 }), 2500); }
+      } })),
+      g1Count, g1Pct: g1Count * 20, g1Done: s.g1m > 0,
+      g1m1: s.g1m >= 1 ? 1 : 0, g1t1: s.g1m >= 1 ? 0 : 14, g1m2: s.g1m >= 2 ? 1 : 0, g1t2: s.g1m >= 2 ? 0 : 14, g1m3: s.g1m >= 3 ? 1 : 0, g1t3: s.g1m >= 3 ? 0 : 14,
+      g1Reset: () => this.setState({ g1: [0, 0, 0, 0, 0], g1m: 0 }),
+      g2Spots: C.G2.map((h, i) => { const f = s.g2.includes(h.k); return { ...h, idle: !f, dot: f ? 14 : 8, bg: f ? '#00D58A' : 'rgba(255,255,255,.2)', delay: (i * .4).toFixed(1) + 's', onClick: () => { if (s.g2.length >= 3 && !f) return; this.setState({ g2: f ? s.g2 : [...s.g2, h.k], g2last: h.k }); } }; }),
+      g2Count: Math.min(3, s.g2.length), g2Info: !!s.g2last, g2Last: C.G2.find(h => h.k === s.g2last) || C.G2[0], g2Done: s.g2.length >= 3,
+      g2Reset: () => this.setState({ g2: [], g2last: null }),
+      sky: v, onSky: e => this.setState({ sky: +e.target.value }),
+      stars: C.STARS.map(st => ({ ...st, op: +(Math.max(0, Math.min(1, (st.b - v / 100 * .92) * 2.6)) * (.45 + st.b * .55)).toFixed(2) })),
+      starsN: stars.toLocaleString('es-AR'), skyPlace: v < 25 ? 'Iberá · estero sin luces' : v < 60 ? 'Pueblo cercano' : 'Ciudad',
+      skyFilter: `brightness(${(1 - v * .006).toFixed(3)}) saturate(${(1 - v * .007).toFixed(3)})`, glowOp: (v / 100).toFixed(2), hazeOp: (Math.pow(v / 100, 1.4) * .9).toFixed(2),
+      bars: C.BARS, wavePlay: s.g4play ? 'running' : 'paused', playSound: () => this.playSound(),
+      g4Opts: [['yacare', 'Yacaré'], ['carpincho', 'Carpincho'], ['ave', 'Ave nocturna']].map(([k, label]) => { const picked = s.g4pick === k; return { label, bd: picked ? (k === 'ave' ? '#00D58A' : 'rgba(255,255,255,.5)') : 'rgba(255,255,255,.14)', op: s.g4ok && k !== 'ave' ? .35 : picked && k !== 'ave' ? .45 : 1, onClick: () => this.setState({ g4pick: k, g4ok: s.g4ok || k === 'ave' }) }; }),
+      g4MsgOp: s.g4pick ? 1 : 0, g4MsgY: s.g4pick ? 0 : 10, g4MsgCol: g4Correct ? '#00D58A' : '#FFFFFF',
+      g4Title: g4Correct ? 'Correcto: un urutaú' : s.g4pick ? 'Probá de nuevo' : '',
+      g4Txt: g4Correct ? 'De día se queda inmóvil imitando una rama. De noche, su canto descendente recorre el estero.' : s.g4pick === 'yacare' ? 'El yacaré se comunica con gruñidos graves, casi vibraciones.' : s.g4pick === 'carpincho' ? 'El carpincho silba y chasquea, pero en tono corto y agudo.' : '',
+
+      rDots: [0, 1, 2].map(i => ({ bg: i <= Math.min(s.rStep, 2) ? '#FFFFFF' : 'rgba(255,255,255,.2)' })),
+      netDot: s.online ? '#00B96C' : '#F68E13', netLabel: s.online ? 'Con señal' : 'Sin señal',
+      toggleNet: () => { const on = !s.online; this.setState({ online: on }); if (on && s.rState === 'saved') this.recover(); },
+      r0: s.rStep === 0, r1: s.rStep === 1, r2: s.rStep === 2, r3: s.rStep === 3,
+      rTipos: C.TIPOS.map(([k, label, icon]) => { const on = s.rTipo === k; return { label, icon, bd: on ? '#00D58A' : 'rgba(255,255,255,.12)', bg: on ? 'rgba(0,213,138,.08)' : 'rgba(255,255,255,.02)', onClick: () => this.setState({ rTipo: k }) }; }),
+      addFoto: () => { if (s.rFoto) { this.setState({ rFoto: false }); return; } this.setState({ fotoLoading: true }); this.later(() => this.setState({ fotoLoading: false, rFoto: true }), 700); },
+      rFoto: s.rFoto, fotoLoading: s.fotoLoading, fotoEmpty: !s.rFoto && !s.fotoLoading, fotoImg: s.rFoto ? U(I.WASTE, 700) : 'none', noFotoTxt: s.rFoto ? '' : 'Sin foto',
+      detectLoc: () => { this.setState({ rLoc: 'detecting' }); this.later(() => this.setState({ rLoc: 'auto', pin: { x: 50, y: 56 } }), 900); },
+      manualLoc: () => this.setState({ rLoc: 'manual' }),
+      detectLabel: s.rLoc === 'detecting' ? 'Detectando…' : 'Detectar mi ubicación',
+      locAutoBd: s.rLoc === 'auto' || s.rLoc === 'detecting' ? '#00D58A' : 'rgba(255,255,255,.14)', locManBd: s.rLoc === 'manual' ? '#00D58A' : 'rgba(255,255,255,.14)',
+      hasLoc: s.rLoc === 'auto' || s.rLoc === 'manual', locText, pinX: s.pin.x, pinY: s.pin.y, pinTr: s.dragging ? 'none' : 'left .6s cubic-bezier(.3,1.3,.4,1),top .6s cubic-bezier(.3,1.3,.4,1)',
+      pinDown: e => { try { e.currentTarget.setPointerCapture(e.pointerId); } catch (x) {} this.setState({ dragging: true }); this.pinAt(e); },
+      pinMove: e => { if (this.state.dragging) this.pinAt(e); },
+      pinUp: () => this.setState({ dragging: false }),
+      tipoLabel: tipoSel ? tipoSel[1] : '', locShort: s.rLoc === 'auto' ? 'Laguna Iberá, 300 m' : 'Punto marcado',
+      nowTxt: new Date().toLocaleString('es-AR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }),
+      note: s.note, onNote: e => this.setState({ note: e.target.value }),
+      rPending: s.rState === 'saved' || s.rState === 'sending', rReceived: s.rState === 'received', canRecover: s.rState === 'saved',
+      pendTitle: s.rState === 'saved' ? 'Guardado en este dispositivo' : 'Enviando reporte…',
+      pendTxt: s.rState === 'saved' ? 'Se enviará automáticamente cuando recuperes conexión.' : 'Recuperaste señal. Tu reporte está saliendo.',
+      pipe: ['Guardado', 'Enviando', 'Recibido'].map((t, i) => ({ t, op: i <= pipeIdx ? 1 : .35, dot: i < pipeIdx ? '#FFFFFF' : i === pipeIdx ? '#00D58A' : 'rgba(255,255,255,.3)', line: i < 2 ? 'block' : 'none' })),
+      recover: () => this.recover(),
+      track: [['Recibido', 'Hoy · Guardaparques Laguna Iberá'], ['Derivado', 'Pendiente · Municipio de Colonia Carlos Pellegrini'], ['Resuelto', 'Pendiente']].map(([t, d], i) => ({ t, d, fill: i === 0 ? '#00D58A' : 'transparent', bd: i === 0 ? '#00D58A' : 'rgba(255,255,255,.4)', fg: i === 0 ? '#FFFFFF' : '#8FA89A', show: s.rTrack })),
+      toggleTrack: () => this.setState({ rTrack: !s.rTrack }), trackLabel: s.rTrack ? 'Ocultar seguimiento' : 'Ver seguimiento',
+      rBackOn: s.rStep > 0 && s.rStep < 3, rBack: () => this.setState({ rStep: s.rStep - 1 }),
+      rMainOn: s.rStep < 3 || s.rState === 'received',
+      nextLabel: s.rStep === 3 ? 'Nuevo reporte' : s.rStep === 2 ? (s.online ? 'Enviar reporte' : 'Guardar y enviar después') : 'Continuar →',
+      nextBg: canNext ? '#EEF2EE' : 'rgba(255,255,255,.08)', nextFg: canNext ? '#0B100E' : '#8FA89A',
+      rNext: () => { if (!canNext) return; if (s.rStep === 3) this.setState({ rStep: 0, rTipo: null, rFoto: false, rLoc: null, note: '', rState: null, rTrack: false }); else if (s.rStep === 2) this.sendReport(); else this.setState({ rStep: s.rStep + 1 }); },
+      rMapOpen: s.rMap, openRMap: () => this.setState({ rMap: true, rSel: null }), closeRMap: () => this.setState({ rMap: false }),
+      rMarks: R.map((m, i) => ({ ...m, dot: s.rSel === i ? 20 : (m.mine ? 16 : 12), onClick: () => this.setState({ rSel: i }) })),
+      hasRSel: !!rSel, rSel: rSel || R[0]
+    };
+  }
+}
+</script>
+</body>
+</html>

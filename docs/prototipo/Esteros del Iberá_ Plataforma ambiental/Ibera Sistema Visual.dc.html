@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,600;0,700;1,700&amp;family=Barlow+Semi+Condensed:wght@800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF;color:#2E2D2C;font-family:Barlow,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#1F5D9B;text-decoration-thickness:2px}
+a:hover{color:#2E2D2C}
+:focus-visible{outline:3px solid #2E2D2C;outline-offset:2px}
+button{font-family:inherit}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+
+<div style="max-width:1240px;margin:0 auto;padding:0 20px 96px;display:flex;flex-direction:column;gap:72px">
+
+<header data-screen-label="Portada" style="background:#FACD05;margin:0 -20px;padding:40px 20px 32px;display:flex;flex-direction:column;gap:20px">
+  <div style="width:112px;height:62px;background:#2E2D2C;-webkit-mask:url(uploads/iso.svg) left center/contain no-repeat;mask:url(uploads/iso.svg) left center/contain no-repeat"></div>
+  <div style="display:flex;flex-direction:column;gap:12px;max-width:820px">
+    <div style="font:600 16px/1.3 Barlow,sans-serif">Plataforma de concientización ambiental y participación ciudadana</div>
+    <h1 style="margin:0;font:800 clamp(44px,8vw,96px)/0.92 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Esteros del Iberá: estructura y sistema visual</h1>
+    <p style="margin:0;font:400 17px/1.5 Barlow,sans-serif;max-width:620px;text-wrap:pretty">Propuesta v0.1. Sigue el Manual de Marca del Gobierno de Corrientes V1.1 en paleta, tipografía, íconos y pastillas. Proyecto no oficial: no usa el escudo ni la marca de gobierno.</p>
+  </div>
+  <nav style="display:flex;flex-wrap:wrap;gap:8px;font:600 15px/1 Barlow,sans-serif">
+    <a href="#estructura" style="color:#2E2D2C;background:#FFFFFF;padding:10px 14px;border-radius:4px;text-decoration:none">01 Estructura</a>
+    <a href="#color" style="color:#2E2D2C;background:#FFFFFF;padding:10px 14px;border-radius:4px;text-decoration:none">02 Color</a>
+    <a href="#tipo" style="color:#2E2D2C;background:#FFFFFF;padding:10px 14px;border-radius:4px;text-decoration:none">03 Tipografía</a>
+    <a href="#espacio" style="color:#2E2D2C;background:#FFFFFF;padding:10px 14px;border-radius:4px;text-decoration:none">04 Espaciado y radios</a>
+    <a href="#iconos" style="color:#2E2D2C;background:#FFFFFF;padding:10px 14px;border-radius:4px;text-decoration:none">05 Íconos</a>
+    <a href="#pastillas" style="color:#2E2D2C;background:#FFFFFF;padding:10px 14px;border-radius:4px;text-decoration:none">06 Pastillas</a>
+    <a href="#estados" style="color:#2E2D2C;background:#FFFFFF;padding:10px 14px;border-radius:4px;text-decoration:none">07 Estados</a>
+    <a href="#pantallas" style="color:#2E2D2C;background:#2E2D2C;color:#FFFFFF;padding:10px 14px;border-radius:4px;text-decoration:none">08 Pantallas</a>
+  </nav>
+</header>
+
+<!-- 01 ESTRUCTURA -->
+<section id="estructura" data-screen-label="01 Estructura" style="display:flex;flex-direction:column;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px;border-top:3px solid #2E2D2C;padding-top:16px"><span style="font:800 22px/1 'Barlow Semi Condensed',sans-serif">01</span><h2 style="margin:0;font:800 40px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Estructura</h2></div>
+  <p style="margin:0;max-width:680px;font:400 17px/1.5 Barlow,sans-serif;text-wrap:pretty">Cuatro secciones, navegación inferior fija en celular. Cada portal, reclamo y minijuego se vincula con los otros dos: el portal explica el problema, el juego lo enseña, el reclamo permite actuar.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
+    <div style="display:flex;flex-direction:column;border:2px solid #2E2D2C;border-radius:8px;overflow:hidden">
+      <div style="background:#FACD05;padding:16px;display:flex;align-items:center;gap:10px"><dc-import name="Icon" n="casa" c="#2E2D2C" k="#FACD05" hint-size="24px,24px"></dc-import><span style="font:800 24px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Inicio</span></div>
+      <ul style="margin:0;padding:16px 16px 16px 34px;display:flex;flex-direction:column;gap:8px;font:400 16px/1.4 Barlow,sans-serif">
+        <li>Propósito en una frase</li><li>Acceso directo a “Reportar”</li><li>Tres entradas en bloque pleno</li>
+      </ul>
+    </div>
+    <div style="display:flex;flex-direction:column;border:2px solid #2E2D2C;border-radius:8px;overflow:hidden">
+      <div style="background:#356F23;color:#FFFFFF;padding:16px;display:flex;align-items:center;gap:10px"><dc-import name="Icon" n="mapa" c="#FFFFFF" k="#356F23" hint-size="24px,24px"></dc-import><span style="font:800 24px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Portales</span></div>
+      <ul style="margin:0;padding:16px 16px 16px 34px;display:flex;flex-direction:column;gap:8px;font:400 16px/1.4 Barlow,sans-serif">
+        <li>Mapa general + lista con estado del camino</li>
+        <li><strong style="font-weight:600">Ficha:</strong> ubicación, estado del camino, descripción, antes de ir, actividades, problemática</li>
+        <li>Enlace al minijuego y a “Reportar en esta zona”</li>
+      </ul>
+    </div>
+    <div style="display:flex;flex-direction:column;border:2px solid #2E2D2C;border-radius:8px;overflow:hidden">
+      <div style="background:#6F0603;color:#FFFFFF;padding:16px;display:flex;align-items:center;gap:10px"><dc-import name="Icon" n="megafono" c="#FFFFFF" k="#6F0603" hint-size="24px,24px"></dc-import><span style="font:800 24px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Reclamos</span></div>
+      <ul style="margin:0;padding:16px 16px 16px 34px;display:flex;flex-direction:column;gap:8px;font:400 16px/1.4 Barlow,sans-serif">
+        <li><strong style="font-weight:600">Nuevo reporte:</strong> tipo → foto → ubicación → enviar</li>
+        <li>Mapa de reportes con filtro por estado</li>
+        <li>Seguimiento por código (sin cuenta obligatoria)</li>
+      </ul>
+    </div>
+    <div style="display:flex;flex-direction:column;border:2px solid #2E2D2C;border-radius:8px;overflow:hidden">
+      <div style="background:#90B4E1;padding:16px;display:flex;align-items:center;gap:10px"><dc-import name="Icon" n="joystick" c="#2E2D2C" k="#90B4E1" hint-size="24px,24px"></dc-import><span style="font:800 24px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Minijuegos</span></div>
+      <ul style="margin:0;padding:16px 16px 16px 34px;display:flex;flex-direction:column;gap:8px;font:400 16px/1.4 Barlow,sans-serif">
+        <li>Catálogo por actividad</li>
+        <li><strong style="font-weight:600">Juego:</strong> intro → partida de 3 min → cierre con dato real y acción</li>
+        <li>Cada juego nombra su portal y su problemática</li>
+      </ul>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;background:#EDEDED;padding:20px;border-radius:8px">
+    <div style="display:flex;flex-direction:column;gap:6px"><div style="font:600 17px/1.3 Barlow,sans-serif">Conexión lenta</div><div style="font:400 15px/1.45 Barlow,sans-serif;color:#5C5A57">Una familia tipográfica, 5 estilos. Mapas que cargan al tocar. Fotos WebP ≤ 60 KB con espacio reservado.</div></div>
+    <div style="display:flex;flex-direction:column;gap:6px"><div style="font:600 17px/1.3 Barlow,sans-serif">Sin señal en la reserva</div><div style="font:400 15px/1.45 Barlow,sans-serif;color:#5C5A57">Fichas de portal y minijuegos se guardan para usar sin conexión. Los reclamos quedan en cola y se envían al recuperar señal.</div></div>
+    <div style="display:flex;flex-direction:column;gap:6px"><div style="font:600 17px/1.3 Barlow,sans-serif">En el aula</div><div style="font:400 15px/1.45 Barlow,sans-serif;color:#5C5A57">Juegos cortos para una clase; cada cierre deja una pregunta para debatir y el enlace al portal real.</div></div>
+  </div>
+</section>
+
+<!-- 02 COLOR -->
+<section id="color" data-screen-label="02 Color" style="display:flex;flex-direction:column;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px;border-top:3px solid #2E2D2C;padding-top:16px"><span style="font:800 22px/1 'Barlow Semi Condensed',sans-serif">02</span><h2 style="margin:0;font:800 40px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Color</h2></div>
+  <p style="margin:0;max-width:680px;font:400 17px/1.5 Barlow,sans-serif;text-wrap:pretty">Cada muestra indica qué texto admite encima (contraste WCAG AA, 4,5:1 para texto normal). Amarillo Claro y Celeste Claro nunca como color de texto.</p>
+
+  <div style="font:600 18px/1 Barlow,sans-serif">Paleta principal</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px">
+    <div style="display:flex;flex-direction:column;border-radius:8px;overflow:hidden;border:1px solid #C9C6C1"><div style="background:#FACD05;height:88px;padding:12px;font:700 22px/1 Barlow,sans-serif;color:#2E2D2C">Aa</div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Amarillo Claro</strong><span>#FACD05</span><span style="color:#5C5A57">Negro 9,0:1 · nunca texto</span></div></div>
+    <div style="display:flex;flex-direction:column;border-radius:8px;overflow:hidden;border:1px solid #C9C6C1"><div style="background:#FAAE05;height:88px;padding:12px;font:700 22px/1 Barlow,sans-serif;color:#2E2D2C">Aa</div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Amarillo Oscuro</strong><span>#FAAE05</span><span style="color:#5C5A57">Negro 7,3:1 · hover primario</span></div></div>
+    <div style="display:flex;flex-direction:column;border-radius:8px;overflow:hidden;border:1px solid #C9C6C1"><div style="background:#F4492E;height:88px;padding:12px;font:800 30px/1 'Barlow Semi Condensed',sans-serif;color:#FFFFFF">AA</div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Rojo Claro</strong><span>#F4492E</span><span style="color:#5C5A57">Blanco 3,6:1 · solo títulos ≥ 24 px e íconos</span></div></div>
+    <div style="display:flex;flex-direction:column;border-radius:8px;overflow:hidden;border:1px solid #C9C6C1"><div style="background:#EA2F09;height:88px;padding:12px;font:800 30px/1 'Barlow Semi Condensed',sans-serif;color:#FFFFFF">AA</div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Rojo Oscuro</strong><span>#EA2F09</span><span style="color:#5C5A57">Blanco 4,3:1 · solo títulos e íconos</span></div></div>
+    <div style="display:flex;flex-direction:column;border-radius:8px;overflow:hidden;border:1px solid #C9C6C1"><div style="background:#6F0603;height:88px;padding:12px;font:700 22px/1 Barlow,sans-serif;color:#FFFFFF">Aa</div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Bordó</strong><span>#6F0603</span><span style="color:#5C5A57">Blanco 12,3:1 · texto sobre rojo</span></div></div>
+    <div style="display:flex;flex-direction:column;border-radius:8px;overflow:hidden;border:1px solid #C9C6C1"><div style="background:#90B4E1;height:88px;padding:12px;font:700 22px/1 Barlow,sans-serif;color:#2E2D2C">Aa</div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Celeste Claro</strong><span>#90B4E1</span><span style="color:#5C5A57">Negro 6,4:1 · nunca texto</span></div></div>
+    <div style="display:flex;flex-direction:column;border-radius:8px;overflow:hidden;border:1px solid #C9C6C1"><div style="background:#769FD3;height:88px;padding:12px;font:700 22px/1 Barlow,sans-serif;color:#2E2D2C">Aa</div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Celeste Oscuro</strong><span>#769FD3</span><span style="color:#5C5A57">Negro 5,0:1 · blanco no</span></div></div>
+    <div style="display:flex;flex-direction:column;border-radius:8px;overflow:hidden;border:1px solid #C9C6C1"><div style="background:#719C29;height:88px;padding:12px;font:800 30px/1 'Barlow Semi Condensed',sans-serif;color:#2E2D2C">AA</div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Verde Claro</strong><span>#719C29</span><span style="color:#5C5A57">Negro 4,3:1 · títulos e íconos</span></div></div>
+    <div style="display:flex;flex-direction:column;border-radius:8px;overflow:hidden;border:1px solid #C9C6C1"><div style="background:#356F23;height:88px;padding:12px;font:700 22px/1 Barlow,sans-serif;color:#FFFFFF">Aa</div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Verde Oscuro</strong><span>#356F23</span><span style="color:#5C5A57">Blanco 6,1:1</span></div></div>
+    <div style="display:flex;flex-direction:column;border-radius:8px;overflow:hidden;border:1px solid #C9C6C1"><div style="background:#2E2D2C;height:88px;padding:12px;font:700 22px/1 Barlow,sans-serif;color:#FFFFFF">Aa</div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Negro</strong><span>#2E2D2C</span><span style="color:#5C5A57">Blanco 13,8:1 · texto base</span></div></div>
+  </div>
+
+  <div style="font:600 18px/1 Barlow,sans-serif">Paleta extendida — solo datos, mapas y estados</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px">
+    <div style="display:flex;flex-direction:column;border-radius:8px;overflow:hidden;border:1px solid #C9C6C1"><div style="background:#F68E13;height:64px;padding:12px;font:700 22px/1 Barlow,sans-serif;color:#2E2D2C">Aa</div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Naranja</strong><span>#F68E13 · negro 5,8:1</span></div></div>
+    <div style="display:flex;flex-direction:column;border-radius:8px;overflow:hidden;border:1px solid #C9C6C1"><div style="background:#B45F04;height:64px;padding:12px;font:700 22px/1 Barlow,sans-serif;color:#FFFFFF">Aa</div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Ocre</strong><span>#B45F04 · blanco 4,6:1</span></div></div>
+    <div style="display:flex;flex-direction:column;border-radius:8px;overflow:hidden;border:1px solid #C9C6C1"><div style="background:#008275;height:64px;padding:12px;font:700 22px/1 Barlow,sans-serif;color:#FFFFFF">Aa</div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Turquesa</strong><span>#008275 · blanco 4,7:1</span></div></div>
+    <div style="display:flex;flex-direction:column;border-radius:8px;overflow:hidden;border:1px solid #C9C6C1"><div style="background:#1F5D9B;height:64px;padding:12px;font:700 22px/1 Barlow,sans-serif;color:#FFFFFF">Aa</div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Azul</strong><span>#1F5D9B · blanco 6,8:1</span></div></div>
+    <div style="display:flex;flex-direction:column;border-radius:8px;overflow:hidden;border:1px solid #C9C6C1"><div style="background:#6B5CB7;height:64px;padding:12px;font:700 22px/1 Barlow,sans-serif;color:#FFFFFF">Aa</div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Violeta</strong><span>#6B5CB7 · blanco 5,5:1</span></div></div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:6px"><div style="font:600 18px/1 Barlow,sans-serif">Escala de grises propuesta</div><div style="font:400 15px/1.45 Barlow,sans-serif;color:#5C5A57;max-width:680px">Interpolada entre Negro y Gris Claro, con el mismo matiz cálido del Negro del manual. Los valores de contraste son sobre blanco.</div></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0;border:1px solid #C9C6C1;border-radius:8px;overflow:hidden">
+    <div style="display:flex;flex-direction:column"><div style="background:#2E2D2C;height:72px"></div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Gris 900 · Negro</strong><span>#2E2D2C · 13,8:1</span><span style="color:#5C5A57">Texto principal</span></div></div>
+    <div style="display:flex;flex-direction:column"><div style="background:#5C5A57;height:72px"></div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Gris 700</strong><span>#5C5A57 · 6,9:1</span><span style="color:#5C5A57">Texto secundario (también sobre #EDEDED, 5,9:1)</span></div></div>
+    <div style="display:flex;flex-direction:column"><div style="background:#74716D;height:72px"></div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Gris 600</strong><span>#74716D · 4,9:1</span><span style="color:#5C5A57">Borde de campos, texto deshabilitado</span></div></div>
+    <div style="display:flex;flex-direction:column"><div style="background:#A8A5A0;height:72px"></div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Gris 400</strong><span>#A8A5A0 · 2,5:1</span><span style="color:#5C5A57">Borde deshabilitado, nunca texto</span></div></div>
+    <div style="display:flex;flex-direction:column"><div style="background:#C9C6C1;height:72px"></div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Gris 300</strong><span>#C9C6C1</span><span style="color:#5C5A57">Borde de tarjetas</span></div></div>
+    <div style="display:flex;flex-direction:column"><div style="background:#DDDBD7;height:72px"></div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Gris 200</strong><span>#DDDBD7</span><span style="color:#5C5A57">Divisores, fondo deshabilitado</span></div></div>
+    <div style="display:flex;flex-direction:column"><div style="background:#EDEDED;height:72px"></div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Gris 100 · Gris Claro</strong><span>#EDEDED</span><span style="color:#5C5A57">Fondo alterno, espacio de imagen</span></div></div>
+    <div style="display:flex;flex-direction:column"><div style="background:#FFFFFF;height:72px;border-bottom:1px solid #DDDBD7"></div><div style="padding:10px 12px;display:flex;flex-direction:column;gap:3px;font:400 13px/1.35 Barlow,sans-serif"><strong style="font-weight:600;font-size:15px">Blanco</strong><span>#FFFFFF</span><span style="color:#5C5A57">Fondo base</span></div></div>
+  </div>
+</section>
+
+<!-- 03 TIPOGRAFIA -->
+<section id="tipo" data-screen-label="03 Tipografía" style="display:flex;flex-direction:column;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px;border-top:3px solid #2E2D2C;padding-top:16px"><span style="font:800 22px/1 'Barlow Semi Condensed',sans-serif">03</span><h2 style="margin:0;font:800 40px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Tipografía</h2></div>
+  <p style="margin:0;max-width:680px;font:400 17px/1.5 Barlow,sans-serif;text-wrap:pretty">Escala celular primero; entre paréntesis, escritorio (≥ 960 px). Interletra 0 en todos los niveles, como pide el manual. Títulos de hasta 4 renglones.</p>
+  <div style="display:flex;flex-direction:column;border-top:1px solid #C9C6C1">
+    <div style="display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:8px 24px;padding:18px 0;border-bottom:1px solid #C9C6C1;align-items:baseline"><div style="font:400 14px/1.4 Barlow,sans-serif;color:#5C5A57"><strong style="font-weight:600;color:#2E2D2C">Título 1</strong><br>Semi Condensed ExtraBold · 40/38 (72/66) · caja alta</div><div style="font:800 40px/0.95 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">El estero es de todos</div></div>
+    <div style="display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:8px 24px;padding:18px 0;border-bottom:1px solid #C9C6C1;align-items:baseline"><div style="font:400 14px/1.4 Barlow,sans-serif;color:#5C5A57"><strong style="font-weight:600;color:#2E2D2C">Título 2</strong><br>Semi Condensed ExtraBold · 30/30 (44/42) · caja alta</div><div style="font:800 30px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Portal Carlos Pellegrini</div></div>
+    <div style="display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:8px 24px;padding:18px 0;border-bottom:1px solid #C9C6C1;align-items:baseline"><div style="font:400 14px/1.4 Barlow,sans-serif;color:#5C5A57"><strong style="font-weight:600;color:#2E2D2C">Título 3</strong><br>Semi Condensed ExtraBold · 22/24 (28/30) · caja alta</div><div style="font:800 22px/1.1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Residuos sólidos urbanos</div></div>
+    <div style="display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:8px 24px;padding:18px 0;border-bottom:1px solid #C9C6C1;align-items:baseline"><div style="font:400 14px/1.4 Barlow,sans-serif;color:#5C5A57"><strong style="font-weight:600;color:#2E2D2C">Subtítulo / destacado</strong><br>Barlow Semibold · 18/24 (22/28)</div><div style="font:600 18px/1.33 Barlow,sans-serif">Reportá lo que daña el agua, con foto y ubicación.</div></div>
+    <div style="display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:8px 24px;padding:18px 0;border-bottom:1px solid #C9C6C1;align-items:baseline"><div style="font:400 14px/1.4 Barlow,sans-serif;color:#5C5A57"><strong style="font-weight:600;color:#2E2D2C">Cuerpo</strong><br>Barlow Regular · 16/24 (18/28) · máx. 68 caracteres</div><div style="font:400 16px/1.5 Barlow,sans-serif;max-width:560px">El lixiviado es el líquido que se filtra de la basura acumulada y viaja bajo tierra hasta el agua de la laguna.</div></div>
+    <div style="display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:8px 24px;padding:18px 0;border-bottom:1px solid #C9C6C1;align-items:baseline"><div style="font:400 14px/1.4 Barlow,sans-serif;color:#5C5A57"><strong style="font-weight:600;color:#2E2D2C">Pequeño</strong><br>Barlow Regular · 14/20 · Gris 700</div><div style="font:400 14px/1.43 Barlow,sans-serif;color:#5C5A57">Actualizado hoy 08:40 · Guardaparques</div></div>
+    <div style="display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:8px 24px;padding:18px 0;border-bottom:1px solid #C9C6C1;align-items:baseline"><div style="font:400 14px/1.4 Barlow,sans-serif;color:#5C5A57"><strong style="font-weight:600;color:#2E2D2C">Pastilla / botón</strong><br>Barlow Bold 15 · combinada: Bold Italic</div><div style="font:700 15px/1 Barlow,sans-serif">Ripio con barro <em style="font-style:italic">· Derivado</em></div></div>
+  </div>
+</section>
+
+<!-- 04 ESPACIADO -->
+<section id="espacio" data-screen-label="04 Espaciado" style="display:flex;flex-direction:column;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px;border-top:3px solid #2E2D2C;padding-top:16px"><span style="font:800 22px/1 'Barlow Semi Condensed',sans-serif">04</span><h2 style="margin:0;font:800 40px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Espaciado y radios</h2></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:40px">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <p style="margin:0;font:400 16px/1.5 Barlow,sans-serif;color:#5C5A57">Base 4 px. Margen de pantalla en celular: 16. Zona táctil mínima: 48 × 48.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;font:400 14px/1 Barlow,sans-serif">
+        <div style="display:flex;align-items:center;gap:12px"><span style="width:64px;font-weight:600">esp-1</span><span style="width:40px;color:#5C5A57">4</span><span style="width:4px;height:20px;background:#2E2D2C"></span><span style="color:#5C5A57">ícono ↔ texto interno</span></div>
+        <div style="display:flex;align-items:center;gap:12px"><span style="width:64px;font-weight:600">esp-2</span><span style="width:40px;color:#5C5A57">8</span><span style="width:8px;height:20px;background:#2E2D2C"></span><span style="color:#5C5A57">entre pastillas</span></div>
+        <div style="display:flex;align-items:center;gap:12px"><span style="width:64px;font-weight:600">esp-3</span><span style="width:40px;color:#5C5A57">12</span><span style="width:12px;height:20px;background:#2E2D2C"></span><span style="color:#5C5A57">dentro de tarjetas compactas</span></div>
+        <div style="display:flex;align-items:center;gap:12px"><span style="width:64px;font-weight:600">esp-4</span><span style="width:40px;color:#5C5A57">16</span><span style="width:16px;height:20px;background:#2E2D2C"></span><span style="color:#5C5A57">margen de pantalla, padding de tarjeta</span></div>
+        <div style="display:flex;align-items:center;gap:12px"><span style="width:64px;font-weight:600">esp-5</span><span style="width:40px;color:#5C5A57">24</span><span style="width:24px;height:20px;background:#2E2D2C"></span><span style="color:#5C5A57">entre bloques de una sección</span></div>
+        <div style="display:flex;align-items:center;gap:12px"><span style="width:64px;font-weight:600">esp-6</span><span style="width:40px;color:#5C5A57">32</span><span style="width:32px;height:20px;background:#2E2D2C"></span><span style="color:#5C5A57">entre secciones (celular)</span></div>
+        <div style="display:flex;align-items:center;gap:12px"><span style="width:64px;font-weight:600">esp-7</span><span style="width:40px;color:#5C5A57">48</span><span style="width:48px;height:20px;background:#2E2D2C"></span><span style="color:#5C5A57">entre secciones (escritorio)</span></div>
+        <div style="display:flex;align-items:center;gap:12px"><span style="width:64px;font-weight:600">esp-8</span><span style="width:40px;color:#5C5A57">64</span><span style="width:64px;height:20px;background:#2E2D2C"></span><span style="color:#5C5A57">aire de portada</span></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <p style="margin:0;font:400 16px/1.5 Barlow,sans-serif;color:#5C5A57">Tres radios. Los bloques plenos que tocan el borde de pantalla van rectos.</p>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="height:88px;background:#356F23;border-radius:0"></div><div style="font:400 14px/1.35 Barlow,sans-serif"><strong style="font-weight:600">r-0 · 0</strong><br><span style="color:#5C5A57">Bloques de sección, portada</span></div></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="height:88px;background:#FACD05;border-radius:4px"></div><div style="font:400 14px/1.35 Barlow,sans-serif"><strong style="font-weight:600">r-1 · 4</strong><br><span style="color:#5C5A57">Pastillas, campos, marcadores</span></div></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="height:88px;background:#769FD3;border-radius:8px"></div><div style="font:400 14px/1.35 Barlow,sans-serif"><strong style="font-weight:600">r-2 · 8</strong><br><span style="color:#5C5A57">Botones, tarjetas</span></div></div>
+      </div>
+      <p style="margin:0;font:400 14px/1.45 Barlow,sans-serif;color:#5C5A57">Bordes: 1 px Gris 300 (tarjeta en reposo), 2 px Negro (seleccionado, contornos), 2 px Gris 600 (campos). Sin sombras: la profundidad la da el color pleno.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 ICONOS -->
+<section id="iconos" data-screen-label="05 Íconos" style="display:flex;flex-direction:column;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px;border-top:3px solid #2E2D2C;padding-top:16px"><span style="font:800 22px/1 'Barlow Semi Condensed',sans-serif">05</span><h2 style="margin:0;font:800 40px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Íconos</h2></div>
+  <p style="margin:0;max-width:680px;font:400 17px/1.5 Barlow,sans-serif;text-wrap:pretty">Grilla 24 px, trazo 1,7, uniones y terminaciones redondeadas. Formas sólidas; los detalles internos se calan con el color del fondo. Tamaños: 24 (UI), 20 (pastillas), 18 (marcadores).</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:1px;background:#C9C6C1;border:1px solid #C9C6C1;border-radius:8px;overflow:hidden">
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="check" s="32" hint-size="32px,32px"></dc-import>Transitable / resuelto</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="alerta" s="32" hint-size="32px,32px"></dc-import>Precaución</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="auto4x4" s="32" hint-size="32px,32px"></dc-import>Solo 4×4</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="cortado" s="32" hint-size="32px,32px"></dc-import>Cortado</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="basura" s="32" hint-size="32px,32px"></dc-import>Minibasural</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="gota" s="32" hint-size="32px,32px"></dc-import>Lixiviados</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="fuego" s="32" hint-size="32px,32px"></dc-import>Quema</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="bandeja" s="32" hint-size="32px,32px"></dc-import>Recibido</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="derivar" s="32" hint-size="32px,32px"></dc-import>Derivado</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="kayak" s="32" hint-size="32px,32px"></dc-import>Kayak</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="montana" s="32" hint-size="32px,32px"></dc-import>Senderismo</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="estrella" s="32" hint-size="32px,32px"></dc-import>Astroturismo</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="ojo" s="32" hint-size="32px,32px"></dc-import>Avistaje</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="pin" s="32" hint-size="32px,32px"></dc-import>Ubicación</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="camara" s="32" hint-size="32px,32px"></dc-import>Foto</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="megafono" s="32" hint-size="32px,32px"></dc-import>Reclamar</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="mapa" s="32" hint-size="32px,32px"></dc-import>Portales</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="joystick" s="32" hint-size="32px,32px"></dc-import>Minijuegos</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="casa" s="32" hint-size="32px,32px"></dc-import>Inicio</div>
+    <div style="background:#FFFFFF;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;font:400 13px/1 Barlow,sans-serif;color:#5C5A57"><dc-import name="Icon" n="descarga" s="32" hint-size="32px,32px"></dc-import>Sin conexión</div>
+  </div>
+</section>
+
+<!-- 06 PASTILLAS -->
+<section id="pastillas" data-screen-label="06 Pastillas" style="display:flex;flex-direction:column;gap:28px">
+  <div style="display:flex;align-items:baseline;gap:16px;border-top:3px solid #2E2D2C;padding-top:16px"><span style="font:800 22px/1 'Barlow Semi Condensed',sans-serif">06</span><h2 style="margin:0;font:800 40px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Pastillas</h2></div>
+  <p style="margin:0;max-width:680px;font:400 17px/1.5 Barlow,sans-serif;text-wrap:pretty">Alto 32 px: bloque de ícono de 32 × 32 + bloque de texto con 10 px a cada lado. Un renglón, ancho ajustado al texto. Dos reglas de color, para que se lean distinto aunque convivan:</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px">
+    <div style="background:#EDEDED;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:6px"><div style="font:600 17px/1.3 Barlow,sans-serif">Estados → dos tonos de una familia</div><div style="font:400 15px/1.45 Barlow,sans-serif;color:#5C5A57">Ícono sobre el tono claro, texto sobre el tono que garantiza 4,5:1. Camino del portal y estado del reclamo.</div></div>
+    <div style="background:#EDEDED;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:6px"><div style="font:600 17px/1.3 Barlow,sans-serif">Categorías → ícono en Negro</div><div style="font:400 15px/1.45 Barlow,sans-serif;color:#5C5A57">Bloque de ícono Negro fijo, texto sobre el color de la categoría. Tipo de reclamo y actividad del minijuego.</div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:32px 24px">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font:600 16px/1 Barlow,sans-serif">Estado del camino</div>
+      <span style="display:inline-flex;height:32px;width:max-content;max-width:100%"><span style="width:32px;flex:none;display:flex;align-items:center;justify-content:center;background:#719C29;border-radius:4px 0 0 4px"><dc-import name="Icon" n="check" c="#2E2D2C" k="#719C29" s="20" hint-size="20px,20px"></dc-import></span><span style="display:flex;align-items:center;padding:0 10px;background:#356F23;color:#FFFFFF;font:700 15px/1 Barlow,sans-serif;white-space:nowrap;border-radius:0 4px 4px 0">Transitable</span></span>
+      <span style="display:inline-flex;height:32px;width:max-content;max-width:100%"><span style="width:32px;flex:none;display:flex;align-items:center;justify-content:center;background:#FAAE05;border-radius:4px 0 0 4px"><dc-import name="Icon" n="alerta" c="#2E2D2C" k="#FAAE05" s="20" hint-size="20px,20px"></dc-import></span><span style="display:flex;align-items:center;padding:0 10px;background:#FACD05;color:#2E2D2C;font:700 15px/1 Barlow,sans-serif;white-space:nowrap;border-radius:0 4px 4px 0">Ripio con barro</span></span>
+      <span style="display:inline-flex;height:32px;width:max-content;max-width:100%"><span style="width:32px;flex:none;display:flex;align-items:center;justify-content:center;background:#F68E13;border-radius:4px 0 0 4px"><dc-import name="Icon" n="auto4x4" c="#2E2D2C" k="#F68E13" s="20" hint-size="20px,20px"></dc-import></span><span style="display:flex;align-items:center;padding:0 10px;background:#B45F04;color:#FFFFFF;font:700 15px/1 Barlow,sans-serif;white-space:nowrap;border-radius:0 4px 4px 0">Solo 4×4</span></span>
+      <span style="display:inline-flex;height:32px;width:max-content;max-width:100%"><span style="width:32px;flex:none;display:flex;align-items:center;justify-content:center;background:#F4492E;border-radius:4px 0 0 4px"><dc-import name="Icon" n="cortado" c="#FFFFFF" k="#F4492E" s="20" hint-size="20px,20px"></dc-import></span><span style="display:flex;align-items:center;padding:0 10px;background:#6F0603;color:#FFFFFF;font:700 15px/1 Barlow,sans-serif;white-space:nowrap;border-radius:0 4px 4px 0">Cortado</span></span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font:600 16px/1 Barlow,sans-serif">Estado del reclamo</div>
+      <span style="display:inline-flex;height:32px;width:max-content;max-width:100%"><span style="width:32px;flex:none;display:flex;align-items:center;justify-content:center;background:#FAAE05;border-radius:4px 0 0 4px"><dc-import name="Icon" n="bandeja" c="#2E2D2C" k="#FAAE05" s="20" hint-size="20px,20px"></dc-import></span><span style="display:flex;align-items:center;padding:0 10px;background:#FACD05;color:#2E2D2C;font:700 15px/1 Barlow,sans-serif;white-space:nowrap;border-radius:0 4px 4px 0">Recibido</span></span>
+      <span style="display:inline-flex;height:32px;width:max-content;max-width:100%"><span style="width:32px;flex:none;display:flex;align-items:center;justify-content:center;background:#769FD3;border-radius:4px 0 0 4px"><dc-import name="Icon" n="derivar" c="#2E2D2C" k="#769FD3" s="20" hint-size="20px,20px"></dc-import></span><span style="display:flex;align-items:center;padding:0 10px;background:#1F5D9B;color:#FFFFFF;font:700 15px/1 Barlow,sans-serif;white-space:nowrap;border-radius:0 4px 4px 0">Derivado</span></span>
+      <span style="display:inline-flex;height:32px;width:max-content;max-width:100%"><span style="width:32px;flex:none;display:flex;align-items:center;justify-content:center;background:#719C29;border-radius:4px 0 0 4px"><dc-import name="Icon" n="check" c="#2E2D2C" k="#719C29" s="20" hint-size="20px,20px"></dc-import></span><span style="display:flex;align-items:center;padding:0 10px;background:#356F23;color:#FFFFFF;font:700 15px/1 Barlow,sans-serif;white-space:nowrap;border-radius:0 4px 4px 0">Resuelto</span></span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font:600 16px/1 Barlow,sans-serif">Tipo de reclamo</div>
+      <span style="display:inline-flex;height:32px;width:max-content;max-width:100%"><span style="width:32px;flex:none;display:flex;align-items:center;justify-content:center;background:#2E2D2C;border-radius:4px 0 0 4px"><dc-import name="Icon" n="basura" c="#FFFFFF" k="#2E2D2C" s="20" hint-size="20px,20px"></dc-import></span><span style="display:flex;align-items:center;padding:0 10px;background:#F68E13;color:#2E2D2C;font:700 15px/1 Barlow,sans-serif;white-space:nowrap;border-radius:0 4px 4px 0">Minibasural</span></span>
+      <span style="display:inline-flex;height:32px;width:max-content;max-width:100%"><span style="width:32px;flex:none;display:flex;align-items:center;justify-content:center;background:#2E2D2C;border-radius:4px 0 0 4px"><dc-import name="Icon" n="gota" c="#FFFFFF" k="#2E2D2C" s="20" hint-size="20px,20px"></dc-import></span><span style="display:flex;align-items:center;padding:0 10px;background:#008275;color:#FFFFFF;font:700 15px/1 Barlow,sans-serif;white-space:nowrap;border-radius:0 4px 4px 0">Foco de lixiviados</span></span>
+      <span style="display:inline-flex;height:32px;width:max-content;max-width:100%"><span style="width:32px;flex:none;display:flex;align-items:center;justify-content:center;background:#2E2D2C;border-radius:4px 0 0 4px"><dc-import name="Icon" n="fuego" c="#FFFFFF" k="#2E2D2C" s="20" hint-size="20px,20px"></dc-import></span><span style="display:flex;align-items:center;padding:0 10px;background:#6F0603;color:#FFFFFF;font:700 15px/1 Barlow,sans-serif;white-space:nowrap;border-radius:0 4px 4px 0">Quema</span></span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font:600 16px/1 Barlow,sans-serif">Categoría de minijuego</div>
+      <span style="display:inline-flex;height:32px;width:max-content;max-width:100%"><span style="width:32px;flex:none;display:flex;align-items:center;justify-content:center;background:#2E2D2C;border-radius:4px 0 0 4px"><dc-import name="Icon" n="kayak" c="#FFFFFF" k="#2E2D2C" s="20" hint-size="20px,20px"></dc-import></span><span style="display:flex;align-items:center;padding:0 10px;background:#90B4E1;color:#2E2D2C;font:700 15px/1 Barlow,sans-serif;white-space:nowrap;border-radius:0 4px 4px 0">Kayak</span></span>
+      <span style="display:inline-flex;height:32px;width:max-content;max-width:100%"><span style="width:32px;flex:none;display:flex;align-items:center;justify-content:center;background:#2E2D2C;border-radius:4px 0 0 4px"><dc-import name="Icon" n="montana" c="#FFFFFF" k="#2E2D2C" s="20" hint-size="20px,20px"></dc-import></span><span style="display:flex;align-items:center;padding:0 10px;background:#356F23;color:#FFFFFF;font:700 15px/1 Barlow,sans-serif;white-space:nowrap;border-radius:0 4px 4px 0">Senderismo</span></span>
+      <span style="display:inline-flex;height:32px;width:max-content;max-width:100%"><span style="width:32px;flex:none;display:flex;align-items:center;justify-content:center;background:#2E2D2C;border-radius:4px 0 0 4px"><dc-import name="Icon" n="estrella" c="#FFFFFF" k="#2E2D2C" s="20" hint-size="20px,20px"></dc-import></span><span style="display:flex;align-items:center;padding:0 10px;background:#6B5CB7;color:#FFFFFF;font:700 15px/1 Barlow,sans-serif;white-space:nowrap;border-radius:0 4px 4px 0">Astroturismo</span></span>
+      <span style="display:inline-flex;height:32px;width:max-content;max-width:100%"><span style="width:32px;flex:none;display:flex;align-items:center;justify-content:center;background:#2E2D2C;border-radius:4px 0 0 4px"><dc-import name="Icon" n="ojo" c="#FFFFFF" k="#2E2D2C" s="20" hint-size="20px,20px"></dc-import></span><span style="display:flex;align-items:center;padding:0 10px;background:#B45F04;color:#FFFFFF;font:700 15px/1 Barlow,sans-serif;white-space:nowrap;border-radius:0 4px 4px 0">Avistaje</span></span>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div style="font:600 16px/1 Barlow,sans-serif">Combinada — tipo + estado en una sola pieza (segundo texto en Bold Italic)</div>
+    <span style="display:inline-flex;height:32px;width:max-content;max-width:100%"><span style="width:32px;flex:none;display:flex;align-items:center;justify-content:center;background:#2E2D2C;border-radius:4px 0 0 4px"><dc-import name="Icon" n="basura" c="#FFFFFF" k="#2E2D2C" s="20" hint-size="20px,20px"></dc-import></span><span style="display:flex;align-items:center;padding:0 10px;background:#F68E13;color:#2E2D2C;font:700 15px/1 Barlow,sans-serif;white-space:nowrap">Minibasural</span><span style="display:flex;align-items:center;padding:0 10px;background:#1F5D9B;color:#FFFFFF;font:italic 700 15px/1 Barlow,sans-serif;white-space:nowrap;border-radius:0 4px 4px 0">Derivado</span></span>
+    <div style="display:flex;flex-wrap:wrap;gap:8px 24px;font:400 14px/1.45 Barlow,sans-serif;color:#5C5A57;max-width:760px"><span>No usar en textos de más de un renglón: si no entra, se acorta el texto.</span><span>No reemplazar el bloque de ícono por un ícono suelto.</span><span>No us
+</x-dc>
+</body>
+</html>

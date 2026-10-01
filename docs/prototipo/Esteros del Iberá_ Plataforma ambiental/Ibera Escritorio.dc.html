@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,600;0,700;1,700&amp;family=Barlow+Semi+Condensed:wght@800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E3E8E5;color:#111514;font-family:Barlow,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#006B32}
+a:hover{color:#003E25}
+:focus-visible{outline:3px solid #111514;outline-offset:2px}
+button{font-family:inherit;cursor:pointer}
+</style>
+</helmet>
+
+<div style="padding:48px 40px 96px;display:flex;flex-direction:column;gap:20px;align-items:flex-start">
+<div style="font:700 15px/1 Barlow,sans-serif;color:#4A524E">Escritorio · Inicio · 1440 px</div>
+
+<div data-screen-label="Escritorio Inicio" style="width:1440px;flex:none;background:#F2F5F3;border-radius:24px;overflow:hidden;border:1px solid #C9D0CC">
+
+  <div style="display:flex;align-items:center;gap:16px;padding:12px 16px;background:#FFFFFF;border-bottom:1px solid #E3E8E5">
+    <div style="display:flex;gap:8px"><span style="width:12px;height:12px;border-radius:999px;background:#C9D0CC"></span><span style="width:12px;height:12px;border-radius:999px;background:#C9D0CC"></span><span style="width:12px;height:12px;border-radius:999px;background:#C9D0CC"></span></div>
+    <div style="flex:1;max-width:520px;margin:0 auto;height:32px;border-radius:999px;background:#F2F5F3;display:flex;align-items:center;padding:0 16px;font:400 14px/1 Barlow,sans-serif;color:#4A524E">ibera-cuida.ar</div>
+  </div>
+
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:20px 48px">
+    <div style="width:116px;height:64px;background:#006B32;-webkit-mask:url(uploads/iso.svg) left center/contain no-repeat;mask:url(uploads/iso.svg) left center/contain no-repeat"></div>
+    <nav style="display:flex;gap:4px;background:#FFFFFF;border-radius:999px;padding:6px">
+      <a href="#" style="height:44px;padding:0 20px;border-radius:999px;background:#003E25;color:#FFFFFF;display:flex;align-items:center;font:700 15px/1 Barlow,sans-serif;text-decoration:none">Inicio</a>
+      <a href="#" style="height:44px;padding:0 20px;border-radius:999px;color:#003E25;display:flex;align-items:center;font:700 15px/1 Barlow,sans-serif;text-decoration:none" style-hover="background:#F2F5F3">Portales</a>
+      <a href="#" style="height:44px;padding:0 20px;border-radius:999px;color:#003E25;display:flex;align-items:center;font:700 15px/1 Barlow,sans-serif;text-decoration:none" style-hover="background:#F2F5F3">Reclamos</a>
+      <a href="#" style="height:44px;padding:0 20px;border-radius:999px;color:#003E25;display:flex;align-items:center;font:700 15px/1 Barlow,sans-serif;text-decoration:none" style-hover="background:#F2F5F3">Minijuegos</a>
+    </nav>
+    <button style="display:flex;align-items:center;gap:8px;height:52px;padding:0 22px 0 16px;border:none;border-radius:999px;background:#111514;color:#FFFFFF;font:700 16px/1 Barlow,sans-serif" style-hover="background:#003E25"><dc-import name="Icon" n="megafono" c="#00D58A" k="#111514" s="22" hint-size="22px,22px"></dc-import>Reportar incidente</button>
+  </header>
+
+  <section style="margin:0 24px;display:grid;grid-template-columns:1.05fr 1fr;gap:16px">
+    <div style="background:#00D58A;border-radius:40px;padding:56px 48px 48px;display:flex;flex-direction:column;gap:24px;justify-content:space-between">
+      <span style="align-self:flex-start;background:#FFFFFF;color:#003E25;border-radius:999px;padding:10px 16px;font:600 15px/1 Barlow,sans-serif">Gran Parque Iberá · Corrientes</span>
+      <h1 style="margin:0;font:800 84px/0.9 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25;text-wrap:balance">El estero es de todos. Cuidarlo también.</h1>
+      <p style="margin:0;max-width:520px;font:400 20px/1.45 Barlow,sans-serif;color:#003E25;text-wrap:pretty">Conocé los portales, reportá lo que daña el agua y aprendé jugando. Para el aula y para quien visita la reserva.</p>
+      <div style="display:flex;gap:10px">
+        <button style="height:60px;padding:0 32px;border:none;border-radius:999px;background:#003E25;color:#FFFFFF;font:700 18px/1 Barlow,sans-serif" style-hover="background:#111514">Explorar portales</button>
+        <button style="height:60px;padding:0 32px;border:2px solid #003E25;border-radius:999px;background:#00D58A;color:#003E25;font:700 18px/1 Barlow,sans-serif" style-hover="background:#FFFFFF">Jugar</button>
+      </div>
+    </div>
+    <div style="border-radius:40px;min-height:600px;background:#00B96C url('https://commons.wikimedia.org/wiki/Special:FilePath/Esteros_del_Ibera_Laguna.JPG?width=1400') center/cover no-repeat;display:flex;align-items:flex-end;justify-content:space-between;padding:20px">
+      <div style="background:#FFFFFF;border-radius:28px;padding:18px 20px;display:flex;align-items:center;gap:14px">
+        <span style="width:48px;height:48px;border-radius:999px;background:#00D58A;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="check" c="#003E25" k="#00D58A" hint-size="24px,24px"></dc-import></span>
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="font:700 17px/1 Barlow,sans-serif;color:#003E25">23 reclamos resueltos</span><span style="font:400 14px/1 Barlow,sans-serif;color:#4A524E">en los últimos 30 días</span></div>
+      </div>
+      <span style="background:#FFFFFF;color:#003E25;border-radius:999px;padding:8px 12px;font:600 13px/1 Barlow,sans-serif">Laguna Iberá · Wikimedia Commons</span>
+    </div>
+  </section>
+
+  <section style="margin:16px 24px 0;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:16px">
+    <div style="background:#006B32 url('https://commons.wikimedia.org/wiki/Special:FilePath/Esteros_Del_Ibera%2C_Corrientes%2C_Argentina%2C_2nd._Jan_2011_-_Flickr_-_PhillipC_(4).jpg?width=1000') center/cover no-repeat;border-radius:36px;min-height:320px;padding:12px;display:flex;align-items:flex-end">
+      <div style="background:#006B32;color:#FFFFFF;border-radius:28px;padding:24px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;width:100%" style-hover="background:#003E25">
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="font:800 40px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Portales</div><div style="font:400 17px/1.4 Barlow,sans-serif">8 accesos al parque, con el estado del camino de hoy.</div></div>
+        <span style="width:56px;height:56px;flex:none;border-radius:999px;background:#00D58A;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="flecha" c="#003E25" s="26" hint-size="26px,26px"></dc-import></span>
+      </div>
+    </div>
+    <div style="background:#111514;color:#FFFFFF;border-radius:36px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;gap:24px">
+      <span style="width:56px;height:56px;border-radius:999px;background:#FACD05;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="megafono" c="#111514" k="#FACD05" s="28" hint-size="28px,28px"></dc-import></span>
+      <div style="display:flex;flex-direction:column;gap:8px"><div style="font:800 34px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Reclamos ambientales</div><div style="font:400 16px/1.4 Barlow,sans-serif;color:#C9D0CC">Minibasurales, lixiviados y quemas. Con foto, ubicación y seguimiento.</div></div>
+    </div>
+    <div style="background:#00B96C;color:#003E25;border-radius:36px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;gap:24px">
+      <span style="width:56px;height:56px;border-radius:999px;background:#FFFFFF;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="joystick" c="#003E25" k="#FFFFFF" s="28" hint-size="28px,28px"></dc-import></span>
+      <div style="display:flex;flex-direction:column;gap:8px"><div style="font:800 34px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Minijuegos</div><div style="font:400 16px/1.4 Barlow,sans-serif">Kayak, senderismo, astroturismo. 3 minutos, en el aula o en el estero.</div></div>
+    </div>
+  </section>
+
+  <section style="margin:16px 24px 0;background:#006B32;border-radius:40px;padding:48px;display:grid;grid-template-columns:360px 1fr;gap:48px">
+    <div style="display:flex;flex-direction:column;gap:16px;color:#FFFFFF">
+      <span style="width:64px;height:4px;border-radius:999px;background:#00D58A"></span>
+      <h2 style="margin:0;font:800 56px/0.95 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Estado de caminos de acceso</h2>
+      <p style="margin:0;font:400 17px/1.45 Barlow,sans-serif;color:#E3E8E5">Actualizado hoy 08:40 por guardaparques. Datos de ejemplo.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <sc-for list="{{ portales }}" as="p" hint-placeholder-count="8">
+        <div style="background:#FFFFFF;border-radius:24px;padding:12px 12px 12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px" style-hover="background:#F2F5F3">
+          <span style="display:flex;align-items:center;gap:10px;font:700 17px/1.2 Barlow,sans-serif;color:#003E25"><dc-import name="Icon" n="pin" c="#006B32" k="#FFFFFF" s="22" hint-size="22px,22px"></dc-import>{{ p.name }}</span>
+          <span style="display:inline-flex;height:32px;width:max-content;border-radius:999px;overflow:hidden;flex:none"><span style="width:32px;display:flex;align-items:center;justify-content:center;background:{{ p.ib }}"><dc-import name="Icon" n="{{ p.icon }}" c="{{ p.ic }}" k="{{ p.ib }}" s="18" hint-size="18px,18px"></dc-import></span><span style="display:flex;align-items:center;padding:0 12px 0 8px;background:{{ p.tb }};color:{{ p.tc }};font:700 14px/1 Barlow,sans-serif;white-space:nowrap">{{ p.estado }}</span></span>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="margin:16px 24px 0;display:grid;grid-template-columns:1fr 1.25fr;gap:16px">
+    <div style="background:#FFFFFF;border-radius:40px;padding:40px;display:flex;flex-direction:column;gap:20px">
+      <h2 style="margin:0;font:800 48px/0.95 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">Aprendé jugando</h2>
+      <p style="margin:0;font:400 17px/1.45 Barlow,sans-serif;color:#4A524E">Cada juego ocurre en un portal real y enseña una problemática de esa zona.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:14px;padding:8px;border-radius:24px;background:#F2F5F3" style-hover="background:#E3E8E5">
+          <div style="width:88px;height:72px;flex:none;border-radius:18px;background:#00B96C url('https://commons.wikimedia.org/wiki/Special:FilePath/Yacare_con_flor_(26389548324).jpg?width=400') center/cover no-repeat"></div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px"><span style="font:800 22px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">Canales limpios</span><span style="font:400 14px/1 Barlow,sans-serif;color:#4A524E">Laguna Iberá · Residuos</span></div>
+          <span style="display:inline-flex;height:32px;width:max-content;border-radius:999px;overflow:hidden"><span style="width:32px;display:flex;align-items:center;justify-content:center;background:#111514"><dc-import name="Icon" n="kayak" c="#FFFFFF" k="#111514" s="18" hint-size="18px,18px"></dc-import></span><span style="display:flex;align-items:center;padding:0 12px 0 8px;background:#90B4E1;color:#111514;font:700 14px/1 Barlow,sans-serif">Kayak</span></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:8px;border-radius:24px;background:#F2F5F3" style-hover="background:#E3E8E5">
+          <div style="width:88px;height:72px;flex:none;border-radius:18px;background:#00B96C url('https://commons.wikimedia.org/wiki/Special:FilePath/Gubernatrix_cristata_-_Yellow_cardinal_(male)%3B_Iber%C3%A1_marshes%2C_Corrientes%2C_Argentina.jpg?width=400') center/cover no-repeat"></div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px"><span style="font:800 22px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">Señales del agua</span><span style="font:400 14px/1 Barlow,sans-serif;color:#4A524E">Colonia Pellegrini · Lixiviados</span></div>
+          <span style="display:inline-flex;height:32px;width:max-content;border-radius:999px;overflow:hidden"><span style="width:32px;display:flex;align-items:center;justify-content:center;background:#111514"><dc-import name="Icon" n="montana" c="#FFFFFF" k="#111514" s="18" hint-size="18px,18px"></dc-import></span><span style="display:flex;align-items:center;padding:0 12px 0 8px;background:#00B96C;color:#003E25;font:700 14px/1 Barlow,sans-serif">Senderismo</span></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:8px;border-radius:24px;background:#F2F5F3" style-hover="background:#E3E8E5">
+          <div style="width:88px;height:72px;flex:none;border-radius:18px;background:#111514"></div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px"><span style="font:800 22px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">Cielo oscuro</span><span style="font:400 14px/1 Barlow,sans-serif;color:#4A524E">Contaminación lumínica</span></div>
+          <span style="display:inline-flex;height:32px;width:max-content;border-radius:999px;overflow:hidden"><span style="width:32px;display:flex;align-items:center;justify-content:center;background:#111514"><dc-import name="Icon" n="estrella" c="#FFFFFF" k="#111514" s="18" hint-size="18px,18px"></dc-import></span><span style="display:flex;align-items:center;padding:0 12px 0 8px;background:#6B5CB7;color:#FFFFFF;font:700 14px/1 Barlow,sans-serif">Astroturismo</span></span>
+        </div>
+      </div>
+    </div>
+    <div style="position:relative;border-radius:40px;overflow:hidden;min-height:560px;background:#DDE5E0 url('https://commons.wikimedia.org/wiki/Special:FilePath/Esteros_del_Iber%C3%A1%2C_Argentina.jpg?width=1400') center/cover no-repeat">
+      <div style="position:absolute;left:20px;top:20px;right:20px;display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <div style="background:#FFFFFF;border-radius:999px;padding:14px 22px;font:800 26px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">Mapa de reclamos</div>
+        <div style="display:flex;gap:6px">
+          <span style="height:40px;border-radius:999px;background:#FFFFFF;display:flex;align-items:center;gap:6px;padding:0 14px 0 10px;font:700 14px/1 Barlow,sans-serif"><span style="width:14px;height:14px;border-radius:999px;background:#FACD05;border:2px solid #111514"></span>Recibidos 14</span>
+          <span style="height:40px;border-radius:999px;background:#FFFFFF;display:flex;align-items:center;gap:6px;padding:0 14px 0 10px;font:700 14px/1 Barlow,sans-serif"><span style="width:14px;height:14px;border-radius:999px;background:#1F5D9B"></span>Derivados 8</span>
+          <span style="height:40px;border-radius:999px;background:#FFFFFF;display:flex;align-items:center;gap:6px;padding:0 14px 0 10px;font:700 14px/1 Barlow,sans-serif"><span style="width:14px;height:14px;border-radius:999px;background:#00B96C"></span>Resueltos 23</span>
+        </div>
+      </div>
+      <span style="position:absolute;left:180px;top:170px;width:44px;height:44px;border-radius:999px;background:#00B96C;border:3px solid #FFFFFF;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="basura" c="#003E25" k="#00B96C" s="22" hint-size="22px,22px"></dc-import></span>
+      <span style="position:absolute;left:420px;top:210px;width:44px;height:44px;border-radius:999px;background:#FACD05;border:3px solid #111514;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="fuego" c="#111514" k="#FACD05" s="22" hint-size="22px,22px"></dc-import></span>
+      <span style="position:absolute;left:300px;top:300px;width:56px;height:56px;border-radius:999px;background:#1F5D9B;border:4px solid #FFFFFF;outline:3px solid #111514;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="basura" c="#FFFFFF" k="#1F5D9B" hint-size="24px,24px"></dc-import></span>
+      <span style="position:absolute;left:560px;top:330px;width:44px;height:44px;border-radius:999px;background:#00B96C;border:3px solid #FFFFFF;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="gota" c="#003E25" k="#00B96C" s="22" hint-size="22px,22px"></dc-import></span>
+      <div style="position:absolute;left:20px;bottom:20px;width:380px;background:#FFFFFF;border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:12px">
+        <span style="display:inline-flex;height:32px;width:max-content;border-radius:999px;overflow:hidden"><span style="width:32px;display:flex;align-items:center;justify-content:center;background:#111514"><dc-import name="Icon" n="basura" c="#FFFFFF" k="#111514" s="18" hint-size="18px,18px"></dc-import></span><span style="display:flex;align-items:center;padding:0 10px 0 8px;background:#F68E13;color:#111514;font:700 14px/1 Barlow,sans-serif">Minibasural</span><span style="display:flex;align-items:center;padding:0 12px 0 10px;background:#1F5D9B;color:#FFFFFF;font:italic 700 14px/1 Barlow,sans-serif">Derivado</span></span>
+        <div style="font:800 24px/1.05 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">Descampado junto al arroyo</div>
+        <div style="font:400 15px/1.35 Barlow,sans-serif;color:#4A524E">Colonia Carlos Pellegrini · 12 sep · Derivado al municipio</div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="margin:16px 24px 24px;background:#111514;color:#FFFFFF;border-radius:40px;padding:40px 48px;display:flex;justify-content:space-between;align-items:flex-end;gap:32px">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="width:116px;height:64px;background:#00D58A;-webkit-mask:url(uploads/iso.svg) left center/contain no-repeat;mask:url(uploads/iso.svg) left center/contain no-repeat"></div>
+      <p style="margin:0;max-width:440px;font:400 15px/1.45 Barlow,sans-serif;color:#C9D0CC">Proyecto ciudadano de concientización ambiental. No oficial. Fotos: Wikimedia Commons (CC BY-SA).</p>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button style="height:52px;padding:0 22px;border:2px solid #FFFFFF;border-radius:999px;background:#111514;color:#FFFFFF;font:700 15px/1 Barlow,sans-serif" style-hover="background:#003E25">Material para docentes</button>
+      <button style="height:52px;padding:0 22px;border:none;border-radius:999px;background:#00D58A;color:#003E25;font:700 15px/1 Barlow,sans-serif" style-hover="background:#FFFFFF">Reportar incidente</button>
+    </div>
+  </footer>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const S = {
+      ok: { estado: 'Transitable', icon: 'check', ib: '#006B32', ic: '#FFFFFF', tb: '#00D58A', tc: '#003E25' },
+      barro: { estado: 'Ripio con barro', icon: 'alerta', ib: '#FAAE05', ic: '#111514', tb: '#FACD05', tc: '#111514' }
+    };
+    const P = [['Portal San Nicolás', 'ok'], ['Portal Carambola', 'ok'], ['Portal Cambyretá', 'ok'], ['Portal Laguna Iberá', 'ok'], ['Portal San Antonio', 'ok'], ['Portal Uguay', 'ok'], ['Portal Galarza', 'barro'], ['P. N. Mburucuyá', 'ok']];
+    return { portales: P.map(([name, s]) => ({ name, ...S[s] })) };
+  }
+}
+</script>
+</body>
+</html>

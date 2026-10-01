@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,600;0,700;1,700&amp;family=Barlow+Semi+Condensed:wght@800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F2F5F3;color:#111514;font-family:Barlow,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#006B32}
+a:hover{color:#003E25}
+:focus-visible{outline:3px solid #111514;outline-offset:3px}
+button{font-family:inherit;cursor:pointer}
+@keyframes pageIn{from{opacity:0;transform:perspective(1600px) rotateX(6deg) translateY(36px)}to{opacity:1;transform:none}}
+@keyframes cardIn{from{opacity:0;transform:perspective(1000px) rotateY(-14deg) translateY(28px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.6)}70%{opacity:1;transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-12px) rotate(8deg)}}
+@keyframes drift{from{transform:translateX(-18px)}to{transform:translateX(18px)}}
+@keyframes pulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(2.2);opacity:0}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column">
+
+<header style="position:sticky;top:0;z-index:50;background:#F2F5F3;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px">
+  <button onClick="{{ goInicio }}" aria-label="Inicio" style="border:none;background:none;padding:0;width:112px;height:60px"><span style="display:block;width:112px;height:60px;background:#006B32;-webkit-mask:url(uploads/iso.svg) left center/contain no-repeat;mask:url(uploads/iso.svg) left center/contain no-repeat"></span></button>
+  <nav style="position:relative;display:flex;gap:4px;background:#FFFFFF;border-radius:999px;padding:6px">
+    <span style="position:absolute;top:6px;left:{{ indLeft }}px;width:132px;height:48px;border-radius:999px;background:#003E25;transition:left .45s cubic-bezier(.3,1.4,.5,1)"></span>
+    <sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+      <button onClick="{{ n.onClick }}" style="position:relative;width:132px;height:48px;border:none;border-radius:999px;background:transparent;color:{{ n.color }};font:700 16px/1 Barlow,sans-serif;transition:color .3s">{{ n.label }}</button>
+    </sc-for>
+  </nav>
+  <button onClick="{{ goReportar }}" style="display:flex;align-items:center;gap:8px;height:56px;padding:0 24px 0 18px;border:none;border-radius:999px;background:#111514;color:#FFFFFF;font:700 16px/1 Barlow,sans-serif;transition:transform .2s,background .2s" style-hover="background:#003E25;transform:translateY(-2px)" style-active="transform:scale(.97)"><dc-import name="Icon" n="megafono" c="#00D58A" k="#111514" s="22" hint-size="22px,22px"></dc-import>Reportar incidente</button>
+</header>
+
+<main style="flex:1;width:100%;max-width:1440px;margin:0 auto;padding:0 32px">
+
+<!-- ================= INICIO ================= -->
+<sc-if value="{{ isInicio }}" hint-placeholder-val="{{ true }}">
+<div data-screen-label="Inicio" style="display:flex;flex-direction:column;gap:16px;animation:pageIn .6s cubic-bezier(.2,.7,.2,1) both">
+  <section onMouseMove="{{ onHeroMove }}" onMouseLeave="{{ onHeroLeave }}" style="display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px;min-height:620px">
+    <div style="background:#00D58A;border-radius:44px;padding:56px 52px 48px;display:flex;flex-direction:column;justify-content:space-between;gap:28px">
+      <span style="align-self:flex-start;background:#FFFFFF;color:#003E25;border-radius:999px;padding:10px 16px;font:600 15px/1 Barlow,sans-serif">Gran Parque Iberá · Corrientes</span>
+      <h1 style="margin:0;font:800 clamp(56px,6.4vw,92px)/0.9 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25;text-wrap:balance">El estero es de todos. Cuidarlo también.</h1>
+      <p style="margin:0;max-width:520px;font:400 20px/1.45 Barlow,sans-serif;color:#003E25;text-wrap:pretty">Conocé los portales, reportá lo que daña el agua y aprendé jugando. Para el aula y para quien visita la reserva.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button onClick="{{ goPortales }}" style="height:60px;padding:0 32px;border:none;border-radius:999px;background:#003E25;color:#FFFFFF;font:700 18px/1 Barlow,sans-serif;transition:transform .2s,background .2s" style-hover="background:#111514;transform:translateY(-2px)" style-active="transform:scale(.97)">Explorar portales</button>
+        <button onClick="{{ goJuegos }}" style="height:60px;padding:0 32px;border:2px solid #003E25;border-radius:999px;background:#00D58A;color:#003E25;font:700 18px/1 Barlow,sans-serif;transition:transform .2s,background .2s" style-hover="background:#FFFFFF;transform:translateY(-2px)" style-active="transform:scale(.97)">Jugar</button>
+      </div>
+    </div>
+    <div style="position:relative;border-radius:44px;background:#003E25;overflow:hidden;perspective:1200px;display:flex;align-items:center;justify-content:center">
+      <div style="position:relative;width:78%;height:74%;transform-style:preserve-3d;transform:{{ stackT }};transition:transform .25s ease-out">
+        <div style="position:absolute;inset:0;border-radius:32px;background:#006B32 {{ imgC }} center/cover no-repeat;transform:translateZ(-90px) translate(-12%,-10%) rotate(-6deg)"></div>
+        <div style="position:absolute;inset:0;border-radius:32px;background:#00B96C {{ imgB }} center/cover no-repeat;transform:translateZ(-30px) translate(10%,-4%) rotate(5deg)"></div>
+        <div style="position:absolute;inset:0;border-radius:32px;background:#00D58A {{ imgA }} center/cover no-repeat;transform:translateZ(40px)"></div>
+        <div style="position:absolute;left:-6%;bottom:8%;transform:translateZ(120px);background:#FFFFFF;border-radius:28px;padding:16px 20px;display:flex;align-items:center;gap:14px">
+          <span style="width:48px;height:48px;border-radius:999px;background:#00D58A;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="check" c="#003E25" k="#00D58A" hint-size="24px,24px"></dc-import></span>
+          <div style="display:flex;flex-direction:column;gap:4px"><span style="font:700 17px/1 Barlow,sans-serif;color:#003E25">23 reclamos resueltos</span><span style="font:400 14px/1 Barlow,sans-serif;color:#4A524E">últimos 30 días</span></div>
+        </div>
+        <div style="position:absolute;right:-4%;top:6%;transform:translateZ(90px);background:#111514;color:#FFFFFF;border-radius:999px;padding:12px 18px 12px 12px;display:flex;align-items:center;gap:10px;font:700 15px/1 Barlow,sans-serif"><dc-import name="Icon" n="pin" c="#00D58A" k="#111514" s="22" hint-size="22px,22px"></dc-import>8 portales abiertos</div>
+      </div>
+      <span style="position:absolute;right:20px;bottom:18px;background:#FFFFFF;color:#003E25;border-radius:999px;padding:8px 12px;font:600 12px/1 Barlow,sans-serif">Fotos: Wikimedia Commons</span>
+    </div>
+  </section>
+
+  <section style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:16px;perspective:1400px">
+    <button onClick="{{ goPortales }}" style="text-align:left;border:none;padding:12px;border-radius:40px;min-height:340px;background:#006B32 {{ imgB }} center/cover no-repeat;display:flex;align-items:flex-end;transition:transform .45s cubic-bezier(.2,.7,.2,1);animation:cardIn .7s .1s both" style-hover="transform:rotateX(4deg) rotateY(-5deg) translateY(-6px)">
+      <span style="background:#006B32;color:#FFFFFF;border-radius:30px;padding:24px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;width:100%">
+        <span style="display:flex;flex-direction:column;gap:8px"><span style="font:800 42px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Portales</span><span style="font:400 17px/1.4 Barlow,sans-serif">8 accesos al parque y el estado de sus caminos.</span></span>
+        <span style="width:56px;height:56px;flex:none;border-radius:999px;background:#00D58A;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="flecha" c="#003E25" s="26" hint-size="26px,26px"></dc-import></span>
+      </span>
+    </button>
+    <button onClick="{{ goReclamos }}" style="text-align:left;border:none;background:#111514;color:#FFFFFF;border-radius:40px;padding:32px;display:flex;flex-direction:column;justify-content:space-between;gap:24px;transition:transform .45s cubic-bezier(.2,.7,.2,1);animation:cardIn .7s .2s both" style-hover="transform:rotateX(4deg) rotateY(-5deg) translateY(-6px)">
+      <span style="width:60px;height:60px;border-radius:999px;background:#FACD05;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="megafono" c="#111514" k="#FACD05" s="30" hint-size="30px,30px"></dc-import></span>
+      <span style="display:flex;flex-direction:column;gap:8px"><span style="font:800 36px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Reclamos ambientales</span><span style="font:400 16px/1.4 Barlow,sans-serif;color:#C9D0CC">Minibasurales, lixiviados y quemas. Con foto, ubicación y seguimiento.</span></span>
+    </button>
+    <button onClick="{{ goJuegos }}" style="text-align:left;border:none;background:#00B96C;color:#003E25;border-radius:40px;padding:32px;display:flex;flex-direction:column;justify-content:space-between;gap:24px;transition:transform .45s cubic-bezier(.2,.7,.2,1);animation:cardIn .7s .3s both" style-hover="transform:rotateX(4deg) rotateY(-5deg) translateY(-6px)">
+      <span style="width:60px;height:60px;border-radius:999px;background:#FFFFFF;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="joystick" c="#003E25" k="#FFFFFF" s="30" hint-size="30px,30px"></dc-import></span>
+      <span style="display:flex;flex-direction:column;gap:8px"><span style="font:800 36px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Minijuegos</span><span style="font:400 16px/1.4 Barlow,sans-serif">Kayak, senderismo, astroturismo. 3 minutos, en el aula o en el estero.</span></span>
+    </button>
+  </section>
+
+  <section style="background:#006B32;border-radius:44px;padding:52px;display:grid;grid-template-columns:360px minmax(0,1fr);gap:48px">
+    <div style="display:flex;flex-direction:column;gap:16px;color:#FFFFFF">
+      <span style="width:64px;height:4px;border-radius:999px;background:#00D58A"></span>
+      <h2 style="margin:0;font:800 56px/0.95 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">Estado de caminos de acceso</h2>
+      <p style="margin:0;font:400 17px/1.45 Barlow,sans-serif;color:#E3E8E5">Actualizado hoy 08:40 por guardaparques. Tocá un portal para ver su ficha.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <sc-for list="{{ caminos }}" as="p" hint-placeholder-count="8">
+        <button onClick="{{ p.onOpen }}" style="border:none;text-align:left;background:#FFFFFF;border-radius:24px;padding:12px 12px 12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:transform .25s,background .25s;animation:cardIn .6s {{ p.delay }} both" style-hover="background:#F2F5F3;transform:translateX(6px)">
+          <span style="display:flex;align-items:center;gap:10px;font:700 17px/1.2 Barlow,sans-serif;color:#003E25"><dc-import name="Icon" n="pin" c="#006B32" k="#FFFFFF" s="22" hint-size="22px,22px"></dc-import>{{ p.full }}</span>
+          <span style="display:inline-flex;height:32px;width:max-content;border-radius:999px;overflow:hidden;flex:none"><span style="width:32px;display:flex;align-items:center;justify-content:center;background:{{ p.ib }}"><dc-import name="Icon" n="{{ p.eIcon }}" c="{{ p.ic }}" k="{{ p.ib }}" s="18" hint-size="18px,18px"></dc-import></span><span style="display:flex;align-items:center;padding:0 12px 0 8px;background:{{ p.tb }};color:{{ p.tc }};font:700 14px/1 Barlow,sans-serif;white-space:nowrap">{{ p.eLabel }}</span></span>
+        </button>
+      </sc-for>
+    </div>
+  </section>
+</div>
+</sc-if>
+
+<!-- ================= PORTALES ================= -->
+<sc-if value="{{ isPortales }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="Portales" style="display:flex;flex-direction:column;gap:24px;animation:pageIn .6s cubic-bezier(.2,.7,.2,1) both">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:16px 8px 0">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <h1 style="margin:0;font:800 80px/0.9 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">Portales</h1>
+      <p style="margin:0;font:400 19px/1.4 Barlow,sans-serif;color:#4A524E">8 accesos al Gran Parque Iberá. Pasá el cursor sobre una tarjeta para ver su problemática.</p>
+    </div>
+    <div style="display:flex;gap:6px;background:#FFFFFF;border-radius:999px;padding:6px">
+      <sc-for list="{{ filtrosP }}" as="f" hint-placeholder-count="3">
+        <button onClick="{{ f.onClick }}" style="height:44px;padding:0 18px;border:none;border-radius:999px;background:{{ f.bg }};color:{{ f.fg }};font:700 15px/1 Barlow,sans-serif;transition:background .25s">{{ f.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:16px;align-items:start">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px">
+      <sc-for list="{{ portalCards }}" as="c" hint-placeholder-count="8">
+        <div onMouseEnter="{{ c.onEnter }}" onMouseLeave="{{ c.onLeave }}" style="height:380px;perspective:1200px;animation:cardIn .6s {{ c.delay }} both">
+          <div style="position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.3,1.2,.4,1);transform:{{ c.flipT }}">
+            <div style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:36px;background:#FFFFFF;padding:10px;display:flex;flex-direction:column;gap:14px">
+              <div style="flex:1;border-radius:28px;background:#00B96C {{ c.img }} center/cover no-repeat"></div>
+              <div style="padding:0 10px 10px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;flex-direction:column;gap:4px"><span style="font:800 26px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">{{ c.name }}</span><span style="font:400 15px/1.2 Barlow,sans-serif;color:#4A524E">{{ c.loc }}</span></div>
+                <span style="display:inline-flex;height:32px;width:max-content;border-radius:999px;overflow:hidden"><span style="width:32px;display:flex;align-items:center;justify-content:center;background:{{ c.ib }}"><dc-import name="Icon" n="{{ c.eIcon }}" c="{{ c.ic }}" k="{{ c.ib }}" s="18" hint-size="18px,18px"></dc-import></span><span style="display:flex;align-items:center;padding:0 12px 0 8px;background:{{ c.tb }};color:{{ c.tc }};font:700 14px/1 Barlow,sans-serif;white-space:nowrap">{{ c.eLabel }}</span></span>
+              </div>
+            </div>
+            <div style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(180deg);border-radius:36px;background:#003E25;color:#FFFFFF;padding:28px;display:flex;flex-direction:column;justify-content:space-between;gap:16px">
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <span style="display:inline-flex;height:32px;width:max-content;border-radius:999px;overflow:hidden"><span style="width:32px;display:flex;align-items:center;justify-content:center;background:#111514"><dc-import name="Icon" n="{{ c.probIcon }}" c="#FFFFFF" k="#111514" s="18" hint-size="18px,18px"></dc-import></span><span style="display:flex;align-items:center;padding:0 12px 0 8px;background:#F68E13;color:#111514;font:700 14px/1 Barlow,sans-serif;white-space:nowrap">Problemática</span></span>
+                <span style="font:800 30px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">{{ c.prob }}</span>
+                <span style="font:400 15px/1.45 Barlow,sans-serif;color:#E3E8E5">{{ c.probTxt }}</span>
+              </div>
+              <button onClick="{{ c.onOpen }}" style="height:52px;border:none;border-radius:999px;background:#00D58A;color:#003E25;font:700 16px/1 Barlow,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .2s" style-hover="background:#FFFFFF">Ver ficha<dc-import name="Icon" n="flecha" c="#003E25" s="20" hint-size="20px,20px"></dc-import></button>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="position:sticky;top:104px;border-radius:40px;overflow:hidden;height:640px;background:#DDE5E0 {{ imgSat }} center/cover no-repeat">
+      <div style="position:absolute;left:16px;top:16px;background:#FFFFFF;border-radius:999px;padding:12px 18px;font:800 22px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">Mapa</div>
+      <sc-for list="{{ pins }}" as="p" hint-placeholder-count="8">
+        <button onClick="{{ p.onOpen }}" onMouseEnter="{{ p.onEnter }}" onMouseLeave="{{ p.onLeave }}" aria-label="{{ p.name }}" style="position:absolute;left:{{ p.x }}%;top:{{ p.y }}%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:999px;border:3px solid #FFFFFF;background:{{ p.bg }};color:{{ p.fg }};font:700 14px/1 Barlow,sans-serif;transform:{{ p.scale }};transition:transform .3s cubic-bezier(.3,1.6,.5,1),background .2s">{{ p.n }}</button>
+      </sc-for>
+      <span style="position:absolute;right:16px;bottom:16px;background:#FFFFFF;border-radius:999px;padding:8px 12px;font:400 12px/1 Barlow,sans-serif;color:#4A524E">Imagen satelital · INPE (CC BY-SA)</span>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= FICHA PORTAL ================= -->
+<sc-if value="{{ isPortal }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="Ficha de portal" style="display:flex;flex-direction:column;gap:16px;animation:pageIn .6s cubic-bezier(.2,.7,.2,1) both">
+  <section style="position:relative;height:540px;border-radius:44px;overflow:hidden;background:#00B96C {{ pImg }} center/cover no-repeat;display:flex;flex-direction:column;justify-content:space-between;padding:24px">
+    <div style="display:flex;justify-content:space-between">
+      <button onClick="{{ goPortales }}" style="height:52px;border:none;border-radius:999px;background:#FFFFFF;display:flex;align-items:center;gap:6px;padding:0 20px 0 12px;font:700 15px/1 Barlow,sans-serif;color:#003E25;transition:transform .2s" style-hover="transform:translateX(-4px)"><dc-import name="Icon" n="atras" c="#003E25" hint-size="24px,24px"></dc-import>Portales</button>
+      <button onClick="{{ toggleGuardar }}" style="height:52px;border:none;border-radius:999px;background:{{ gBg }};display:flex;align-items:center;gap:8px;padding:0 20px 0 14px;font:700 15px/1 Barlow,sans-serif;color:#003E25;transition:background .3s"><dc-import name="Icon" n="{{ gIcon }}" c="#003E25" k="{{ gBg }}" s="22" hint-size="22px,22px"></dc-import>{{ gLabel }}</button>
+    </div>
+    <div style="align-self:flex-start;background:#FFFFFF;border-radius:36px;padding:28px 32px;display:flex;flex-direction:column;gap:12px;max-width:640px;animation:pop .6s .2s both">
+      <span style="font:600 16px/1 Barlow,sans-serif;color:#006B32">{{ pLoc }}</span>
+      <h1 style="margin:0;font:800 68px/0.92 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">Portal {{ pName }}</h1>
+    </div>
+  </section>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:16px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="background:#FFFFFF;border-radius:36px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font:600 16px/1 Barlow,sans-serif;color:#4A524E">Estado del camino</span><span style="font:400 18px/1.4 Barlow,sans-serif">{{ pRuta }}</span></div>
+        <span style="display:inline-flex;height:40px;width:max-content;border-radius:999px;overflow:hidden"><span style="width:40px;display:flex;align-items:center;justify-content:center;background:{{ pIb }}"><dc-import name="Icon" n="{{ pEIcon }}" c="{{ pIc }}" k="{{ pIb }}" s="22" hint-size="22px,22px"></dc-import></span><span style="display:flex;align-items:center;padding:0 16px 0 10px;background:{{ pTb }};color:{{ pTc }};font:700 17px/1 Barlow,sans-serif;white-space:nowrap">{{ pELabel }}</span></span>
+      </div>
+      <div style="background:#FFFFFF;border-radius:36px;padding:28px 32px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;gap:6px;background:#F2F5F3;border-radius:999px;padding:6px;align-self:flex-start">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+            <button onClick="{{ t.onClick }}" style="height:44px;padding:0 20px;border:none;border-radius:999px;background:{{ t.bg }};color:{{ t.fg }};font:700 15px/1 Barlow,sans-serif;transition:background .25s,color .25s">{{ t.label }}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ tabDesc }}" hint-placeholder-val="{{ true }}">
+          <p style="margin:0;font:400 19px/1.55 Barlow,sans-serif;max-width:680px;text-wrap:pretty;animation:pageIn .45s both">{{ pDesc }}</p>
+        </sc-if>
+        <sc-if value="{{ tabAct }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+            <sc-for list="{{ actividades }}" as="a" hint-placeholder-count="3">
+              <div style="background:#F2F5F3;border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:18px;animation:cardIn .5s {{ a.delay }} both">
+                <span style="width:52px;height:52px;border-radius:999px;background:{{ a.bg }};display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="{{ a.icon }}" c="{{ a.fg }}" k="{{ a.bg }}" s="26" hint-size="26px,26px"></dc-import></span>
+                <span style="font:700 17px/1.3 Barlow,sans-serif">{{ a.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ tabAntes }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:10px;animation:pageIn .45s both">
+            <div style="display:flex;align-items:center;gap:12px;font:400 18px/1.4 Barlow,sans-serif"><dc-import name="Icon" n="info" c="#006B32" hint-size="24px,24px"></dc-import>Señal de celular limitada: guardá esta ficha antes de salir.</div>
+            <div style="display:flex;align-items:center;gap:12px;font:400 18px/1.4 Barlow,sans-serif"><dc-import name="Icon" n="basura" c="#006B32" hint-size="24px,24px"></dc-import>Llevá tus residuos de vuelta.</div>
+            <div style="display:flex;align-items:center;gap:12px;font:400 18px/1.4 Barlow,sans-serif"><dc-import name="Icon" n="fuego" c="#006B32" hint-size="24px,24px"></dc-import>No hagas fuego fuera de las áreas habilitadas.</div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="background:#003E25;color:#FFFFFF;border-radius:36px;padding:28px;display:flex;flex-direction:column;gap:14px">
+        <span style="display:inline-flex;height:32px;width:max-content;border-radius:999px;overflow:hidden"><span style="width:32px;display:flex;align-items:center;justify-content:center;background:#111514"><dc-import name="Icon" n="{{ pProbIcon }}" c="#FFFFFF" k="#111514" s="18" hint-size="18px,18px"></dc-import></span><span style="display:flex;align-items:center;padding:0 12px 0 8px;background:#F68E13;color:#111514;font:700 14px/1 Barlow,sans-serif;white-space:nowrap">Problemática de la zona</span></span>
+        <span style="font:800 34px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase">{{ pProb }}</span>
+        <p style="margin:0;font:400 16px/1.45 Barlow,sans-serif;color:#E3E8E5">{{ pProbTxt }}</p>
+        <div style="display:flex;flex-direction:column;gap:8px;padding-top:6px">
+          <button onClick="{{ goJuegos }}" style="height:56px;border:none;border-radius:999px;background:#00D58A;color:#003E25;font:700 16px/1 Barlow,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .2s,transform .2s" style-hover="background:#FFFFFF;transform:translateY(-2px)"><dc-import name="Icon" n="joystick" c="#003E25" k="#00D58A" s="22" hint-size="22px,22px"></dc-import>Jugar: {{ pJuego }}</button>
+          <button onClick="{{ goReportar }}" style="height:56px;border:2px solid #FFFFFF;border-radius:999px;background:#003E25;color:#FFFFFF;font:700 16px/1 Barlow,sans-serif;transition:background .2s" style-hover="background:#006B32">Reportar en esta zona</button>
+        </div>
+      </div>
+      <div style="position:relative;height:260px;border-radius:36px;overflow:hidden;background:#DDE5E0 {{ imgSat }} center/cover no-repeat">
+        <span style="position:absolute;left:{{ pX }}%;top:{{ pY }}%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:999px;background:#00D58A;animation:pulse 1.8s ease-out infinite"></span>
+        <span style="position:absolute;left:{{ pX }}%;top:{{ pY }}%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:999px;background:#00D58A;border:3px solid #FFFFFF"></span>
+        <span style="position:absolute;left:14px;bottom:14px;background:#FFFFFF;border-radius:999px;padding:10px 14px;font:700 14px/1 Barlow,sans-serif;color:#003E25">Cómo llegar</span>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= RECLAMOS ================= -->
+<sc-if value="{{ isReclamos }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="Reclamos" style="display:flex;flex-direction:column;gap:24px;animation:pageIn .6s cubic-bezier(.2,.7,.2,1) both">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:16px 8px 0">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <h1 style="margin:0;font:800 80px/0.9 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">Reclamos</h1>
+      <p style="margin:0;font:400 19px/1.4 Barlow,sans-serif;color:#4A524E">Todos los reportes ciudadanos y en qué estado están. Datos de ejemplo.</p>
+    </div>
+    <button onClick="{{ goReportar }}" style="height:60px;padding:0 28px 0 20px;border:none;border-radius:999px;background:#003E25;color:#FFFFFF;font:700 17px/1 Barlow,sans-serif;display:flex;align-items:center;gap:10px;transition:transform .2s,background .2s" style-hover="background:#111514;transform:translateY(-2px)"><dc-import name="Icon" n="camara" c="#00D58A" k="#003E25" hint-size="24px,24px"></dc-import>Nuevo reporte</button>
+  </div>
+  <div style="display:grid;grid-template-columns:420px minmax(0,1fr);gap:16px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <sc-for list="{{ filtrosR }}" as="f" hint-placeholder-count="4">
+          <button onClick="{{ f.onClick }}" style="height:44px;padding:0 16px 0 12px;border:2px solid {{ f.bd }};border-radius:999px;background:{{ f.bg }};color:{{ f.fg }};display:flex;align-items:center;gap:8px;font:700 14px/1 Barlow,sans-serif;transition:background .2s"><span style="width:14px;height:14px;border-radius:999px;background:{{ f.dot }};border:2px solid #FFFFFF"></span>{{ f.label }}</button>
+        </sc-for>
+      </div>
+      <sc-for list="{{ reclamos }}" as="r" hint-placeholder-count="5">
+        <button onClick="{{ r.onClick }}" style="border:2px solid {{ r.bd }};text-align:left;background:#FFFFFF;border-radius:28px;padding:16px;display:flex;flex-direction:column;gap:10px;transition:transform .25s,border-color .25s;animation:cardIn .5s {{ r.delay }} both" style-hover="transform:translateX(6px)">
+          <span style="display:inline-flex;height:32px;width:max-content;border-radius:999px;overflow:hidden"><span style="width:32px;display:flex;align-items:center;justify-content:center;background:#111514"><dc-import name="Icon" n="{{ r.tipo }}" c="#FFFFFF" k="#111514" s="18" hint-size="18px,18px"></dc-import></span><span style="display:flex;align-items:center;padding:0 10px 0 8px;background:{{ r.tBg }};color:{{ r.tFg }};font:700 14px/1 Barlow,sans-serif;white-space:nowrap">{{ r.tLabel }}</span><span style="display:flex;align-items:center;padding:0 12px 0 10px;background:{{ r.eBg }};color:{{ r.eFg }};font:italic 700 14px/1 Barlow,sans-serif;white-space:nowrap">{{ r.eLabel }}</span></span>
+          <span style="font:800 22px/1.05 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">{{ r.titulo }}</span>
+          <span style="font:400 14px/1.3 Barlow,sans-serif;color:#4A524E">{{ r.lugar }} · {{ r.fecha }}</span>
+        </button>
+      </sc-for>
+    </div>
+    <div style="position:sticky;top:104px;height:720px;border-radius:40px;overflow:hidden;background:#DDE5E0 {{ imgSat }} center/cover no-repeat">
+      <sc-for list="{{ reclamos }}" as="r" hint-placeholder-count="5">
+        <button onClick="{{ r.onClick }}" aria-label="{{ r.titulo }}" style="position:absolute;left:{{ r.x }}%;top:{{ r.y }}%;width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:999px;border:3px solid {{ r.mBd }};background:{{ r.eBg }};display:flex;align-items:center;justify-content:center;transform:{{ r.mScale }};transition:transform .35s cubic-bezier(.3,1.6,.5,1);animation:pop .5s {{ r.delay }} both"><dc-import name="Icon" n="{{ r.tipo }}" c="{{ r.eFg }}" k="{{ r.eBg }}" hint-size="24px,24px"></dc-import></button>
+      </sc-for>
+      <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;right:20px;bottom:20px;width:380px;background:#FFFFFF;border-radius:32px;padding:10px;display:flex;flex-direction:column;gap:14px;animation:pop .45s both">
+          <div style="height:170px;border-radius:24px;background:#E3E8E5 {{ sImg }} center/cover no-repeat"></div>
+          <div style="padding:0 12px 12px;display:flex;flex-direction:column;gap:12px">
+            <span style="font:800 26px/1.05 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">{{ sTitulo }}</span>
+            <span style="font:400 15px/1.35 Barlow,sans-serif;color:#4A524E">{{ sLugar }} · código {{ sCodigo }}</span>
+            <div style="display:flex;align-items:center;gap:6px">
+              <sc-for list="{{ sPasos }}" as="s" hint-placeholder-count="3">
+                <span style="flex:1;display:flex;flex-direction:column;gap:6px"><span style="height:8px;border-radius:999px;background:{{ s.bg }}"></span><span style="font:700 13px/1 Barlow,sans-serif;color:{{ s.fg }}">{{ s.label }}</span></span>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= REPORTAR ================= -->
+<sc-if value="{{ isReportar }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="Reportar" style="display:flex;flex-direction:column;gap:24px;animation:pageIn .6s cubic-bezier(.2,.7,.2,1) both;max-width:1040px;margin:0 auto;width:100%">
+  <sc-if value="{{ rForm }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:16px 8px 0">
+      <h1 style="margin:0;font:800 72px/0.9 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">Reportar un incidente</h1>
+      <span style="font:600 16px/1 Barlow,sans-serif;color:#4A524E;white-space:nowrap">Paso {{ rStepN }} de 3</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+      <sc-for list="{{ rBar }}" as="b" hint-placeholder-count="3">
+        <span style="height:10px;border-radius:999px;background:{{ b.bg }};transition:background .4s"></span>
+      </sc-for>
+    </div>
+    <div style="overflow:hidden;border-radius:40px">
+      <div style="display:flex;width:300%;transform:{{ rTrack }};transition:transform .6s cubic-bezier(.3,1,.4,1)">
+        <div style="width:33.3333%;padding:0 2px;display:flex;flex-direction:column;gap:16px">
+          <div style="background:#FFFFFF;border-radius:40px;padding:36px;display:flex;flex-direction:column;gap:20px">
+            <h2 style="margin:0;font:800 36px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">¿Qué encontraste?</h2>
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;perspective:1000px">
+              <sc-for list="{{ rTipos }}" as="t" hint-placeholder-count="3">
+                <button onClick="{{ t.onClick }}" style="text-align:left;border:3px solid {{ t.bd }};background:{{ t.bg }};border-radius:32px;padding:24px;display:flex;flex-direction:column;gap:40px;transform:{{ t.tf }};transition:transform .4s cubic-bezier(.3,1.4,.5,1),background .25s,border-color .25s">
+                  <span style="display:flex;justify-content:space-between;align-items:flex-start"><span style="width:60px;height:60px;border-radius:999px;background:#111514;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="{{ t.icon }}" c="#FFFFFF" k="#111514" s="30" hint-size="30px,30px"></dc-import></span><span style="width:30px;height:30px;border-radius:999px;border:2px solid #003E25;background:{{ t.dot }};transition:background .25s"></span></span>
+                  <span style="display:flex;flex-direction:column;gap:6px"><span style="font:800 26px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#111514">{{ t.label }}</span><span style="font:400 15px/1.35 Barlow,sans-serif;color:#4A524E">{{ t.hint }}</span></span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        <div style="width:33.3333%;padding:0 2px">
+          <div style="background:#FFFFFF;border-radius:40px;padding:36px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <h2 style="margin:0;font:800 30px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">Foto</h2>
+              <sc-if value="{{ rSinFoto }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ addFoto }}" style="height:300px;border-radius:32px;border:2px dashed #6B736F;background:#F2F5F3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;font:700 17px/1 Barlow,sans-serif;color:#003E25;transition:background .2s" style-hover="background:#E3E8E5"><dc-import name="Icon" n="camara" c="#003E25" k="#F2F5F3" s="40" hint-size="40px,40px"></dc-import>Subir o sacar foto<span style="font:400 14px/1 Barlow,sans-serif;color:#4A524E">Se comprime a 300 KB</span></button>
+              </sc-if>
+              <sc-if value="{{ rConFoto }}" hint-placeholder-val="{{ false }}">
+                <div style="position:relative;height:300px;border-radius:32px;background:#E3E8E5 {{ imgFoto }} center/cover no-repeat;animation:pop .45s both"><button onClick="{{ quitarFoto }}" style="position:absolute;right:12px;top:12px;height:40px;padding:0 14px;border:none;border-radius:999px;background:#FFFFFF;color:#003E25;font:700 14px/1 Barlow,sans-serif">Cambiar</button></div>
+              </sc-if>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <h2 style="margin:0;font:800 30px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">Ubicación</h2>
+              <div onClick="{{ onMapClick }}" style="position:relative;height:300px;border-radius:32px;overflow:hidden;cursor:crosshair;background:#DDE5E0 {{ imgSat }} center/cover no-repeat">
+                <span style="position:absolute;left:{{ pinX }}%;top:{{ pinY }}%;margin:-40px 0 0 -20px;transition:left .35s cubic-bezier(.3,1.4,.5,1),top .35s cubic-bezier(.3,1.4,.5,1)"><dc-import name="Icon" n="pin" c="#00D58A" k="#003E25" s="40" hint-size="40px,40px"></dc-import></span>
+                <span style="position:absolute;left:12px;bottom:12px;background:#FFFFFF;border-radius:999px;padding:10px 14px;font:700 14px/1 Barlow,sans-serif;color:#003E25">Tocá el mapa para mover el punto</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="width:33.3333%;padding:0 2px">
+          <div style="background:#FFFFFF;border-radius:40px;padding:36px;display:flex;flex-direction:column;gap:18px">
+            <h2 style="margin:0;font:800 36px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">Revisá y enviá</h2>
+            <span style="display:inline-flex;height:40px;width:max-content;border-radius:999px;overflow:hidden"><span style="width:40px;display:flex;align-items:center;justify-content:center;background:#111514"><dc-import name="Icon" n="{{ rSelIcon }}" c="#FFFFFF" k="#111514" s="22" hint-size="22px,22px"></dc-import></span><span style="display:flex;align-items:center;padding:0 16px 0 10px;background:{{ rSelBg }};color:{{ rSelFg }};font:700 17px/1 Barlow,sans-serif">{{ rSelLabel }}</span></span>
+            <div style="min-height:120px;border-radius:28px;border:2px solid #6B736F;padding:18px 20px;font:400 17px/1.4 Barlow,sans-serif;color:#6B736F">Contanos qué ves (opcional)</div>
+            <span style="font:400 15px/1.4 Barlow,sans-serif;color:#4A524E">No hace falta cuenta. Si no hay señal, el reporte se guarda y se envía solo.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;gap:12px">
+      <button onClick="{{ rBack }}" style="height:60px;padding:0 28px;border:2px solid #003E25;border-radius:999px;background:#F2F5F3;color:#003E25;font:700 17px/1 Barlow,sans-serif;transition:background .2s" style-hover="background:#FFFFFF">{{ rBackLabel }}</button>
+      <button onClick="{{ rNext }}" style="height:60px;padding:0 36px;border:none;border-radius:999px;background:#003E25;color:#FFFFFF;font:700 17px/1 Barlow,sans-serif;transition:transform .2s,background .2s" style-hover="background:#111514;transform:translateY(-2px)">{{ rNextLabel }}</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ rEnviado }}" hint-placeholder-val="{{ false }}">
+    <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:16px;padding-top:16px">
+      <div style="background:#00D58A;border-radius:44px;padding:48px;display:flex;flex-direction:column;gap:20px">
+        <span style="width:96px;height:96px;border-radius:999px;background:#003E25;display:flex;align-items:center;justify-content:center;animation:pop .7s .1s both"><dc-import name="Icon" n="check" c="#00D58A" k="#003E25" s="52" hint-size="52px,52px"></dc-import></span>
+        <h1 style="margin:0;font:800 72px/0.9 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">Recibimos tu reporte</h1>
+        <p style="margin:0;font:400 19px/1.45 Barlow,sans-serif;color:#003E25;max-width:460px">Guardá el código para seguirlo. Te avisamos cuando cambie de estado.</p>
+        <span style="align-self:flex-start;background:#FFFFFF;border-radius:999px;padding:16px 24px;font:700 28px/1 Barlow,sans-serif;color:#003E25">IB-0427</span>
+      </div>
+      <div style="background:#FFFFFF;border-radius:44px;padding:40px;display:flex;flex-direction:column;gap:24px">
+        <span style="display:inline-flex;height:40px;width:max-content;border-radius:999px;overflow:hidden;animation:pop .5s .5s both"><span style="width:40px;display:flex;align-items:center;justify-content:center;background:#111514"><dc-import name="Icon" n="{{ rSelIcon }}" c="#FFFFFF" k="#111514" s="22" hint-size="22px,22px"></dc-import></span><span style="display:flex;align-items:center;padding:0 12px 0 10px;background:{{ rSelBg }};color:{{ rSelFg }};font:700 17px/1 Barlow,sans-serif">{{ rSelLabel }}</span><span style="display:flex;align-items:center;padding:0 16px 0 12px;background:#FACD05;color:#111514;font:italic 700 17px/1 Barlow,sans-serif">Recibido</span></span>
+        <div style="display:flex;flex-direction:column">
+          <div style="display:flex;gap:16px"><div style="display:flex;flex-direction:column;align-items:center"><span style="width:36px;height:36px;border-radius:999px;background:#FACD05;display:flex;align-items:center;justify-content:center"><dc-import name="Icon" n="bandeja" c="#111514" k="#FACD05" s="20" hint-size="20px,20px"></dc-import></span><span style="width:3px;height:40px;background:#E3E8E5"></span></div><div style="display:flex;flex-direction:column;gap:4px;padding-top:6px"><span style="font:700 18px/1 Barlow,sans-serif">Recibido</span><span style="font:400 14px/1 Barlow,sans-serif;color:#4A524E">Hoy</span></div></div>
+          <div style="display:flex;gap:16px"><div style="display:flex;flex-direction:column;align-items:center"><span style="width:36px;height:36px;border-radius:999px;border:3px solid #E3E8E5"></span><span style="width:3px;height:40px;background:#E3E8E5"></span></div><div style="padding-top:8px;font:600 18px/1 Barlow,sans-serif;color:#6B736F">Derivado al área responsable</div></div>
+          <div style="display:flex;gap:16px"><span style="width:36px;height:36px;border-radius:999px;border:3px solid #E3E8E5"></span><div style="padding-top:8px;font:600 18px/1 Barlow,sans-serif;color:#6B736F">Resuelto</div></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:auto">
+          <button onClick="{{ goReclamos }}" style="flex:1;height:56px;border:none;border-radius:999px;background:#003E25;color:#FFFFFF;font:700 16px/1 Barlow,sans-serif">Ver en el mapa</button>
+          <button onClick="{{ rReset }}" style="flex:1;height:56px;border:2px solid #003E25;border-radius:999px;background:#FFFFFF;color:#003E25;font:700 16px/1 Barlow,sans-serif">Otro reporte</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- ================= MINIJUEGOS ================= -->
+<sc-if value="{{ isJuegos }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="Minijuegos" style="display:flex;flex-direction:column;gap:24px;animation:pageIn .6s cubic-bezier(.2,.7,.2,1) both">
+  <div style="display:flex;flex-direction:column;gap:10px;padding:16px 8px 0">
+    <h1 style="margin:0;font:800 80px/0.9 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">Minijuegos</h1>
+    <p style="margin:0;font:400 19px/1.4 Barlow,sans-serif;color:#4A524E">Actividades reales del Iberá, cada una ligada a un portal y a una problemática.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;perspective:1400px">
+    <sc-for list="{{ juegos }}" as="j" hint-placeholder-count="4">
+      <div style="background:#FFFFFF;border-radius:40px;padding:10px;display:flex;flex-direction:column;gap:16px;transition:transform .45s cubic-bezier(.2,.7,.2,1);animation:cardIn .6s {{ j.delay }} both" style-hover="transform:rotateX(5deg) rotateY(-6deg) translateY(-8px)">
+        <div style="height:280px;border-radius:32px;background:{{ j.bgc }} {{ j.img }} center/cover no-repeat;padding:12px">
+          <span style="display:inline-flex;height:32px;width:max-content;border-radius:999px;overflow:hidden"><span style="width:32px;display:flex;align-items:center;justify-content:center;background:#111514"><dc-import name="Icon" n="{{ j.icon }}" c="#FFFFFF" k="#111514" s="18" hint-size="18px,18px"></dc-import></span><span style="display:flex;align-items:center;padding:0 12px 0 8px;background:{{ j.catBg }};color:{{ j.catFg }};font:700 14px/1 Barlow,sans-serif;white-space:nowrap">{{ j.cat }}</span></span>
+        </div>
+        <div style="padding:0 14px 14px;display:flex;flex-direction:column;gap:12px;flex:1">
+          <span style="font:800 30px/1 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">{{ j.title }}</span>
+          <span style="font:400 15px/1.35 Barlow,sans-serif;color:#4A524E">Portal {{ j.portal }} · {{ j.prob }}</span>
+          <button onClick="{{ j.onPlay }}" disabled="{{ j.disabled }}" style="margin-top:auto;height:52px;border:none;border-radius:999px;background:{{ j.btnBg }};color:{{ j.btnFg }};font:700 16px/1 Barlow,sans-serif;cursor:{{ j.cursor }};transition:background .2s">{{ j.btn }}</button>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<!-- ================= JUEGO ================= -->
+<sc-if value="{{ isJuego }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="Juego Canales limpios" style="display:flex;flex-direction:column;gap:16px;animation:pageIn .6s cubic-bezier(.2,.7,.2,1) both">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:8px">
+    <button onClick="{{ goJuegos }}" style="height:52px;border:none;border-radius:999px;background:#FFFFFF;display:flex;align-items:center;gap:6px;padding:0 20px 0 12px;font:700 15px/1 Barlow,sans-serif;color:#003E25"><dc-import name="Icon" n="atras" c="#003E25" hint-size="24px,24px"></dc-import>Minijuegos</button>
+    <div style="display:flex;gap:8px">
+      <span style="height:52px;border-radius:999px;background:#FFFFFF;display:flex;align-items:center;gap:8px;padding:0 20px 0 14px;font:700 18px/1 Barlow,sans-serif;color:#003E25"><dc-import name="Icon" n="reloj" c="#003E25" hint-size="24px,24px"></dc-import>{{ gT }} s</span>
+      <span style="height:52px;border-radius:999px;background:#003E25;display:flex;align-items:center;gap:8px;padding:0 20px 0 14px;font:700 18px/1 Barlow,sans-serif;color:#FFFFFF"><dc-import name="Icon" n="basura" c="#00D58A" k="#003E25" hint-size="24px,24px"></dc-import>{{ gScore }} / 10</span>
+    </div>
+  </div>
+  <div style="position:relative;height:600px;border-radius:44px;overflow:hidden;background:#006B32 {{ imgA }} center/cover no-repeat">
+    <sc-for list="{{ gItems }}" as="it" hint-placeholder-count="0">
+      <span style="position:absolute;left:{{ it.x }}%;top:{{ it.y }}%;animation:drift {{ it.dd }} ease-in-out infinite alternate">
+        <button onClick="{{ it.onClick }}" aria-label="Recolectar residuo" style="width:64px;height:64px;border-radius:999px;border:3px solid #FFFFFF;background:#F68E13;display:flex;align-items:center;justify-content:center;animation:bob {{ it.db }} ease-in-out infinite;transition:transform .15s" style-hover="transform:scale(1.12)"><dc-import name="Icon" n="{{ it.icon }}" c="#111514" k="#F68E13" s="30" hint-size="30px,30px"></dc-import></button>
+      </span>
+    </sc-for>
+    <sc-if value="{{ gIntro }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px">
+        <div style="background:#FFFFFF;border-radius:40px;padding:40px;max-width:560px;display:flex;flex-direction:column;gap:18px;animation:pop .5s both">
+          <span style="display:inline-flex;height:32px;width:max-content;border-radius:999px;overflow:hidden"><span style="width:32px;display:flex;align-items:center;justify-content:center;background:#111514"><dc-import name="Icon" n="kayak" c="#FFFFFF" k="#111514" s="18" hint-size="18px,18px"></dc-import></span><span style="display:flex;align-items:center;padding:0 12px 0 8px;background:#90B4E1;color:#111514;font:700 14px/1 Barlow,sans-serif">Kayak · Portal Laguna Iberá</span></span>
+          <h1 style="margin:0;font:800 60px/0.9 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">Canales limpios</h1>
+          <p style="margin:0;font:400 18px/1.45 Barlow,sans-serif;color:#4A524E">Salís en kayak con el guardaparque. Tocá los residuos que flotan antes de que se los lleve la corriente. Tenés 20 segundos.</p>
+          <button onClick="{{ gStart }}" style="height:60px;border:none;border-radius:999px;background:#003E25;color:#FFFFFF;font:700 18px/1 Barlow,sans-serif;transition:transform .2s" style-hover="transform:translateY(-2px)">Empezar</button>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ gEnd }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px">
+        <div style="background:#FFFFFF;border-radius:40px;padding:40px;max-width:620px;display:flex;flex-direction:column;gap:18px;animation:pop .5s both">
+          <span style="font:800 96px/0.85 'Barlow Semi Condensed',sans-serif;color:#00B96C">{{ gScore }}/10</span>
+          <h2 style="margin:0;font:800 44px/0.95 'Barlow Semi Condensed',sans-serif;text-transform:uppercase;color:#003E25">{{ gTitle }}</h2>
+          <p style="margin:0;font:400 18px/1.45 Barlow,sans-serif;color:#4A524E">Mañana va a haber más: el problema no está en el canal, está río arriba, en el basural del pueblo. Recolectar no alcanza.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button onClick="{{ gStart }}" style="height:56px;padding:0 24px;border:2px solid #003E25;border-radius:999px;background:#FFFFFF;color:#003E25;font:700 16px/1 Barlow,sans-serif">Jugar otra vez</button>
+            <button onClick="{{ goLaguna }}" style="height:56px;padding:0 24px;border:none;border-radius:999px;background:#00D58A;color:#003E25;font:700 16px/1 Barlow,sans-serif">Ver el portal</button>
+            <button onClick="{{ goReportar }}" style="height:56px;padding:0 24px;border:none;border-radius:999px;background:#003E25;color:#FFFFFF;font:700 16px/1 Barlow,sans-serif">Reportar un basural</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+
+</main>
+
+<footer style="margin:32px;background:#111514;color:#FFFFFF;border-radius:44px;padding:40px 48px;display:flex;justify-content:space-between;align-items:flex-end;gap:32px">
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div style="width:116px;height:64px;background:#00D58A;-webkit-mask:url(uploads/iso.svg) left center/contain no-repeat;mask:url(uploads/iso.svg) left center/contain no-repeat"></div>
+    <p style="margin:0;max-width:460px;font:400 15px/1.45 Barlow,sans-serif;color:#C9D0CC">Proyecto ciudadano de concientización ambiental. No oficial. Fotos: Wikimedia Commons (CC BY-SA). Datos de ejemplo.</p>
+  </div>
+  <div style="display:flex;gap:10px">
+    <button onClick="{{ goJuegos }}" style="height:52px;padding:0 22px;border:2px solid #FFFFFF;border-radius:999px;background:#111514;color:#FFFFFF;font:700 15px/1 Barlow,sans-serif" style-hover="background:#003E25">Material para docentes</button>
+    <button onClick="{{ goReportar }}" style="height:52px;padding:0 22px;border:none;border-radius:999px;background:#00D58A;color:#003E25;font:700 15px/1 Barlow,sans-serif" style-hover="background:#FFFFFF">Reportar incidente</button>
+  </div>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { page: 'inicio', portal: 'laguna', flip: null, hover: null, fP: 'todos', rx: 0, ry: 0, tab: 'desc', guardado: false,
+    fR: 'todos', sel: 'r3', rStep: 0, rTipo: 'basura', rFoto: false, pin: { x: 48, y: 52 }, rEnviado: false,
+    g: 'intro', gT: 20, items: [], score: 0 };
+
+  static U(n) { return "url('https://commons.wikimedia.org/wiki/Special:FilePath/" + encodeURIComponent(n.replace(/ /g, '_')) + "?width=1100')"; }
+
+  static E = {
+    ok: { eLabel: 'Transitable', eIcon: 'check', ib: '#006B32', ic: '#FFFFFF', tb: '#00D58A', tc: '#003E25' },
+    barro: { eLabel: 'Ripio con barro', eIcon: 'alerta', ib: '#FAAE05', ic: '#111514', tb: '#FACD05', tc: '#111514' },
+    x4: { eLabel: 'Solo 4×4', eIcon: 'auto4x4', ib: '#F68E13', ic: '#111514', tb: '#FFD9A8', tc: '#111514' }
+  };
+
+  static P = [
+    { id: 'laguna', name: 'Laguna Iberá', loc: 'Colonia Carlos Pellegrini', est: 'ok', x: 52, y: 58, ruta: 'RP 40 desde Mercedes · 120 km de ripio', img: 'Esteros_del_Ibera_Laguna.JPG', prob: 'Residuos sólidos urbanos', probIcon: 'basura', probTxt: 'En temporada alta llegan visitantes todos los días. Lo que no se recolecta termina en los canales.', juego: 'Canales limpios', desc: 'El portal más visitado del sistema. El pueblo y la laguna comparten orilla: lo que pasa en uno llega al otro.' },
+    { id: 'cambyreta', name: 'Cambyretá', loc: 'Ituzaingó', est: 'ok', x: 70, y: 24, ruta: 'Desde Ituzaingó · camino de tierra', img: 'Esteros Del Ibera, Corrientes, Argentina, 2nd. Jan 2011 - Flickr - PhillipC (4).jpg', prob: 'Incendios', probIcon: 'fuego', probTxt: 'Las quemas de pastizales avanzan con la sequía. En 2022 el fuego afectó una porción enorme de la reserva.', juego: 'Voces de la noche', desc: 'Puerta norte del parque, entre palmares y esteros abiertos.' },
+    { id: 'sannicolas', name: 'San Nicolás', loc: 'Ituzaingó', est: 'x4', x: 62, y: 34, ruta: 'Tramo final de arena · solo 4×4', img: 'Urupe, Esteros Del Ibera, Corrientes, Argentina, 2nd. Jan 2011 - Flickr - PhillipC.jpg', prob: 'Lixiviados', probIcon: 'gota', probTxt: 'El líquido que se filtra de la basura acumulada viaja bajo tierra hasta el agua.', juego: 'Señales del agua', desc: 'Uno de los portales más aislados, con lagunas de agua muy clara.' },
+    { id: 'uguay', name: 'Uguay', loc: 'Villa Olivari', est: 'ok', x: 46, y: 20, ruta: 'Desde RN 12 · camino de tierra', img: 'Avifauna_en_los_esteros_del_Iberá,_cormoranes.JPG', prob: 'Residuos sólidos urbanos', probIcon: 'basura', probTxt: 'Los residuos de pesca y camping quedan en la costa y llegan al agua con la crecida.', juego: 'Canales limpios', desc: 'Acceso por el norte, con avistaje de aves acuáticas.' },
+    { id: 'galarza', name: 'Galarza', loc: 'Gdor. Virasoro', est: 'barro', x: 84, y: 42, ruta: 'RP 41 · ripio con barro tras lluvias', img: 'Yacaré_-_Esteros_del_Iberá_-_Argentina_02.jpg', prob: 'Incendios', probIcon: 'fuego', probTxt: 'Zona afectada por los incendios de 2022. La fauna todavía se está recuperando.', juego: 'Voces de la noche', desc: 'Portal del este, el más cercano a Misiones.' },
+    { id: 'carambola', name: 'Carambola', loc: 'Concepción', est: 'ok', x: 28, y: 48, ruta: 'Desde Concepción · ripio', img: 'Gubernatrix cristata - Yellow cardinal (male); Iberá marshes, Corrientes, Argentina.jpg', prob: 'Contaminación lumínica', probIcon: 'estrella', probTxt: 'La luz artificial de los pueblos cercanos apaga el cielo nocturno y desorienta a la fauna.', juego: 'Cielo oscuro', desc: 'Portal del oeste, con senderos de monte y cielo muy oscuro.' },
+    { id: 'sanantonio', name: 'San Antonio', loc: 'Concepción', est: 'ok', x: 38, y: 36, ruta: 'Camino vecinal · tierra', img: 'Yacare con flor (26389548324).jpg', prob: 'Lixiviados', probIcon: 'gota', probTxt: 'Basurales cercanos a cursos de agua contaminan lagunas y peces.', juego: 'Señales del agua', desc: 'Pequeño portal ligado a la comunidad local.' },
+    { id: 'mburucuya', name: 'P. N. Mburucuyá', loc: 'Mburucuyá', est: 'ok', x: 14, y: 74, ruta: 'RP 86 · ripio', img: 'Esteros_Ibera_Caiman_Yacare.jpg', prob: 'Residuos sólidos urbanos', probIcon: 'basura', probTxt: 'El crecimiento del turismo exige separar y retirar los residuos del parque.', juego: 'Canales limpios', desc: 'Parque nacional vecino, con bosques, palmares y esteros.' }
+  ];
+
+  static T = {
+    basura: { label: 'Minibasural', hint: 'Residuos acumulados a cielo abierto', color: '#F68E13', fg: '#111514' },
+    gota: { label: 'Foco de lixiviados', hint: 'Agua turbia u oscura cerca de basura', color: '#008275', fg: '#FFFFFF' },
+    fuego: { label: 'Quema', hint: 'Humo o fuego en pastizales o basura', color: '#6F0603', fg: '#FFFFFF' }
+  };
+  static ES = {
+    rec: { label: 'Recibido', bg: '#FACD05', fg: '#111514', mBd: '#111514', n: 0 },
+    der: { label: 'Derivado', bg: '#1F5D9B', fg: '#FFFFFF', mBd: '#FFFFFF', n: 1 },
+    res: { label: 'Resuelto', bg: '#00B96C', fg: '#003E25', mBd: '#FFFFFF', n: 2 }
+  };
+  static R = [
+    { id: 'r1', tipo: 'basura', est: 'res', titulo: 'Bolsas en la costanera', lugar: 'Colonia Carlos Pellegrini', fecha: '2 sep', x: 50, y: 60, img: 'Esteros_del_Ibera_Laguna.JPG' },
+    { id: 'r2', tipo: 'fuego', est: 'rec', titulo: 'Humo en pastizal', lugar: 'Portal Galarza', fecha: 'hoy', x: 80, y: 38, img: 'Yacaré_-_Esteros_del_Iberá_-_Argentina_02.jpg' },
+    { id: 'r3', tipo: 'basura', est: 'der', titulo: 'Descampado junto al arroyo', lugar: 'Colonia Carlos Pellegrini', fecha: '12 sep', x: 56, y: 52, img: 'Urupe, Esteros Del Ibera, Corrientes, Argentina, 2nd. Jan 2011 - Flickr - PhillipC.jpg' },
+    { id: 'r4', tipo: 'gota', est: 'der', titulo: 'Agua oscura cerca del basural', lugar: 'San Antonio', fecha: '9 sep', x: 38, y: 40, img: 'Yacare con flor (26389548324).jpg' },
+    { id: 'r5', tipo: 'gota', est: 'res', titulo: 'Filtración en canal', lugar: 'San Nicolás', fecha: '28 ago', x: 64, y: 30, img: 'Esteros Del Ibera, Corrientes, Argentina, 2nd. Jan 2011 - Flickr - PhillipC (4).jpg' },
+    { id: 'r6', tipo: 'basura', est: 'rec', titulo: 'Restos de camping', lugar: 'Portal Uguay', fecha: 'ayer', x: 44, y: 22, img: 'Avifauna_en_los_esteros_del_Iberá,_cormoranes.JPG' },
+    { id: 'r7', tipo: 'fuego', est: 'res', titulo: 'Quema de residuos', lugar: 'Carambola', fecha: '20 ago', x: 26, y: 54, img: 'Gubernatrix cristata - Yellow cardinal (male); Iberá marshes, Corrientes, Argentina.jpg' }
+  ];
+
+  componentWillUnmount() { clearInterval(this.timer); cancelAnimationFrame(this.raf); }
+  go(page, extra) { clearInterval(this.timer); this.setState({ page, flip: null, ...(extra || {}) }); try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {} }
+
+  startGame() {
+    clearInterval(this.timer);
+    const icons = ['basura', 'gota', 'basura', 'basura', 'gota', 'basura', 'basura', 'gota', 'basura', 'basura'];
+    const items = icons.map((icon, i) => ({ id: i, icon, x: 6 + Math.random() * 82, y: 10 + Math.random() * 74, dd: (2.5 + Math.random() * 3).toFixed(2) + 's', db: (1.6 + Math.random() * 1.6).toFixed(2) + 's' }));
+    this.setState({ g: 'play', gT: 20, items, score: 0 });
+    this.timer = setInterval(() => {
+      this.setState(s => {
+        if (s.g !== 'play') return null;
+        if (s.gT <= 1) { clearInterval(this.timer); return { gT: 0, g: 'end' }; }
+        return { gT: s.gT - 1 };
+      });
+    }, 1000);
+  }
+  collect(id) {
+    this.setState(s => {
+      const items = s.items.filter(it => it.id !== id), score = s.score + 1;
+      if (!items.length) { clearInterval(this.timer); return { items, score, g: 'end' }; }
+      return { items, score };
+    });
+  }
+
+  renderVals() {
+    const s = this.state, C = Component, U = C.U;
+    const navIdx = { inicio: 0, portales: 1, portal: 1, reclamos: 2, reportar: 2, juegos: 3, juego: 3 }[s.page];
+    const nav = [['Inicio', 'inicio'], ['Portales', 'portales'], ['Reclamos', 'reclamos'], ['Minijuegos', 'juegos']].map(([label, p], i) => ({ label, color: i === navIdx ? '#FFFFFF' : '#003E25', onClick: () => this.go(p) }));
+    const open = id => () => this.go('portal', { portal: id, tab: 'desc', guardado: false });
+    const withE = p => ({ ...p, ...C.E[p.est], full: (p.id === 'mburucuya' ? 'Parque Nacional Mburucuyá' : 'Portal ' + p.name) });
+    const P = C.P.map(withE);
+    const pf = P.filter(p => s.fP === 'todos' || (s.fP === 'ok' ? p.est === 'ok' : p.est !== 'ok'));
+    const cur = withE(C.P.find(p => p.id === s.portal) || C.P[0]);
+
+    const tipoSel = C.T[s.rTipo];
+    const rf = C.R.filter(r => s.fR === 'todos' || r.est === s.fR);
+    const selR = C.R.find(r => r.id === s.sel && rf.includes(r));
+    const counts = { rec: 14, der: 8, res: 23 };
+    const actsBy = { basura: ['kayak', 'Kayak y lancha por la laguna'], gota: ['montana', 'Senderos de observación'], fuego: ['ojo', 'Avistaje de fauna'], estrella: ['estrella', 'Observación del cielo nocturno'] };
+    const actList = [actsBy[cur.probIcon] || actsBy.basura, ['montana', 'Senderos del centro de visitantes'], ['estrella', 'Observación del cielo nocturno']];
+    const actCol = [['#90B4E1', '#111514'], ['#00D58A', '#003E25'], ['#111514', '#FFFFFF']];
+
+    return {
+      nav, indLeft: 6 + navIdx * 136,
+      isInicio: s.page === 'inicio', isPortales: s.page === 'portales', isPortal: s.page === 'portal', isReclamos: s.page === 'reclamos', isReportar: s.page === 'reportar', isJuegos: s.page === 'juegos', isJuego: s.page === 'juego',
+      goInicio: () => this.go('inicio'), goPortales: () => this.go('portales'), goReclamos: () => this.go('reclamos'), goJuegos: () => this.go('juegos'),
+      goReportar: () => this.go('reportar', { rStep: 0, rEnviado: false }), goLaguna: open('laguna'),
+      imgA: U('Esteros_del_Ibera_Laguna.JPG'), imgB: U('Esteros Del Ibera, Corrientes, Argentina, 2nd. Jan 2011 - Flickr - PhillipC (4).jpg'), imgC: U('Avifauna_en_los_esteros_del_Iberá,_cormoranes.JPG'),
+      imgSat: U('Esteros del Iberá, Argentina.jpg'), imgFoto: U('Urupe, Esteros Del Ibera, Corrientes, Argentina, 2nd. Jan 2011 - Flickr - PhillipC.jpg'),
+      onHeroMove: e => { const r = e.currentTarget.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5; cancelAnimationFrame(this.raf); this.raf = requestAnimationFrame(() => this.setState({ rx: -y * 14, ry: x * 18 })); },
+      onHeroLeave: () => this.setState({ rx: 0, ry: 0 }),
+      stackT: `rotateX(${s.rx.toFixed(2)}deg) rotateY(${s.ry.toFixed(2)}deg)`,
+      caminos: P.map((p, i) => ({ ...p, onOpen: open(p.id), delay: (i * 0.05).toFixed(2) + 's' })),
+
+      filtrosP: [['Todos', 'todos'], ['Transitables', 'ok'], ['Con precaución', 'prec']].map(([label, id]) => ({ label, bg: s.fP === id ? '#003E25' : '#FFFFFF', fg: s.fP === id ? '#FFFFFF' : '#003E25', onClick: () => this.setState({ fP: id }) })),
+      portalCards: pf.map((p, i) => ({ ...p, img: U(p.img), delay: (i * 0.06).toFixed(2) + 's', flipT: s.flip === p.id ? 'rotateY(180deg)' : 'rotateY(0deg)', onEnter: () => this.setState({ flip: p.id, hover: p.id }), onLeave: () => this.setState({ flip: null, hover: null }), onOpen: open(p.id) })),
+      pins: P.map((p, i) => ({ ...p, n: i + 1, bg: s.hover === p.id ? '#00D58A' : '#003E25', fg: s.hover === p.id ? '#003E25' : '#FFFFFF', scale: s.hover === p.id ? 'scale(1.35)' : 'scale(1)', onOpen: open(p.id), onEnter: () => this.setState({ hover: p.id }), onLeave: () => this.setState({ hover: null }) })),
+
+      pName: cur.name, pLoc: cur.loc, pRuta: cur.ruta, pImg: U(cur.img), pDesc: cur.desc, pProb: cur.prob, pProbIcon: cur.probIcon, pProbTxt: cur.probTxt, pJuego: cur.juego, pX: cur.x, pY: cur.y,
+      pIb: cur.ib, pIc: cur.ic, pTb: cur.tb, pTc: cur.tc, pEIcon: cur.eIcon, pELabel: cur.eLabel,
+      gBg: s.guardado ? '#00D58A' : '#FFFFFF', gIcon: s.guardado ? 'check' : 'descarga', gLabel: s.guardado ? 'Guardado sin conexión' : 'Guardar sin conexión',
+      toggleGuardar: () => this.setState({ guardado: !s.guardado }),
+      tabs: [['desc', 'Descripción'], ['act', 'Actividades'], ['antes', 'Antes de ir']].map(([id, label]) => ({ label, bg: s.tab === id ? '#003E25' : 'transparent', fg: s.tab === id ? '#FFFFFF' : '#003E25', onClick: () => this.setState({ tab: id }) })),
+      tabDesc: s.tab === 'desc', tabAct: s.tab === 'act', tabAntes: s.tab === 'antes',
+      actividades: actList.map(([icon, label], i) => ({ icon, label, bg: actCol[i][0], fg: actCol[i][1], delay: (i * 0.08).toFixed(2) + 's' })),
+
+      filtrosR: [['Todos', 'todos', '#6B736F'], ['Recibidos ' + counts.rec, 'rec', '#FACD05'], ['Derivados ' + counts.der, 'der', '#1F5D9B'], ['Resueltos ' + counts.res, 'res', '#00B96C']].map(([label, id, dot]) => ({ label, dot, bg: s.fR === id ? '#003E25' : '#FFFFFF', fg: s.fR === id ? '#FFFFFF' : '#111514', bd: s.fR === id ? '#003E25' : '#FFFFFF', onClick: () => this.setState({ fR: id }) })),
+      reclamos: rf.map((r, i) => { const t = C.T[r.tipo], e = C.ES[r.est], on = r.id === s.sel; return { ...r, tLabel: t.label, tBg: t.color, tFg: t.fg, eLabel: e.label, eBg: e.bg, eFg: e.fg, mBd: on ? '#111514' : e.mBd, bd: on ? '#003E25' : '#FFFFFF', mScale: on ? 'scale(1.3)' : 'scale(1)', delay: (i * 0.05).toFixed(2) + 's', onClick: () => this.setState({ sel: r.id }) }; }),
+      hasSel: !!selR,
+      sTitulo: selR ? selR.titulo : '', sLugar: selR ? selR.lugar : '', sCodigo: selR ? 'IB-04' + selR.id.slice(1).padStart(2, '0') : '', sImg: selR ? U(selR.img) : 'none',
+      sPasos: ['Recibido', 'Derivado', 'Resuelto'].map((label, i) => { const n = selR ? C.ES[selR.est].n : -1, on = i <= n, col = [C.ES.rec.bg, C.ES.der.bg, C.ES.res.bg][i]; return { label, bg: on ? col : '#E3E8E5', fg: on ? '#111514' : '#6B736F' }; }),
+
+      rForm: !s.rEnviado, rEnviado: s.rEnviado, rStepN: s.rStep + 1,
+      rBar: [0, 1, 2].map(i => ({ bg: i <= s.rStep ? '#00B96C' : '#FFFFFF' })),
+      rTrack: `translateX(-${(s.rStep * 33.3333).toFixed(4)}%)`,
+      rTipos: Object.entries(C.T).map(([id, t]) => { const on = s.rTipo === id; return { ...t, icon: id, bg: on ? '#00D58A' : '#F2F5F3', bd: on ? '#003E25' : '#F2F5F3', dot: on ? '#003E25' : '#FFFFFF', tf: on ? 'rotateX(6deg) translateY(-6px)' : 'none', onClick: () => this.setState({ rTipo: id }) }; }),
+      rSinFoto: !s.rFoto, rConFoto: s.rFoto, addFoto: () => this.setState({ rFoto: true }), quitarFoto: () => this.setState({ rFoto: false }),
+      onMapClick: e => { const r = e.currentTarget.getBoundingClientRect(); this.setState({ pin: { x: (e.clientX - r.left) / r.width * 100, y: (e.clientY - r.top) / r.height * 100 } }); },
+      pinX: s.pin.x.toFixed(1), pinY: s.pin.y.toFixed(1),
+      rSelIcon: s.rTipo, rSelLabel: tipoSel.label, rSelBg: tipoSel.color, rSelFg: tipoSel.fg,
+      rBackLabel: s.rStep === 0 ? 'Cancelar' : 'Atrás',
+      rBack: () => s.rStep === 0 ? this.go('reclamos') : this.setState({ rStep: s.rStep - 1 }),
+      rNextLabel: s.rStep === 2 ? 'Enviar reporte' : 'Siguiente',
+      rNext: () => s.rStep === 2 ? this.setState({ rEnviado: true }) : this.setState({ rStep: s.rStep + 1 }),
+      rReset: () => this.setState({ rEnviado: false, rStep: 0, rFoto: false }),
+
+      juegos: [
+        { title: 'Canales limpios', cat: 'Kayak', icon: 'kayak', catBg: '#90B4E1', catFg: '#111514', portal: 'Laguna Iberá', prob: 'Residuos', img: U('Yacare con flor (26389548324).jpg'), bgc: '#00B96C', play: true },
+        { title: 'Señales del agua', cat: 'Senderismo', icon: 'montana', catBg: '#00D58A', catFg: '#003E25', portal: 'San Antonio', prob: 'Lixiviados', img: U('Gubernatrix cristata - Yellow cardinal (male); Iberá marshes, Corrientes, Argentina.jpg'), bgc: '#00B96C' },
+        { title: 'Cielo oscuro', cat: 'Astroturismo', icon: 'estrella', catBg: '#6B5CB7', catFg: '#FFFFFF', portal: 'Carambola', prob: 'Contaminación lumínica', img: 'none', bgc: '#111514' },
+        { title: 'Voces de la noche', cat: 'Avistaje', icon: 'ojo', catBg: '#F68E13', catFg: '#111514', portal: 'Galarza', prob: 'Fauna tras el fuego', img: U('Yacaré_-_Esteros_del_Iberá_-_Argentina_02.jpg'), bgc: '#003E25' }
+      ].map((j, i) => ({ ...j, delay: (i * 0.08).toFixed(2) + 's', btn: j.play ? 'Jugar' : 'Próximamente', btnBg: j.play ? '#003E25' : '#E3E8E5', btnFg: j.play ? '#FFFFFF' : '#4A524E', cursor: j.play ? 'pointer' : 'not-allowed', disabled: !j.play, onPlay: () => j.play && this.go('juego', { g: 'intro', items: [], score: 0, gT: 20 }) })),
+
+      gT: s.gT, gScore: s.score, gIntro: s.g === 'intro', gEnd: s.g === 'end',
+      gTitle: s.score >= 10 ? '¡Canal limpio!' : s.score >= 6 ? 'Buen trabajo' : 'La corriente ganó esta vez',
+      gItems: s.g === 'play' ? s.items.map(it => ({ ...it, onClick: () => this.collect(it.id) })) : [],
+      gStart: () => this.startGame()
+    };
+  }
+}
+</script>
+</body>
+</html>
