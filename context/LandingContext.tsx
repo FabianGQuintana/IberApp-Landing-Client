@@ -10,7 +10,7 @@ interface LandingState {
   portalId: string;
   /** Selects a portal and, by default, scrolls to the sheet (v6: `openPortal`) */
   openPortal: (id: string, options?: { scroll?: boolean }) => void;
-  /** Game shown in "Aprender jugando" (v6: `game`) */
+  /** Game shown in "Aprender jugando" (v6: `game`). Team pact: the games themselves are redesigned, not copied from v6 (guide §10); this selection contract stays. */
   gameId: GameId;
   /** Selects a game and scrolls to the games section (v6: `goJuegoCur`) */
   openGame: (id: GameId, options?: { scroll?: boolean }) => void;

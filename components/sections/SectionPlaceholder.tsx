@@ -15,6 +15,7 @@ interface SectionPlaceholderProps {
 
 // TEMPORARY (phase 1): keeps v6's ids, tones and heights so the header, menu and band can be built
 // and tested against real scroll positions. Phase 2 replaces each one with the real section.
+// "Aprender jugando" is the exception to "match v6": when it is built, its minigames are redesigned (guide §10).
 export function SectionPlaceholder({ id, tone, label, title, heightClass, image, surface = "bg" }: SectionPlaceholderProps) {
   const photo = tone === "photo";
   return (
