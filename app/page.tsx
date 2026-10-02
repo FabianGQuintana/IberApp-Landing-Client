@@ -1,5 +1,7 @@
 import { Footer } from "@/components/layout/Footer";
 import { SiteChrome } from "@/components/layout/SiteChrome";
+import { CustomCursor } from "@/components/motion/CustomCursor";
+import { ScrollMotion } from "@/components/motion/ScrollMotion";
 import { ConnectedByWater } from "@/components/sections/ConnectedByWater";
 import { Ecosystem } from "@/components/sections/Ecosystem";
 import { Fragility } from "@/components/sections/Fragility";
@@ -15,11 +17,13 @@ import { LandingProvider } from "@/context/LandingContext";
 import { SECTION_IDS } from "@/lib/data/copy";
 
 // Ibera Landing v6, section by section and in the same order.
-// Placeholders: Aprender jugando and Reportar (phase 4: interactive).
+// Placeholders: Aprender jugando and Reportar (phase 4: interactive). Scroll choreography lives in <ScrollMotion /> and <CustomCursor />.
 export default function LandingPage() {
   return (
     <LandingProvider>
       <SiteChrome />
+      <ScrollMotion />
+      <CustomCursor />
       <main>
         <Hero />
         <ConnectedByWater />

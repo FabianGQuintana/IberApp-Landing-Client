@@ -32,6 +32,7 @@
 - **Fase 1 completa.** Header, menú móvil, tema, franja “Caminos hoy” y footer iguales a v6.
 - **Fase 2 completa.** Secciones de contenido iguales a v6.
 - **Fase 3 completa.** Territorio y el mapa de la ficha con MapLibre. 10 de las 12 secciones implementadas; siguen provisorias Aprender jugando y Reportar (fase 4).
+- **Fase 5 completa.** Coreografía de scroll de v6: parallax, mapa sticky por scroll, ondulación, sanación y cursor. La fase 4 (juegos y reporte) queda pendiente por decisión del equipo: los juegos no serán necesariamente como los de la landing.
 
 Archivos del prototipo que **no** se implementan: `Ibera Prototipo`, `Ibera Mockup`, `Ibera Escritorio`, `Ibera Landing v2`–`v5` e `Ibera Landing`. `Ibera Sistema Visual` y `Icon` quedan como referencia de íconos.
 
@@ -230,20 +231,20 @@ Datos fijos: `BOUNDS = [[-58.0692, -28.6549], [-56.6969, -27.8572]]`, `PELLEGRIN
 
 | Efecto | Marca en v6 | Implementación |
 | --- | --- | --- |
-| Parallax de portada | `data-hero-img`, `data-hero-txt`, `data-hero-meta` | `useParallax` (rAF + ref) |
+| Parallax de portada | `data-hero-img`, `data-hero-txt`, `data-hero-meta` | `<ScrollMotion />` (un único listener + rAF, escribe por DOM) ✅ |
 | Revelado al entrar | `data-rv` (opacidad + 28 px, 1,2 s) | `<Reveal>` con IntersectionObserver, `rootMargin: 0 0 -12% 0` |
 | Líneas que suben | `data-lines` / `data-line` (escalonado 0,12 s) | `<Reveal lines>` |
-| Parallax de imágenes | `data-par`, `data-drift` | `useParallax` |
+| Parallax de imágenes | `data-par`, `data-drift` | `<ScrollMotion />` (collage de la ficha, títulos de Pausa y Cierre) ✅ |
 | Texto iluminado | `data-litsec`, `data-w` | `<LitText>` con progreso de sección |
-| Recorte al entrar | `data-reveal` (`clip-path: inset`) | Hook de progreso por elemento |
-| Mapa por scroll | `secP(#territorio)` → `mapIdx` 0–7 | `useScrollProgress` + `camera()` |
-| Ondulación y oscurecido | `#ibera-ripple`, `data-dim`, `data-dimsec` | Filtro SVG + progreso |
-| Sanación | `data-heal` (escala de grises a color) | Progreso por elemento |
+| Recorte al entrar | `data-reveal` (`clip-path: inset`) | `<ScrollMotion />` (Pausa) ✅ |
+| Mapa por scroll | `secP(#territorio)` → `mapIdx` 0–7 | `Territory`: `useScrollFrame` + `sectionProgress`; sección de 300vh con escenario sticky; la cámara sigue al portal del scroll, y un pin o “Ver todo” la toman manualmente ✅ |
+| Ondulación y oscurecido | `#ibera-ripple`, `data-dim`, `data-dimsec` | Filtro SVG en `Fragility`, 850 ms una vez por entrada ✅ |
+| Sanación | `data-heal` (escala de grises a color) | `<ScrollMotion />` (Cierre) ✅ |
 | Tono del header | `data-tone` | `useActiveSection` |
 | Sección activa del menú | ids `territorio`, `portales`, `ecosistema`, `jugar` | `useActiveSection` |
 | Ficha activa (Ecosistema / Fragilidad) | `data-fauna`, `data-frag` | `useActiveSection` por ítem |
-| Carrusel | `onRailScroll`, `data-card`, `data-cimg`, `data-railbar` | Listener del carrusel + ref |
-| Cursor personalizado | `cursorRef`, `data-cursor` | `<CustomCursor>` (solo puntero fino) |
+| Carrusel | `onRailScroll`, `data-card`, `data-cimg`, `data-railbar` | `PortalsRail`: parallax por tarjeta, brillo, leyenda y transición al abrir ✅ |
+| Cursor personalizado | `cursorRef`, `data-cursor` | `<CustomCursor />` delegado por `data-cursor` (carrusel y galería); solo puntero fino y sin reduced-motion ✅ |
 
 ---
 
@@ -307,7 +308,7 @@ Rama de trabajo: `feat/landing-v6`. Cada fase termina con lint, build y Playwrig
 | **2 · Secciones de contenido** ✅ | Portada (entrada animada), Conectado por el agua (texto iluminado), Caminos, Pausa, Carrusel de portales, Ficha con galería, lightbox y “Antes de ir”, Ecosistema y Fragilidad (ficha activa por scroll), Cierre; `LandingContext` (portal y juego elegidos) | Comparación lado a lado con v6 de 12 escenarios en 1440 y 390 px; 19 tests en verde | `feat(sections): build v6 content sections` |
 | **3 · Mapas** ✅ | `MapView` (MapLibre diferido, marcadores HTML por `project()`, tratamiento del raster por tema, estados y reintento), Territorio (pines, etiquetas, tarjeta, zoom, reiniciar, brújula, escala, leyenda, intro, tira de portales en celular), mapa de la ficha; worker de MapLibre servido desde `public/` | Comparación lado a lado con v6 en 1440 y 390 px; 26 tests en verde (incluye fallo de teselas) | `feat(map): territory and portal sheet maps` |
 | 4 · Interactivos | 4 juegos, asistente de reporte con foto y GPS reales, panel de reclamos, `useOffline` | Flujos E2E en verde | `feat(play,report): games and report wizard` |
-| 5 · Coreografía | Parallax, iluminado, mapa sticky por scroll, ondulación, sanación, cursor, carrusel con parallax, reduced-motion | Comparación visual con v6 en escritorio y celular | `feat(motion): scroll choreography from v6` |
+| **5 · Coreografía** ✅ | Parallax, iluminado, mapa sticky por scroll, ondulación, sanación, cursor, carrusel con parallax, reduced-motion | Comparación visual con v6 en escritorio y celular; 36 tests en verde (10 nuevos en `motion.spec.ts`) | `feat(motion): scroll choreography from v6` |
 | 6 · Producción | Postgres + Drizzle, bucket, Server Action, Serwist, imágenes de reemplazo, deploy en Railway | Reporte sin señal que llega al volver la conexión; Lighthouse móvil ≥ 90 | `feat(api): persist reports and offline queue` |
 
 ---

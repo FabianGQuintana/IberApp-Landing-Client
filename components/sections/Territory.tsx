@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { sectionProgress, useScrollFrame } from "@/hooks/useScrollFrame";
 import { MapView, type MapApi, type MapStatus } from "@/components/map/MapView";
 import { Dot } from "@/components/ui/Controls";
 import { scrollToSection, useLanding } from "@/context/LandingContext";
@@ -17,8 +18,9 @@ const SPRING = "cubic-bezier(.3,1.2,.4,1)";
 const SCALE_STEPS_KM = [2, 5, 10, 20, 25, 50, 100];
 
 // "Territorio" (v6 #territorio): satellite map of the 8 portals with the active portal card.
-// Phase 3: portals are picked with the pins (and the name strip below 1024 px).
-// Phase 5 adds the 300vh sticky version where scrolling flies through the portals.
+// Desktop (≥ 1024 px): 300vh section with a sticky 100dvh stage. Scrolling flies the camera through the 8 portals
+// (v6: index = floor(clamp((progress − .12) / .8) × 8)); picking a pin or hovering still takes over.
+// Below 1024 px the map is a plain block and portals are picked with the pins or the name strip.
 export function Territory() {
   const { openPortal } = useLanding();
   const isDesktop = useIsDesktop();
@@ -34,11 +36,19 @@ export function Territory() {
   const [hovered, setHovered] = useState<string | null>(null);
   const [introStage, setIntroStage] = useState(0);
   const [shownPins, setShownPins] = useState(0);
+  // Desktop scroll choreography: portal under the scroll position, whether the camera follows it, manual "see all"
+  const [scrollIndex, setScrollIndex] = useState(0);
+  const [following, setFollowing] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+  const progressBar = useRef<HTMLSpanElement>(null);
+  const cameraKey = useRef<string | null>(null);
+  const lastIndex = useRef(0);
 
   const ready = status === "ready";
   const introDone = introStage >= 4;
   const hoveredIndex = !narrow && hovered ? PORTALS.findIndex((p) => p.id === hovered) : -1;
-  const active = hoveredIndex >= 0 ? hoveredIndex : (picked ?? 0);
+  const focusIndex = picked ?? scrollIndex;
+  const active = hoveredIndex >= 0 ? hoveredIndex : focusIndex;
 
   // Intro (v6 runIntro): 4 stages 380 ms apart, then pins appear one by one; starts when the section is in view.
   useEffect(() => {
@@ -70,6 +80,41 @@ export function Territory() {
     };
   }, []);
 
+  useScrollFrame(() => {
+    const el = section.current;
+    if (!el) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!window.matchMedia("(min-width: 1024px)").matches || reduce) {
+      setFollowing(false);
+      return;
+    }
+    const p = sectionProgress(el);
+    if (progressBar.current) progressBar.current.style.transform = `scaleX(${p.toFixed(3)})`;
+    const idx = Math.min(PORTALS.length - 1, Math.floor(Math.max(0, Math.min(0.999, (p - 0.12) / 0.8)) * PORTALS.length));
+    setFollowing(p > 0.1 && p < 0.96);
+    if (idx !== lastIndex.current) {
+      lastIndex.current = idx;
+      // Moving to another portal by scrolling drops any manual pick or "see all" (v6)
+      setScrollIndex(idx);
+      setPicked(null);
+      setShowAll(false);
+    }
+  });
+
+  // Camera (v6 focusKey/camera): follow the portal under the scroll, or the pick; otherwise frame the whole park.
+  const cameraWanted = showAll ? "all" : picked !== null || (following && !narrow) ? `p${focusIndex}` : "all";
+  useEffect(() => {
+    if (!ready || (introStage < 1 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
+    if (cameraKey.current === cameraWanted) return;
+    const first = cameraKey.current === null;
+    cameraKey.current = cameraWanted;
+    if (cameraWanted === "all") {
+      if (!first) api.current?.fitAll();
+    } else {
+      api.current?.flyTo(PORTALS[Number(cameraWanted.slice(1))], { zoomOffset: narrow ? 1 : 1.3 });
+    }
+  }, [cameraWanted, ready, introStage, narrow]);
+
   const updateScale = () => {
     const mpp = api.current?.metersPerPixel();
     if (!mpp || !scaleBar.current || !scaleText.current) return;
@@ -80,17 +125,21 @@ export function Territory() {
 
   const pick = (i: number) => {
     setPicked(i);
+    setShowAll(false);
     setHovered(null);
+    cameraKey.current = `p${i}`;
     api.current?.flyTo(PORTALS[i], { zoomOffset: narrow ? 1 : 1.3 });
   };
   const resetView = () => {
     setPicked(null);
+    setShowAll(true);
+    cameraKey.current = "all";
     api.current?.fitAll();
   };
 
   return (
-    <section ref={section} id={SECTION_IDS.territory} data-tone="photo" aria-label="Territorio" className="relative overflow-clip bg-night text-white lg:h-dvh lg:min-h-[640px]">
-      <div className="flex flex-col gap-8 px-[clamp(24px,4vw,64px)] pb-[clamp(72px,12vw,96px)] pt-[112px] lg:h-full lg:flex-row lg:py-0">
+    <section ref={section} id={SECTION_IDS.territory} data-tone="photo" aria-label="Territorio" className="relative overflow-clip bg-night text-white lg:h-[300vh]">
+      <div className="relative flex flex-col gap-8 px-[clamp(24px,4vw,64px)] pb-[clamp(72px,12vw,96px)] pt-[112px] lg:sticky lg:top-0 lg:h-dvh lg:min-h-[640px] lg:flex-row lg:py-0">
         {/* Text column (desktop) — its children join the column flow below 1024 px (display: contents) */}
         <div className="pointer-events-none relative z-[3] contents lg:flex lg:h-full lg:w-[min(28vw,380px)] lg:flex-none lg:flex-col lg:justify-between lg:gap-8 lg:pb-12 lg:pt-[140px]">
           <div className="pointer-events-auto order-0 flex flex-col gap-6">
@@ -127,6 +176,9 @@ export function Territory() {
 
           {/* Active portal card */}
           <div className="pointer-events-auto relative order-3 grid w-[min(100%,420px)] rounded-[12px] border border-white/10 bg-[rgba(12,20,16,.55)] px-6 py-5 shadow-[inset_0_1px_rgba(255,255,255,.05)] backdrop-blur-[18px] backdrop-saturate-[1.2] lg:w-full">
+            <span aria-hidden="true" className="pointer-events-none absolute inset-x-6 top-0 hidden h-px overflow-hidden bg-white/10 lg:block">
+              <span ref={progressBar} className="block h-full w-full origin-left bg-mint" style={{ transform: "scaleX(0)" }} />
+            </span>
             {PORTALS.map((p, i) => (
               <PortalCard key={p.id} portal={p} index={i} active={i === active} onOpen={() => openPortal(p.id)} />
             ))}

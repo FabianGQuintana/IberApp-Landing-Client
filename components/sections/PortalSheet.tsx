@@ -122,6 +122,7 @@ export function PortalSheet() {
                 <button
                   key={portal.id + i}
                   type="button"
+                  data-cursor={current ? "Abrir" : i > index ? "Siguiente" : "Anterior"}
                   aria-label={current ? "Abrir en pantalla completa" : `Ir a la foto ${i + 1}`}
                   onClick={() => {
                     if (dragged.current) return;
@@ -184,9 +185,9 @@ export function PortalSheet() {
             </Reveal>
 
             <div className="grid grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] grid-rows-[auto_auto] gap-4">
-              <CollagePhoto image={portal.collage[0]} className="row-span-2 min-h-[340px]" />
-              <CollagePhoto image={portal.collage[1]} className="aspect-[4/3]" />
-              <CollagePhoto image={portal.collage[2]} className="aspect-[4/3]" />
+              <CollagePhoto image={portal.collage[0]} par={3} className="row-span-2 min-h-[340px]" />
+              <CollagePhoto image={portal.collage[1]} par={-2} className="aspect-[4/3]" />
+              <CollagePhoto image={portal.collage[2]} par={2} className="aspect-[4/3]" />
             </div>
 
             <Reveal className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,190px),1fr))] gap-x-8 gap-y-12">
@@ -243,10 +244,11 @@ export function PortalSheet() {
   );
 }
 
-function CollagePhoto({ image, className }: { image: keyof typeof IMAGES; className: string }) {
+// `par` is the drift amplitude in % (v6 data-par: 3, -2, 2); <ScrollMotion /> animates it.
+function CollagePhoto({ image, par, className }: { image: keyof typeof IMAGES; par: number; className: string }) {
   return (
     <div className={`relative overflow-hidden rounded-[2px] bg-[#002E1D] ${className}`}>
-      <div data-par="" className="absolute inset-x-0 -inset-y-[8%]">
+      <div data-par={par} className="absolute inset-x-0 -inset-y-[8%] will-change-transform">
         <Image src={IMAGES[image].src} alt={IMAGES[image].alt} fill sizes="(min-width: 1024px) 30vw, 50vw" className="object-cover" />
       </div>
     </div>
