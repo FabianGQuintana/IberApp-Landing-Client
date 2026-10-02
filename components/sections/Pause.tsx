@@ -2,12 +2,12 @@ import Image from "next/image";
 import { IMAGES } from "@/lib/data/images";
 
 // "Pausa" from Ibera Landing v6: full-bleed photo between the access list and the portals.
-// The clip-path reveal and text drift arrive in phase 5; this is the final (fully revealed) state.
+// <ScrollMotion /> opens the clip-path (data-reveal) and drifts the title (data-drift) with the scroll.
 export function Pause() {
   return (
     <section data-tone="surface" aria-label="Pausa" className="bg-page pb-[clamp(48px,6vw,96px)]">
       <div data-reveal="" className="relative h-[clamp(420px,92vh,960px)] overflow-hidden rounded-[2px] bg-[#002E1D]">
-        <div data-reveal-img="" className="absolute inset-x-0 -inset-y-[6%]">
+        <div data-reveal-img="" className="absolute inset-x-0 -inset-y-[6%] will-change-transform">
           <Image src={IMAGES.cormorants.src} alt={IMAGES.cormorants.alt} fill sizes="100vw" className="object-cover" />
         </div>
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,16,14,0)_55%,rgba(11,16,14,.55)_100%)]" />

@@ -1,5 +1,10 @@
 import type { Game, WasteItem, WaterSign } from "@/types/game";
 
+// TEAM PACT (docs/GUIA_IMPLEMENTACION.md, sections 1 and 10): the minigames are NOT replicated from landing v6.
+// v6's mechanics are reference only; the team wants to build something better. What stays is this contract
+// (ids, title, meta, description and linked portal), which the portal sheet, Fragility, the games index and LandingContext rely on.
+// The per-mechanic data from v6 (WASTE_ITEMS, WATER_SIGNS...) is provisional and may be replaced or deleted.
+
 // Source: `GAMES`, `G1`, `G2`, `STARS`, `BARS` and the night-voices options in Ibera Landing v6.
 
 export const GAMES: Game[] = [

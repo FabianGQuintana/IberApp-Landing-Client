@@ -227,6 +227,12 @@
   }
 }
 
+/* Custom "Ver" cursor: hide the native one only where CustomCursor is active (fine pointer, no reduced motion) */
+html[data-custom-cursor="on"] [data-cursor],
+html[data-custom-cursor="on"] [data-cursor] * {
+  cursor: none;
+}
+
 /* MapLibre markers: no default styles */
 .maplibregl-marker {
   line-height: 1;

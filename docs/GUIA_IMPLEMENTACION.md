@@ -1,7 +1,11 @@
 # IberAPP — Guía de implementación de la Landing v6
 
-> Versión 2.0 · 1 de octubre de 2026 · Reemplaza la versión 1.0, que tomaba como base `Ibera Prototipo`.
+> Versión 2.1 · 2 de octubre de 2026 · Reemplaza la versión 1.0, que tomaba como base `Ibera Prototipo`.
 > **Objetivo único:** que la app quede igual a `docs/prototipo/Esteros del Iberá_ Plataforma ambiental/Ibera Landing v6.dc.html`, en Next.js 16 y en todos los anchos (360–1440 px y más).
+>
+> ### ⚠️ Decisión pactada: los minijuegos NO se hacen como en v6
+>
+> **Excepción única a la regla de “paridad con v6”.** La sección **Aprender jugando** (`#jugar`) conserva la *estructura* de v6 (lugar en la página, índice de cuatro temas, vínculo con los portales y las amenazas), pero **las mecánicas de los cuatro minijuegos de v6 son solo una referencia de inspiración, no una especificación.** El equipo quiere hacer algo **mejor** que lo que muestra el prototipo. Quien continúe el desarrollo **no debe replicar los juegos de v6 tal cual**; el detalle de qué se conserva y qué queda libre está en la [sección 10](#10-minijuegos). Esta decisión también afecta la fase 4 y sus criterios de cierre (secciones 12 y 13).
 
 ## Índice
 
@@ -25,13 +29,14 @@
 ## 1. Objetivo y estado
 
 - **La app es una sola página** (`/`), igual que v6: una landing narrativa con anclas, no un sitio de varias rutas.
-- **Paridad visual y funcional** con v6: mismo orden de secciones, textos, tipografía, colores (tema oscuro por defecto y claro), mapas, juegos e interacciones.
+- **Paridad visual y funcional** con v6: mismo orden de secciones, textos, tipografía, colores (tema oscuro por defecto y claro), mapas e interacciones. **Excepción pactada: los minijuegos** (sección 10), que se rediseñan y no copian la mecánica de v6.
 - **Lo simulado en v6 se vuelve real**: foto, GPS, código de seguimiento y detección de conexión (sección 9).
 - **v6 ya es responsive.** Se validó con Playwright: 0 errores y 0 px de scroll horizontal en 1440 y 390 px.
 - **Fase 0 completa** (rama `feat/landing-v6`). Se retiró el código del Prototipo, los datos quedaron alineados 1:1 con v6 y la base visual está lista.
 - **Fase 1 completa.** Header, menú móvil, tema, franja “Caminos hoy” y footer iguales a v6.
 - **Fase 2 completa.** Secciones de contenido iguales a v6.
 - **Fase 3 completa.** Territorio y el mapa de la ficha con MapLibre. 10 de las 12 secciones implementadas; siguen provisorias Aprender jugando y Reportar (fase 4).
+- **Fase 5 completa.** Coreografía de scroll de v6: parallax, mapa sticky por scroll, ondulación, sanación y cursor. La fase 4 (juegos y reporte) queda pendiente. **Pacto del equipo: los minijuegos no se replican como en v6; se rediseñan para ser mejores** (sección 10). El asistente de reporte sí sigue la paridad con v6.
 
 Archivos del prototipo que **no** se implementan: `Ibera Prototipo`, `Ibera Mockup`, `Ibera Escritorio`, `Ibera Landing v2`–`v5` e `Ibera Landing`. `Ibera Sistema Visual` y `Icon` quedan como referencia de íconos.
 
@@ -54,7 +59,7 @@ Para verlo: `python -m http.server 8765` dentro de la carpeta del prototipo y ab
 | 7 | `#ficha` | Ficha del portal | Chips de los 8 portales, nombre gigante, galería (slides al 74%), qué hacer, puntos de interés, dónde quedarse, desafío de la zona, “Aprendelo jugando”, “Reportar en esta zona”, antes de ir (camino, cómo llegar, señal, combustible, visitantes), mapa chico, collage de 3 fotos, “Guardar sin conexión” | Galería con swipe, rueda y teclado; lightbox con miniaturas | Slides al 86% |
 | 8 | `#ecosistema` | Ecosistema | “El estero respira”: yaguareté, ciervo, carpincho, embalsados | Sección de 100vh con la ficha activa según scroll y fundido entre fotos | Fichas apiladas |
 | 9 | `#fragilidad` | Fragilidad | “Pero un ecosistema tan vivo también es vulnerable.” Residuos, lixiviados, fuego, luz | Texto iluminado (210vh), ondulación SVG y oscurecido de la foto, ficha activa por scroll | 170vh |
-| 10 | `#jugar` | Aprender jugando | “Lo que se hace en el estero, se aprende jugando” + 4 juegos con índice | Cambio de juego con fundido | Área 4:5 en vez de 16:9 |
+| 10 | `#jugar` | Aprender jugando | “Lo que se hace en el estero, se aprende jugando” + 4 juegos con índice. **Estructura de v6; los juegos en sí se rediseñan (sección 10)** | Cambio de juego con fundido | Área 4:5 en vez de 16:9 |
 | 11 | `#actuar` | Reportar | “¿Viste algo que no debería estar acá?”, asistente de 4 pasos, indicador de señal, “Ver reclamos en el mapa” (panel superpuesto con mapa) | Pasos con transición; modo sin señal con cola y recuperación | Panel debajo del título |
 | 12 | `#futuro` | Cierre | “Conocer para cuidar”, yaguareté | Foto de gris a color según scroll (“sanación”) | Igual |
 | — | — | Footer | Explorar / Participar / Institucional (Prensa, Contacto, Parque Iberá), créditos | Links con subrayado animado | Columnas apiladas |
@@ -109,7 +114,7 @@ components/
   sections/             Hero, ConnectedByWater, Territory, RoadStatus, Pause, PortalsRail,
                         PortalSheet, Ecosystem, Fragility, Play, Act, Future
   map/                  MapView (client, MapLibre diferido), PortalMiniMap
-  games/                CleanChannels, WaterSigns, DarkSky, NightVoices, GamesIndex
+  games/                GamesIndex + un componente por juego (nombres y mecánicas por definir; CleanChannels, WaterSigns, DarkSky y NightVoices son los de v6, solo referencia: ver sección 10)
   report/               ReportWizard, ReportsMapDialog, TrackingTimeline
   ui/                   Icon, Lightbox, Controls (flechas, botón vidrio, acción subrayada, punto),
                         LitText, Reveal, CustomCursor (fase 5)
@@ -197,7 +202,7 @@ Medidas que v6 cambia por ancho y que se replican:
 | Tarjeta del carrusel | `min(84vw, 640px)` | Igual | `min(58vw, 880px)` |
 | Slide de la galería | 86% | 86% | 74% |
 | Ecosistema | Alto automático, todo visible | Igual | 100vh, ficha activa |
-| Juegos | 4:5 | 16:9 | 16:9 |
+| Juegos (área de juego; la proporción final depende del rediseño) | 4:5 | 16:9 | 16:9 |
 | Header | Logo + tema + “Menú” | Igual | Links + Reportar + tema |
 | Padding del mapa | 56 / 48 / 36 / 36 | 90 / 90 / 64 / 84 | Deja libre la columna de texto |
 
@@ -230,20 +235,20 @@ Datos fijos: `BOUNDS = [[-58.0692, -28.6549], [-56.6969, -27.8572]]`, `PELLEGRIN
 
 | Efecto | Marca en v6 | Implementación |
 | --- | --- | --- |
-| Parallax de portada | `data-hero-img`, `data-hero-txt`, `data-hero-meta` | `useParallax` (rAF + ref) |
+| Parallax de portada | `data-hero-img`, `data-hero-txt`, `data-hero-meta` | `<ScrollMotion />` (un único listener + rAF, escribe por DOM) ✅ |
 | Revelado al entrar | `data-rv` (opacidad + 28 px, 1,2 s) | `<Reveal>` con IntersectionObserver, `rootMargin: 0 0 -12% 0` |
 | Líneas que suben | `data-lines` / `data-line` (escalonado 0,12 s) | `<Reveal lines>` |
-| Parallax de imágenes | `data-par`, `data-drift` | `useParallax` |
+| Parallax de imágenes | `data-par`, `data-drift` | `<ScrollMotion />` (collage de la ficha, títulos de Pausa y Cierre) ✅ |
 | Texto iluminado | `data-litsec`, `data-w` | `<LitText>` con progreso de sección |
-| Recorte al entrar | `data-reveal` (`clip-path: inset`) | Hook de progreso por elemento |
-| Mapa por scroll | `secP(#territorio)` → `mapIdx` 0–7 | `useScrollProgress` + `camera()` |
-| Ondulación y oscurecido | `#ibera-ripple`, `data-dim`, `data-dimsec` | Filtro SVG + progreso |
-| Sanación | `data-heal` (escala de grises a color) | Progreso por elemento |
+| Recorte al entrar | `data-reveal` (`clip-path: inset`) | `<ScrollMotion />` (Pausa) ✅ |
+| Mapa por scroll | `secP(#territorio)` → `mapIdx` 0–7 | `Territory`: `useScrollFrame` + `sectionProgress`; sección de 300vh con escenario sticky; la cámara sigue al portal del scroll, y un pin o “Ver todo” la toman manualmente ✅ |
+| Ondulación y oscurecido | `#ibera-ripple`, `data-dim`, `data-dimsec` | Filtro SVG en `Fragility`, 850 ms una vez por entrada ✅ |
+| Sanación | `data-heal` (escala de grises a color) | `<ScrollMotion />` (Cierre) ✅ |
 | Tono del header | `data-tone` | `useActiveSection` |
 | Sección activa del menú | ids `territorio`, `portales`, `ecosistema`, `jugar` | `useActiveSection` |
 | Ficha activa (Ecosistema / Fragilidad) | `data-fauna`, `data-frag` | `useActiveSection` por ítem |
-| Carrusel | `onRailScroll`, `data-card`, `data-cimg`, `data-railbar` | Listener del carrusel + ref |
-| Cursor personalizado | `cursorRef`, `data-cursor` | `<CustomCursor>` (solo puntero fino) |
+| Carrusel | `onRailScroll`, `data-card`, `data-cimg`, `data-railbar` | `PortalsRail`: parallax por tarjeta, brillo, leyenda y transición al abrir ✅ |
+| Cursor personalizado | `cursorRef`, `data-cursor` | `<CustomCursor />` delegado por `data-cursor` (carrusel y galería); solo puntero fino y sin reduced-motion ✅ |
 
 ---
 
@@ -266,14 +271,45 @@ Fase 4: los reportes se guardan en `localStorage`. Fase 6: Server Action + Postg
 
 ## 10. Minijuegos
 
-| Juego | Mecánica en v6 | Datos |
+> ### ⚠️ Pacto del equipo — leer antes de tocar esta sección
+>
+> **Los minijuegos de la landing v6 son una referencia, no el objetivo.** El equipo decidió **no replicarlos tal cual** y construir experiencias **mejores**: más cuidadas, más educativas y más acordes a la estética minimalista y moderna del resto de la página. Si seguís el desarrollo, **no copies las mecánicas de la tabla de abajo por inercia** ni las tomes como criterio de aceptación: usalas como punto de partida para pensar algo superior.
+
+### Qué se conserva (estructura: contrato con el resto de la página)
+
+Esto **sí** se respeta, porque otras secciones dependen de ello:
+
+- La sección existe con el id **`#jugar`** y el título “Lo que se hace en el estero, se aprende jugando”, entre Fragilidad y Reportar, con el tono y las alturas de la guía (`data-tone="surface"`).
+- Hay **cuatro temas** con índice y cambio con fundido entre uno y otro: residuos en el agua, señales de contaminación, contaminación lumínica y fauna nocturna. Los títulos de v6 se pueden mantener (Canales limpios, Señales del agua, Cielo oscuro, Voces de la noche) **o cambiar**, siempre que se actualicen las referencias de abajo.
+- **Vínculos que ya existen en la app** y deben seguir funcionando:
+  - `lib/data/portals.ts`: cada portal apunta a un juego (`game: GameId`) y la Ficha muestra “Aprendelo jugando”.
+  - `lib/data/ecosystem.ts`: cada amenaza de Fragilidad dice “Se aprende en <juego>”.
+  - `LandingContext`: `gameId` y `openGame(id)` seleccionan el juego y hacen scroll a `#jugar`. Se llaman desde la Ficha y desde el índice.
+  - `types/portal.ts` (`GameId`), `types/game.ts` (`Game`) y `lib/data/games.ts` (`GAMES`: título, línea de meta, descripción y portal asociado).
+  - El footer aclara que las cifras de los juegos son datos de ejemplo; si el rediseño usa cifras reales, ajustar ese texto.
+- Esos contratos pueden **evolucionar** (agregar o quitar juegos, renombrar ids), pero hay que hacerlo **de punta a punta**: tipos, datos, Ficha, Fragilidad, índice, tests y esta guía.
+
+### Qué queda libre (todo lo demás)
+
+- Las **mecánicas, la interacción, el feedback, la dificultad, la cantidad y el orden** de los juegos.
+- El **guion educativo** de cada uno y el uso de **fotos, sonido, mapa o movimiento** propios.
+- Los componentes de `components/games/`, sus nombres y su estado interno. Los datos de ejemplo de `lib/data/games.ts` (`WASTE_ITEMS`, `WATER_SIGNS`, etc.) **pueden reemplazarse o borrarse**.
+- La proporción del área de juego (4:5 / 16:9 de v6 es solo punto de partida).
+
+### Criterios de calidad para lo nuevo
+
+Cada juego debe: ser mejor que su equivalente de v6 y poder justificarse como tal; **enseñar algo concreto** sobre el Iberá; funcionar con **mouse, táctil y teclado**, con alternativa accesible; **respetar `prefers-reduced-motion`**; verse bien en 360–1440 px sin scroll horizontal; mantener el **sistema visual de la sección 5** (sin sombras, radios de 2/4/10/12 px, tipografía de v6); y no escribir estado por frame con `setState` (sección 8). Los sonidos no deben depender de archivos pesados sin necesidad.
+
+### Referencia: cómo eran los juegos en v6 (solo inspiración)
+
+| Juego | Mecánica en v6 | Datos de v6 |
 | --- | --- | --- |
 | Canales limpios | 5 residuos flotando (`ib-bob`); al juntar los 5, aparecen 3 mensajes escalonados (0,45 / 1,5 / 2,6 s) | `WASTE_ITEMS` |
 | Señales del agua | 4 puntos sobre la foto; hay que encontrar 3, cada uno muestra su explicación | `WATER_SIGNS` |
 | Cielo oscuro | Control deslizante Estero → Ciudad: se apagan estrellas, sube el resplandor y la bruma; contador `2400 → 150` (“cifra ilustrativa”) | `STARS`, `visibleStars()` |
 | Voces de la noche | “Escuchá”: canto sintetizado con Web Audio y 44 barras animadas; 3 opciones; la correcta es el urutaú | `NIGHT_VOICES`, `WAVE_BARS` |
 
-`STARS` y `WAVE_BARS` usan la fórmula determinística de v6, así que el servidor y el cliente generan los mismos valores (sin errores de hidratación).
+`STARS` y `WAVE_BARS` usaban una fórmula determinística para que servidor y cliente generaran los mismos valores (sin errores de hidratación). Es un buen patrón si el nuevo diseño muestra valores “aleatorios” en el primer render.
 
 ---
 
@@ -287,12 +323,12 @@ Todos en `lib/data/`, con claves en inglés y contenido en castellano, tomados 1
 | `road-status.ts` | `ROAD_STATUS` | Estado de cada camino y fecha de actualización (separado porque cambia a diario) |
 | `statuses.ts` | `E`, `TIPOS`, colores de `R` | Etiquetas y colores de estados y tipos |
 | `ecosystem.ts` | `FAUNA`, `FRAG` | 4 especies/hábitats y 4 amenazas |
-| `games.ts` | `GAMES`, `G1`, `G2`, `STARS`, `BARS` | Juegos y sus datos |
+| `games.ts` | `GAMES`, `G1`, `G2`, `STARS`, `BARS` | Juegos y sus datos. **Provisorio:** `GAMES` es el contrato con Ficha, Fragilidad e índice; los datos de cada mecánica de v6 (`G1`, `G2`, `STARS`, `BARS`) se reemplazan con el rediseño (sección 10) |
 | `reports.ts` | `R`, `track` | 5 reclamos de ejemplo y pasos de seguimiento |
 | `copy.ts` | `LIT_A`, `LIT_B`, prop `heroCopy`, ids | Textos narrativos, anclas, links |
 | `images.ts` | `static I` | 19 fotos locales con alt y archivo de origen |
 
-Son **datos de ejemplo**: teléfonos `000 000`, estados de camino, reclamos y cifras de los juegos (v6 lo aclara en el footer).
+Son **datos de ejemplo**: teléfonos `000 000`, estados de camino, reclamos y cifras de los juegos (v6 lo aclara en el footer). Los datos específicos de las mecánicas de v6 (`G1`, `G2`, `STARS`, `BARS`) son provisorios: ver sección 10.
 
 ---
 
@@ -306,8 +342,8 @@ Rama de trabajo: `feat/landing-v6`. Cada fase termina con lint, build y Playwrig
 | **1 · Cáscara** ✅ | Header (tono, vidrio, link activo), menú móvil, selector de tema, franja “Caminos hoy”, footer, `Reveal`, breakpoint `tab`, `useLandingScroll`, secciones provisorias con ids/tonos/alturas de v6 | Comparación lado a lado con v6 (header arriba y sobre superficie, oscuro y claro, menú, franja, footer) en 1440 y 390 px; 12 tests en verde | `feat(layout): add v6 header, mobile menu, roads band and footer` |
 | **2 · Secciones de contenido** ✅ | Portada (entrada animada), Conectado por el agua (texto iluminado), Caminos, Pausa, Carrusel de portales, Ficha con galería, lightbox y “Antes de ir”, Ecosistema y Fragilidad (ficha activa por scroll), Cierre; `LandingContext` (portal y juego elegidos) | Comparación lado a lado con v6 de 12 escenarios en 1440 y 390 px; 19 tests en verde | `feat(sections): build v6 content sections` |
 | **3 · Mapas** ✅ | `MapView` (MapLibre diferido, marcadores HTML por `project()`, tratamiento del raster por tema, estados y reintento), Territorio (pines, etiquetas, tarjeta, zoom, reiniciar, brújula, escala, leyenda, intro, tira de portales en celular), mapa de la ficha; worker de MapLibre servido desde `public/` | Comparación lado a lado con v6 en 1440 y 390 px; 26 tests en verde (incluye fallo de teselas) | `feat(map): territory and portal sheet maps` |
-| 4 · Interactivos | 4 juegos, asistente de reporte con foto y GPS reales, panel de reclamos, `useOffline` | Flujos E2E en verde | `feat(play,report): games and report wizard` |
-| 5 · Coreografía | Parallax, iluminado, mapa sticky por scroll, ondulación, sanación, cursor, carrusel con parallax, reduced-motion | Comparación visual con v6 en escritorio y celular | `feat(motion): scroll choreography from v6` |
+| 4 · Interactivos ⏳ | **Minijuegos rediseñados (no son copia de v6; sección 10)**, asistente de reporte con foto y GPS reales, panel de reclamos, `useOffline`. Se puede dividir en dos entregas: `report` (paridad con v6) y `play` (diseño nuevo) | Reporte: flujos E2E en verde y comparación con v6. Juegos: cumplen los criterios de calidad de la sección 10 y tienen sus propios tests; **no se comparan contra v6** | `feat(report): report wizard and claims map` / `feat(play): redesigned minigames` |
+| **5 · Coreografía** ✅ | Parallax, iluminado, mapa sticky por scroll, ondulación, sanación, cursor, carrusel con parallax, reduced-motion | Comparación visual con v6 en escritorio y celular; 36 tests en verde (10 nuevos en `motion.spec.ts`) | `feat(motion): scroll choreography from v6` |
 | 6 · Producción | Postgres + Drizzle, bucket, Server Action, Serwist, imágenes de reemplazo, deploy en Railway | Reporte sin señal que llega al volver la conexión; Lighthouse móvil ≥ 90 | `feat(api): persist reports and offline queue` |
 
 ---
@@ -324,6 +360,7 @@ Rama de trabajo: `feat/landing-v6`. Cada fase termina con lint, build y Playwrig
 
 ### Decisiones abiertas
 
+- [x] **Minijuegos (decidido):** no se replican los de v6; se rediseñan para ser mejores, conservando la estructura de la sección y sus vínculos (sección 10). Falta que el equipo defina el diseño concreto de cada juego.
 - [ ] **“Modo historia”:** en v6 enlaza al archivo del Prototipo. ¿Se oculta hasta que exista el modo historia en 3 actos del docx?
 - [ ] **Prensa y Contacto:** en v6 apuntan a parqueibera.gob.ar. ¿Se mantienen o se hacen secciones propias?
 - [ ] **Copy de la portada:** v6 trae dos variantes (“Un paisaje hecho de agua” por defecto, o “El estero es de todos”).
@@ -345,7 +382,7 @@ Rama de trabajo: `feat/landing-v6`. Cada fase termina con lint, build y Playwrig
 - **Commits:** [Conventional Commits](https://www.conventionalcommits.org/) (`feat`, `fix`, `refactor`, `chore`, `docs`, `test`) con scope (`layout`, `sections`, `map`, `play`, `report`, `motion`, `api`). Un commit por fase como mínimo.
 - **Ramas:** trabajo en `feat/landing-v6`; PR a `main` al cerrar cada fase o al final.
 - **Next 16 primero:** ante cualquier duda, `node_modules/next/dist/docs/` manda (AGENTS.md).
-- **Comparación visual con v6:** con el prototipo servido en `:8765` (`python -m http.server 8765` en su carpeta) y `npm run dev -- -p 3005`, correr `npm run compare:v6 [escenario…]`. Deja capturas lado a lado (izquierda v6, derecha IberAPP) en `tests/.compare/`. Cada fase agrega sus escenarios en `tests/compare-v6.mjs`.
+- **Comparación visual con v6** (no aplica a los minijuegos, que se rediseñan): con el prototipo servido en `:8765` (`python -m http.server 8765` en su carpeta) y `npm run dev -- -p 3005`, correr `npm run compare:v6 [escenario…]`. Deja capturas lado a lado (izquierda v6, derecha IberAPP) en `tests/.compare/`. Cada fase agrega sus escenarios en `tests/compare-v6.mjs`.
 - **Una tarea está terminada cuando** pasan `npm run lint`, `npm run build` y `npm run test:e2e`; no hay scroll horizontal ni errores de runtime en 360, 768, 1024 y 1440 px; respeta `prefers-reduced-motion`; y se comparó con v6 en el navegador.
 
 ### Skills recomendadas (skills.sh)

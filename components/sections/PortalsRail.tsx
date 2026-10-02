@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, type MouseEvent } from "react";
 import { Dot, RoundArrowButton, TextAction } from "@/components/ui/Controls";
 import { Reveal } from "@/components/ui/Reveal";
 import { useLanding } from "@/context/LandingContext";
@@ -13,14 +13,19 @@ import { PORTALS } from "@/lib/data/portals";
 const GUTTER = "clamp(24px,4vw,64px)";
 
 // "Portales" (v6 #portales): horizontal scroll-snap rail with arrows and a progress bar.
-// Card image parallax and the "Ver portal" cursor arrive in phase 5.
+// Each card's photo slides against the scroll and brightens as the card reaches the left edge (v6 onRailScroll);
+// the "Ver portal" cursor comes from data-cursor + <CustomCursor />.
 export function PortalsRail() {
   const { openPortal } = useLanding();
   const rail = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLDivElement>(null);
 
-  // Progress bar: width = visible share, left = scroll position (v6 onRailScroll).
-  const updateBar = () => {
+  const frame = useRef(0);
+  const opening = useRef<string | null>(null);
+
+  // Progress bar: width = visible share, left = scroll position. Cards: parallax, brightness and caption fade.
+  const updateRail = useCallback(() => {
+    frame.current = 0;
     const r = rail.current;
     const b = bar.current;
     if (!r || !b) return;
@@ -28,12 +33,54 @@ export function PortalsRail() {
     const p = r.scrollLeft / Math.max(1, r.scrollWidth - r.clientWidth);
     b.style.width = `${(visible * 100).toFixed(1)}%`;
     b.style.left = `${(p * (1 - visible) * 100).toFixed(1)}%`;
-  };
-  useEffect(() => {
-    updateBar();
-    window.addEventListener("resize", updateBar);
-    return () => window.removeEventListener("resize", updateBar);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const rr = r.getBoundingClientRect();
+    const pad = parseFloat(getComputedStyle(r).paddingLeft) || 0;
+    r.querySelectorAll<HTMLElement>("[data-card]").forEach((card) => {
+      const cr = card.getBoundingClientRect();
+      const d = (cr.left - rr.left - pad) / Math.max(1, cr.width);
+      const f = Math.max(0, 1 - Math.abs(d));
+      const img = card.querySelector<HTMLElement>("[data-cimg]");
+      const cap = card.querySelector<HTMLElement>("[data-ccap]");
+      if (img && card.dataset.card !== opening.current) {
+        img.style.transform = `translate3d(${(-Math.max(-1, Math.min(1, d)) * 5).toFixed(2)}%,0,0) scale(${(1.025 - 0.025 * f).toFixed(4)})`;
+        img.style.filter = `brightness(${(0.85 + 0.15 * f).toFixed(3)})`;
+      }
+      if (cap) cap.style.opacity = (0.6 + 0.4 * f).toFixed(3);
+    });
   }, []);
+  const scheduleRail = useCallback(() => {
+    if (!frame.current) frame.current = requestAnimationFrame(updateRail);
+  }, [updateRail]);
+  useEffect(() => {
+    scheduleRail();
+    window.addEventListener("resize", scheduleRail);
+    return () => {
+      cancelAnimationFrame(frame.current);
+      frame.current = 0;
+      window.removeEventListener("resize", scheduleRail);
+    };
+  }, [scheduleRail]);
+
+  // Opening a card: its photo swells for a beat, then the sheet takes over (v6 openFromRail).
+  const openFromRail = (id: string, e: MouseEvent<HTMLElement>) => {
+    const card = e.currentTarget.closest<HTMLElement>("[data-card]");
+    const img = card?.querySelector<HTMLElement>("[data-cimg]");
+    if (!card || !img || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      openPortal(id);
+      return;
+    }
+    opening.current = card.dataset.card ?? null;
+    img.style.transition = "transform .6s cubic-bezier(.2,.7,.2,1), filter .6s cubic-bezier(.2,.7,.2,1)";
+    img.style.transform = "scale(1.06)";
+    img.style.filter = "brightness(1.06)";
+    window.setTimeout(() => openPortal(id), 420);
+    window.setTimeout(() => {
+      opening.current = null;
+      img.style.transition = "";
+      scheduleRail();
+    }, 1600);
+  };
 
   const scrollBy = (dir: 1 | -1) => rail.current?.scrollBy({ left: dir * rail.current.clientWidth * 0.6, behavior: "smooth" });
 
@@ -55,21 +102,22 @@ export function PortalsRail() {
 
       <div
         ref={rail}
-        onScroll={updateBar}
+        onScroll={scheduleRail}
         className="mt-16 flex snap-x snap-mandatory gap-[clamp(16px,2vw,32px)] overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         style={{ paddingInline: GUTTER, scrollPaddingInline: GUTTER }}
       >
         {PORTALS.map((p) => {
           const status = roadStatusOf(p.id);
           return (
-            <article key={p.id} data-card="" className="flex w-[min(84vw,640px)] flex-none snap-start flex-col gap-6 lg:w-[min(58vw,880px)]">
+            <article key={p.id} data-card={p.id} className="flex w-[min(84vw,640px)] flex-none snap-start flex-col gap-6 lg:w-[min(58vw,880px)]">
               <button
                 type="button"
-                onClick={() => openPortal(p.id)}
+                onClick={(e) => openFromRail(p.id, e)}
+                data-cursor="Ver portal"
                 aria-label={`Ver portal ${p.name}`}
                 className="relative h-[clamp(360px,64vh,680px)] overflow-hidden rounded-[2px] border-none bg-[#002E1D] p-0"
               >
-                <span data-cimg="" className="absolute inset-y-0 -inset-x-[6%]">
+                <span data-cimg="" className="absolute inset-y-0 -inset-x-[6%] will-change-transform">
                   <Image src={IMAGES[p.image].src} alt={IMAGES[p.image].alt} fill sizes="(min-width: 1024px) 60vw, 85vw" className="object-cover" />
                 </span>
               </button>

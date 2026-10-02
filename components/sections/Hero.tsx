@@ -4,12 +4,12 @@ import { IMAGES } from "@/lib/data/images";
 
 const EASE = "cubic-bezier(.2,.7,.2,1)";
 
-// "Portada" from Ibera Landing v6. Entrance runs in CSS on first paint; scroll parallax arrives in phase 5.
+// "Portada" from Ibera Landing v6. Entrance runs in CSS on first paint; scroll parallax is written by <ScrollMotion />.
 export function Hero() {
   return (
     <section id={SECTION_IDS.hero} data-tone="photo" aria-label="Portada" className="relative h-dvh min-h-[620px] overflow-hidden bg-[#002E1D] text-white">
       <div className="absolute inset-0" style={{ animation: `ib-settle 2.4s ${EASE} both` }}>
-        <div data-hero-img="" className="absolute inset-x-0 -inset-y-[4%] scale-[1.08] will-change-transform">
+        <div data-hero-img="" className="absolute inset-x-0 -inset-y-[4%] will-change-transform" style={{ transform: "scale(1.08)" }}>
           <Image src={IMAGES.wetlands.src} alt={IMAGES.wetlands.alt} fill priority sizes="100vw" className="object-cover" />
         </div>
       </div>
