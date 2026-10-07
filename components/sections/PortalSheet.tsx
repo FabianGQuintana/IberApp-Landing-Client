@@ -206,7 +206,7 @@ export function PortalSheet() {
               <div className="eyebrow text-mute">El desafío de esta zona · {ISSUE_LABEL[portal.issue]}</div>
               <p className="m-0 text-[clamp(20px,1.6vw,24px)] leading-[1.45] text-head [text-wrap:pretty]">{portal.issueText}</p>
               <div className="mt-2 flex flex-wrap gap-x-8 gap-y-4">
-                {game && (
+                {game && ( 
                   <TextAction arrow="→" className="text-head" onClick={() => openGame(game.id)}>
                     Aprendelo jugando: {game.title}
                   </TextAction>
