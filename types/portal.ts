@@ -40,7 +40,8 @@ export interface Portal {
   lodging: { name: string; where: string }[];
   signal: string;
   fuel: string;
-  phone: string;
+  /** Visitor phone. Only real, verified numbers: the row is hidden when missing. */
+  phone?: string;
   issue: Issue;
   issueText: string;
   game: GameId;

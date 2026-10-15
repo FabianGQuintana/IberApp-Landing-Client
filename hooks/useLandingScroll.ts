@@ -34,17 +34,17 @@ function compute(): LandingScrollState {
     const r = rect(link.target);
     if (r && r.top < vh * 0.4) activeNav = i;
   });
-  const act = rect(SECTION_IDS.act);
-  if (activeNav === NAV_LINKS.length - 1 && act && act.top < vh * 0.4) activeNav = -1;
+  const end = rect(SECTION_IDS.future);
+  if (activeNav === NAV_LINKS.length - 1 && end && end.top < vh * 0.4) activeNav = -1;
 
-  // v6 hides the band on top of the page, over Territorio and Caminos, and near Reportar.
+  // v6 hides the band on top of the page, over Territorio and Caminos, and near the end (v6: Reportar, now Futuro).
   const roads = rect(SECTION_IDS.roads);
   const territory = rect(SECTION_IDS.territory);
   let hide = true;
-  if (roads && act) {
+  if (roads && end) {
     hide =
       (roads.top < vh && roads.bottom > 0) ||
-      act.top < vh * 0.8 ||
+      end.top < vh * 0.8 ||
       y < vh * 1.5 ||
       (!!territory && territory.bottom > vh * 0.5 && territory.top < vh);
   }

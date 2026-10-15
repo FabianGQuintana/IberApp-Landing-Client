@@ -19,9 +19,9 @@ import { LandingProvider } from "@/context/LandingContext";
 import { SECTION_IDS } from "@/lib/data/copy";
 
 // Ibera Landing v6, section by section and in the same order.
-// Placeholders: Aprender jugando and Reportar (phase 4: interactive).
+// Placeholder: Aprender jugando (a teammate builds the games). The v6 "Reportar" section was dropped: tourists use "Valorar".
 // Aprender jugando keeps v6's place, id and index of four topics, but its minigames are NOT copied from v6: the team
-// agreed to redesign them to be better (guide §10). Reportar does follow v6. Scroll choreography lives in <ScrollMotion /> and <CustomCursor />.
+// agreed to redesign them to be better (guide §10). Scroll choreography lives in <ScrollMotion /> and <CustomCursor />.
 export default function LandingPage() {
   return (
     <LandingProvider>
@@ -39,7 +39,6 @@ export default function LandingPage() {
         <Ecosystem />
         <Fragility />
         <SectionPlaceholder id={SECTION_IDS.play} tone="surface" label="Aprender · Desafío Iberá" title="Lo que se hace en el estero, se aprende jugando" heightClass="min-h-[150vh]" surface="bg2" />
-        <SectionPlaceholder id={SECTION_IDS.act} tone="photo" label="Actuar" title="¿Viste algo que no debería estar acá?" heightClass="min-h-[120vh]" image="caiman" />
         <Future />
       </main>
       <Footer />

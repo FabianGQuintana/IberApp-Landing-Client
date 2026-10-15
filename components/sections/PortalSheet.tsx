@@ -6,7 +6,7 @@ import { PortalMiniMap } from "@/components/map/PortalMiniMap";
 import { Dot, RoundArrowButton, TextAction } from "@/components/ui/Controls";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { Reveal } from "@/components/ui/Reveal";
-import { scrollToSection, useLanding } from "@/context/LandingContext";
+import { useLanding } from "@/context/LandingContext";
 import { SECTION_IDS } from "@/lib/data/copy";
 import { GAMES } from "@/lib/data/games";
 import { IMAGES } from "@/lib/data/images";
@@ -211,9 +211,6 @@ export function PortalSheet() {
                     Aprendelo jugando: {game.title}
                   </TextAction>
                 )}
-                <TextAction arrow="→" className="text-head" onClick={() => scrollToSection(SECTION_IDS.act)}>
-                  Reportar en esta zona
-                </TextAction>
                 <TextAction arrow="→" className="text-head" onClick={() => openFeedback(portal.id)} aria-haspopup="dialog">
                   Valorar este portal
                 </TextAction>
@@ -232,7 +229,7 @@ export function PortalSheet() {
             <BeforeRow label="Cómo llegar">{portal.route}</BeforeRow>
             <BeforeRow label="Señal">{portal.signal}</BeforeRow>
             <BeforeRow label="Combustible">{portal.fuel}</BeforeRow>
-            <BeforeRow label="Visitantes">{portal.phone}</BeforeRow>
+            {portal.phone && <BeforeRow label="Visitantes">{portal.phone}</BeforeRow>}
             <PortalMiniMap portalId={portal.id} label={`${portal.kind === "national-park" ? "Parque Nacional" : "Portal"} ${portal.name}`} />
             <TextAction className="mt-6 text-head" onClick={() => setSavedId(saved ? null : portal.id)} aria-pressed={saved}>
               {saved && <span className="h-[7px] w-[7px] animate-ib-fadeup rounded-full bg-mint" />}

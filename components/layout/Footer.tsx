@@ -33,7 +33,6 @@ export function Footer() {
           title="Participar"
           links={[
             ["Aprender jugando", `#${SECTION_IDS.play}`],
-            ["Reportar", `#${SECTION_IDS.act}`],
             // v6 links "Modo historia" to the Prototipo file. Open decision (guide §13): points to the games until the story mode exists.
             ["Modo historia", `#${SECTION_IDS.play}`],
           ]}

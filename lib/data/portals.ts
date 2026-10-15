@@ -1,7 +1,7 @@
 import type { Portal } from "@/types/portal";
 
 // Source: `static P` in Ibera Landing v6.dc.html (geographic source of truth: lat/lng).
-// Phones and lodging are SAMPLE DATA. Road status lives apart in road-status.ts (it changes daily).
+// Lodging is SAMPLE DATA. Phones were placeholders and are left out until the team confirms the real ones. Road status lives apart in road-status.ts (it changes daily).
 
 export const PORTALS: Portal[] = [
   {
@@ -26,7 +26,6 @@ export const PORTALS: Portal[] = [
     ],
     signal: "Solo en el pueblo",
     fuel: "Última carga en Mercedes",
-    phone: "+54 3773 000 000",
     issue: "waste",
     issueText: "En temporada alta llegan visitantes todos los días. Lo que no se recolecta termina en los canales.",
     game: "clean-channels",
@@ -59,7 +58,6 @@ export const PORTALS: Portal[] = [
     ],
     signal: "Nula en el último tramo",
     fuel: "Última carga en Ituzaingó",
-    phone: "+54 3786 000 000",
     issue: "fire",
     issueText: "Las quemas de pastizales avanzan con la sequía y ponen en riesgo a la fauna del palmar.",
     game: "night-voices",
@@ -91,7 +89,6 @@ export const PORTALS: Portal[] = [
     ],
     signal: "Sin señal",
     fuel: "Última carga en San Miguel",
-    phone: "+54 3786 000 001",
     issue: "leachate",
     issueText: "El líquido que se filtra de la basura acumulada viaja bajo tierra hasta el agua.",
     game: "water-signs",
@@ -123,7 +120,6 @@ export const PORTALS: Portal[] = [
     ],
     signal: "Intermitente",
     fuel: "Última carga en Mercedes",
-    phone: "+54 3786 000 002",
     issue: "waste",
     issueText: "Los residuos de pesca y camping quedan en la costa y llegan al agua con la crecida.",
     game: "clean-channels",
@@ -155,7 +151,6 @@ export const PORTALS: Portal[] = [
     ],
     signal: "Intermitente",
     fuel: "Última carga en Gdor. Virasoro",
-    phone: "+54 3756 000 000",
     issue: "fire",
     issueText: "Zona afectada por los incendios de 2022. La fauna todavía se está recuperando.",
     game: "night-voices",
@@ -187,7 +182,6 @@ export const PORTALS: Portal[] = [
     ],
     signal: "Nula en el portal",
     fuel: "Última carga en Concepción del Yaguareté Corá",
-    phone: "+54 3782 000 001",
     issue: "light",
     issueText: "La luz de los pueblos cercanos apaga el cielo nocturno y desorienta a la fauna.",
     game: "dark-sky",
@@ -220,7 +214,6 @@ export const PORTALS: Portal[] = [
     ],
     signal: "Intermitente",
     fuel: "Última carga en Loreto",
-    phone: "+54 3782 000 000",
     issue: "leachate",
     issueText: "Basurales cercanos a cursos de agua contaminan lagunas y peces.",
     game: "water-signs",
@@ -252,7 +245,6 @@ export const PORTALS: Portal[] = [
     ],
     signal: "Solo en el pueblo",
     fuel: "Última carga en Mburucuyá",
-    phone: "+54 3782 000 002",
     issue: "waste",
     issueText: "El crecimiento del turismo exige separar y retirar los residuos del parque.",
     game: "clean-channels",

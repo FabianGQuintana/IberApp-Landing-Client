@@ -8,8 +8,6 @@ export const BOUNDS: [[number, number], [number, number]] = [
 
 export const PELLEGRINI: [number, number] = [-57.1745, -28.5405];
 
-/** Accepted area (with margin) used to validate report locations. */
-export const REPORT_AREA = { minLng: -58.6, maxLng: -56.2, minLat: -29.1, maxLat: -27.4 };
 
 /** v6 prop `tilt`: pitch of the territory map on desktop (0–15). */
 export const MAIN_PITCH = 6;
