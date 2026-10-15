@@ -19,7 +19,7 @@ const EASE = "cubic-bezier(.2,.7,.2,1)";
 
 // "Ficha del portal" (v6 #ficha).
 export function PortalSheet() {
-  const { portalId, openPortal, openGame } = useLanding();
+  const { portalId, openPortal, openGame, openFeedback } = useLanding();
   const portal = getPortal(portalId) ?? PORTALS[0];
   const status = roadStatusOf(portal.id);
   const game = GAMES.find((g) => g.id === portal.game);
@@ -213,6 +213,9 @@ export function PortalSheet() {
                 )}
                 <TextAction arrow="→" className="text-head" onClick={() => scrollToSection(SECTION_IDS.act)}>
                   Reportar en esta zona
+                </TextAction>
+                <TextAction arrow="→" className="text-head" onClick={() => openFeedback(portal.id)} aria-haspopup="dialog">
+                  Valorar este portal
                 </TextAction>
               </div>
             </Reveal>

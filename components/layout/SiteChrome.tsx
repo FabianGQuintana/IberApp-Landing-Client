@@ -82,7 +82,7 @@ export function SiteChrome() {
             ))}
             <button
               type="button"
-              onClick={openFeedback}
+              onClick={() => openFeedback()}
               aria-haspopup="dialog"
               className="flex h-10 items-center rounded-[10px] border-none px-[18px] text-[15px] font-medium leading-none transition-transform duration-[350ms] hover:scale-[1.015]"
               style={{ background: fg, color: ink }}

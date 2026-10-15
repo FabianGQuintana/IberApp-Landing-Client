@@ -1,4 +1,5 @@
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
+import { FeedbackQueueToast } from "@/components/feedback/FeedbackQueueToast";
 import { Footer } from "@/components/layout/Footer";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { CustomCursor } from "@/components/motion/CustomCursor";
@@ -43,6 +44,7 @@ export default function LandingPage() {
       </main>
       <Footer />
       <FeedbackModal />
+      <FeedbackQueueToast />
     </LandingProvider>
   );
 }
