@@ -1,3 +1,4 @@
+import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { Footer } from "@/components/layout/Footer";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { CustomCursor } from "@/components/motion/CustomCursor";
@@ -41,6 +42,7 @@ export default function LandingPage() {
         <Future />
       </main>
       <Footer />
+      <FeedbackModal />
     </LandingProvider>
   );
 }

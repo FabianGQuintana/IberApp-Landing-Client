@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLanding } from "@/context/LandingContext";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { useLandingScroll } from "@/hooks/useLandingScroll";
 import { useTheme } from "@/hooks/useTheme";
@@ -9,7 +10,6 @@ import { ROAD_STATUS_BY_PORTAL } from "@/lib/data/road-status";
 import { Logo } from "./Logo";
 
 const GUTTER = "clamp(24px,4vw,64px)"; // v6 constant `G`
-const MENU_LINKS = [...NAV_LINKS, { label: "Reportar", target: SECTION_IDS.act }];
 const openRoads = Object.values(ROAD_STATUS_BY_PORTAL).filter((s) => s === "open").length;
 const totalRoads = Object.keys(ROAD_STATUS_BY_PORTAL).length;
 
@@ -18,6 +18,7 @@ export function SiteChrome() {
   const { scrolled, tone, activeNav, bandVisible } = useLandingScroll();
   const { isDark } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { openFeedback } = useLanding();
 
   // Colors exactly as v6 computes them (navFg, navInk, navBg, navLine, navLineStrong).
   const onPhoto = tone === "photo";
@@ -79,13 +80,15 @@ export function SiteChrome() {
                 {link.label}
               </a>
             ))}
-            <a
-              href={`#${SECTION_IDS.act}`}
-              className="flex h-10 items-center rounded-[10px] px-[18px] text-[15px] font-medium leading-none no-underline transition-transform duration-[350ms] hover:scale-[1.015]"
+            <button
+              type="button"
+              onClick={openFeedback}
+              aria-haspopup="dialog"
+              className="flex h-10 items-center rounded-[10px] border-none px-[18px] text-[15px] font-medium leading-none transition-transform duration-[350ms] hover:scale-[1.015]"
               style={{ background: fg, color: ink }}
             >
-              Reportar
-            </a>
+              Valorar
+            </button>
           </nav>
           <ThemeToggle color={fg} borderColor={lineStrong} />
           <button
@@ -125,7 +128,7 @@ export function SiteChrome() {
           </button>
         </div>
         <nav aria-label="Secciones" className="mt-auto flex flex-col gap-1">
-          {MENU_LINKS.map((link, i) => (
+          {NAV_LINKS.map((link, i) => (
             <span key={link.target} className="block overflow-hidden">
               <a
                 href={`#${link.target}`}
@@ -140,6 +143,23 @@ export function SiteChrome() {
               </a>
             </span>
           ))}
+          <span className="block overflow-hidden">
+            <button
+              type="button"
+              aria-haspopup="dialog"
+              onClick={() => {
+                setMenuOpen(false);
+                openFeedback();
+              }}
+              className="title-display block border-none bg-transparent p-0 py-2 text-left text-[clamp(44px,12vw,64px)] leading-[0.95] text-mint"
+              style={{
+                transform: `translateY(${menuOpen ? 0 : 100}%)`,
+                transition: `transform .8s cubic-bezier(.2,.7,.2,1) ${menuOpen ? (0.12 + NAV_LINKS.length * 0.06).toFixed(2) : 0}s`,
+              }}
+            >
+              Valorar
+            </button>
+          </span>
         </nav>
         <div className="eyebrow mt-8 border-t border-white/[.14] pt-6 leading-[1.4] text-sage">Gran Parque Iberá · Corrientes, Argentina</div>
       </div>
