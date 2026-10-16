@@ -196,6 +196,8 @@ function GameStageView({ id, entry, title, portal, onReport, devOptions }: ViewP
   const handleRef = useRef<GameHandle | null>(null);
   const moduleRef = useRef<Promise<GameModule> | null>(null);
   const reviewModuleRef = useRef<Promise<ReviewModule> | null>(null);
+  const overlayLoading = useRef(false);
+  const [Overlay, setOverlay] = useState<ComponentType | null>(null);
   const pauseRef = useRef({ offscreen: false, hidden: false, result: false });
   const autoPaused = useRef(false);
   // The play in progress: difficulty played, collected count (the review's denominator), the review's tally, and the
@@ -335,6 +337,18 @@ function GameStageView({ id, entry, title, portal, onReport, devOptions }: ViewP
       reviewModuleRef.current = promise;
     }
     return reviewModuleRef.current;
+  }, [ready]);
+
+  // The game's optional DOM layer over the stage (ReadyEntry.overlay), loaded once, shown while it plays.
+  const loadOverlay = useCallback(() => {
+    if (!ready?.overlay || overlayLoading.current) return;
+    overlayLoading.current = true;
+    ready.overlay().then(
+      ({ Overlay }) => setOverlay(() => Overlay),
+      () => {
+        overlayLoading.current = false; // the game plays without it; the next "Empezar" tries again
+      },
+    );
   }, [ready]);
 
   /** onRunEnd: the canvas is already gone; mount the game's review component with the run summary. */
@@ -554,6 +568,7 @@ function GameStageView({ id, entry, title, portal, onReport, devOptions }: ViewP
     const max = maxTotal(meta, difficulty);
     playRef.current = newPlay(playRef.current.token + 1, difficulty, max);
     loadReview(); // ready by the end of the run
+    loadOverlay();
     setHits(0);
     setDenominator(max);
     setCollect({ collected: 0, inChannel: max });
@@ -654,6 +669,12 @@ function GameStageView({ id, entry, title, portal, onReport, devOptions }: ViewP
                   Empezar
                 </StageButton>
               </Panel>
+            )}
+
+            {state === "playing" && Overlay && (
+              <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+                <Overlay />
+              </div>
             )}
 
             {busy && (

@@ -1,5 +1,5 @@
 import type { GameMeta } from "@/lib/games/contract";
-import type { DistractorId, SignalId } from "./hotspots";
+import type { DistractorId, ElementId, SignalId } from "./rules";
 
 // water-signs (Señales en el agua): a still lagoon where the player marks the signs of polluted water, then one
 // closing question about where they come from (user specification, G2·0 decisions, interface texts of 13/10/2026).
@@ -30,6 +30,30 @@ export const DISTRACTOR_TEXTS: Record<DistractorId, string> = {
   capybara: "El carpincho entra y sale del agua todo el día. El barro removido en la orilla es su rastro.",
   "sunken-log": "Un tronco hundido no contamina: da sombra y refugio a los peces.",
   "stirred-mud": "El agua se enturbia sola cuando la fauna pasa por la orilla. Se asienta en un rato.",
+};
+
+/**
+ * Two names per element. `label`: neutral, always visible over the scene while observing; it says what is being looked
+ * at, never whether it is a sign or a healthy element. `revealedLabel`: the descriptive name with the verdict
+ * (specification's "Señal" / "Elemento" columns); it shows only once marked, as the heading of the mark's text.
+ * Never unify them: the neutral one keeps the game a matter of judgment.
+ */
+export const ELEMENT_LABELS: Record<ElementId, { label: string; revealedLabel: string }> = {
+  "dead-fish": { label: "Peces", revealedLabel: "Peces muertos flotando" },
+  "oil-sheen": { label: "Reflejos", revealedLabel: "Película aceitosa, irisada" },
+  "bottom-bubbling": { label: "Burbujas", revealedLabel: "Burbujeo desde el fondo" },
+  "persistent-foam": { label: "Espuma", revealedLabel: "Espuma que no se deshace" },
+  "dead-vegetation": { label: "Juncos", revealedLabel: "Franja de juncos secos" },
+  "algae-bloom": { label: "Agua verde", revealedLabel: "Verde intenso en la superficie" },
+  "buried-waste": { label: "Barranca", revealedLabel: "Residuos asomando en la barranca" },
+  "murky-patch": { label: "Mancha", revealedLabel: "Mancha turbia junto a la orilla" },
+  "tannin-water": { label: "Agua", revealedLabel: "Agua oscura, color té" },
+  camalote: { label: "Camalotes", revealedLabel: "Camalotes flotando" },
+  irupe: { label: "Irupé", revealedLabel: "Irupé" },
+  caiman: { label: "Yacaré", revealedLabel: "Yacaré asoleándose" },
+  capybara: { label: "Carpincho", revealedLabel: "Carpincho en la barranca" },
+  "sunken-log": { label: "Tronco", revealedLabel: "Tronco sumergido" },
+  "stirred-mud": { label: "Barro", revealedLabel: "Barro removido" },
 };
 
 /** Appended to a mark's text (one announcement per mark). */

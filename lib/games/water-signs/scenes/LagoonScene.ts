@@ -23,8 +23,8 @@ import {
   type ObservationSummary,
   type SignalId,
   type Zone,
-} from "../hotspots";
-import { DISTRACTOR_TEXTS, NOTICES, SIGNAL_TEXTS } from "../meta";
+} from "../rules";
+import { DISTRACTOR_TEXTS, ELEMENT_LABELS, NOTICES, SIGNAL_TEXTS } from "../meta";
 
 // Phase 2, the observation: a still lagoon (scene.webp) with 15 invisible zones. Everything lives in one container in
 // scene px; only the container moves when the layout changes (16:9: ×0.8 between bg2 bands; 4:5: 688 × 860 inside a
@@ -139,7 +139,8 @@ export class LagoonScene extends Phaser.Scene {
     const allFound = this.hits === TOTAL;
     const done = allFound || left === 0;
     const notice = allFound ? NOTICES.allFound : left === 0 ? NOTICES.noMarks : left <= MARKS_WARNING ? NOTICES.marksLeft(left) : null;
-    const text = zone.kind === "signal" ? SIGNAL_TEXTS[zone.id] : DISTRACTOR_TEXTS[zone.id];
+    // The revealed name heads the educational text: the verdict shows only once the element is marked.
+    const text = `${ELEMENT_LABELS[zone.id].revealedLabel}. ${zone.kind === "signal" ? SIGNAL_TEXTS[zone.id] : DISTRACTOR_TEXTS[zone.id]}`;
     context.announce(notice ? `${text} ${notice}` : text); // one announcement per mark: the panel shows only the last one
     if (!done) return;
 

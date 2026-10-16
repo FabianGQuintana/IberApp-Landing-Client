@@ -289,12 +289,23 @@ export interface ReviewModule {
   Review: ComponentType<ReviewProps>;
 }
 
+/**
+ * A game's DOM layer over its canvas while it plays (e.g. text labels on a fixed scene: the canvas draws no text,
+ * C15). The wrapper renders it filling the stage, with pointer-events off; it measures its own box (the canvas fills
+ * it: same proportion) and places itself with the pure helpers of shared/layout and shared/scene-fit.
+ */
+export interface OverlayModule {
+  Overlay: ComponentType;
+}
+
 export interface ReadyEntry {
   status: "ready";
   meta: GameMeta;
   load: () => Promise<GameModule>;
   /** Run games only: the review step (its own chunk, no Phaser). */
   review?: () => Promise<ReviewModule>;
+  /** Optional DOM layer over the stage while the game plays (its own chunk, no Phaser). */
+  overlay?: () => Promise<OverlayModule>;
 }
 
 export type RegistryEntry = { status: "coming-soon" } | ReadyEntry;

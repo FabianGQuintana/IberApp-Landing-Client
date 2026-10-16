@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { ReviewProps } from "@/lib/games/contract";
-import { TOTAL, type ObservationSummary } from "@/lib/games/water-signs/hotspots";
+import { TOTAL, type ObservationSummary } from "@/lib/games/water-signs/rules";
 import { QUESTION } from "@/lib/games/water-signs/meta";
 
 // Phase 3 of water-signs, "El rastro" (specification): one question about where all of it came from. It cannot be

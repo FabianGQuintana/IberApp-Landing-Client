@@ -17,6 +17,7 @@ export const REGISTRY: GameRegistry = {
     meta: waterSignsMeta,
     load: () => import("./water-signs"),
     review: () => import("@/components/games/water-signs/Review"),
+    overlay: () => import("@/components/games/water-signs/Labels"),
   },
   "dark-sky": { status: "coming-soon" },
   "night-voices": { status: "coming-soon" },
