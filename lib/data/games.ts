@@ -12,14 +12,14 @@ export const GAMES: Game[] = [
     id: "clean-channels",
     title: "Canales limpios",
     meta: "Kayak · Residuos · Laguna Iberá",
-    description: "Tocá los residuos que flotan en el canal. Cinco piezas, y una pregunta: ¿de dónde vienen?",
+    description: "Remá por el canal y juntá los residuos que flotan. Después clasificalos: no todos hacen el mismo daño.",
     portalId: "laguna",
   },
   {
     id: "water-signs",
     title: "Señales del agua",
     meta: "Senderismo · Lixiviados · San Nicolás",
-    description: "Recorré la imagen y encontrá tres señales de que el agua está cambiando.",
+    description: "Mirá la laguna y marcá las señales de que el agua está contaminada. Ojo: no todo lo raro es contaminación.",
     portalId: "sannicolas",
   },
   {
