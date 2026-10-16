@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predev": "node scripts/copy-maplibre-worker.mjs",
+    "predev": "node scripts/copy-maplibre-worker.mjs && node scripts/build-assets.mjs clean-channels && node scripts/build-assets.mjs water-signs",
     "dev": "next dev",
-    "prebuild": "node scripts/copy-maplibre-worker.mjs",
+    "prebuild": "node scripts/copy-maplibre-worker.mjs && node scripts/build-assets.mjs clean-channels && node scripts/build-assets.mjs water-signs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -15,6 +15,7 @@
   "dependencies": {
     "maplibre-gl": "^6.11.2",
     "next": "16.3.6",
+    "phaser": "3.90.0",
     "postcss": "^8.5.28",
     "react": "19.2.8",
     "react-dom": "19.2.8",
@@ -28,6 +29,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
+    "sharp": "0.35.5",
     "tailwindcss": "^4.3.3",
     "typescript": "^5"
   },

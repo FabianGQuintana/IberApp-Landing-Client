@@ -84,6 +84,7 @@ Cada necesidad de v6, cómo la resuelve el prototipo y con qué se implementa. *
 | Animación de scroll | `scroll` + `requestAnimationFrame` + `IntersectionObserver`, escribiendo estilos directo en el DOM | **Sin librería de animación.** Hooks propios con `rAF` + `IntersectionObserver` que escriben por ref. Se descarta `motion`: v6 no lo necesita y agrega peso | Decisión validada |
 | Ondulación del agua | Filtro SVG `feTurbulence` + `feDisplacementMap` animado | Mismo filtro SVG inline | Compatible |
 | Sonido (Voces de la noche) | **Web Audio API**: 4 osciladores con rampa descendente | Igual. No hacen falta archivos de audio | Compatible |
+| Minijuegos | Animaciones CSS y Web Audio dentro de cada componente | **Phaser 3.90.0** exacto (`npm i --save-exact`: sin la versión instala la 4.x), cargado con `import()` recién cerca de `#jugar` y montado al tocar “Empezar”, detrás de un wrapper único (`GameStage`). Efectos de sonido sintetizados con Web Audio, sin archivos | Implementado (fase 4, entrega `play`): fuera del bundle inicial, verificado sobre `next start` |
 | Detección de conexión | Botón que simula “Sin señal” | **`useOffline`** de `next/offline` + `experimental.useOffline` (Next 16, experimental) para la UI; cola propia en IndexedDB para reportes | Validado: el hook y el flag existen en 16.3.6 |
 | Uso sin conexión completo | Texto “Guardar sin conexión” | **Serwist** (`@serwist/next` 9.5.12 + `@serwist/cli`), recomendado por la guía PWA de Next 16 con ejemplo para Turbopack | Validado en compatibilidad; se instala en fase 6 |
 | Fotos de reportes | Simulado | `<input type="file" accept="image/*" capture="environment">` + compresión en canvas (`utils/image.ts`) | Implementado como utilidad |
@@ -93,7 +94,7 @@ Cada necesidad de v6, cómo la resuelve el prototipo y con qué se implementa. *
 | Pruebas | — | **Playwright 1.63**: 4 anchos, errores de runtime, tema; luego comparación visual contra v6 | Validado (5 tests en verde) |
 | Lint | — | ESLint 9 + `eslint-config-next` 16 (incluye las reglas de React Compiler, como `set-state-in-effect`) | Validado |
 
-**Conclusión:** todo lo que hace v6 tiene un equivalente directo en Next 16. No hace falta ninguna librería que v6 no use, salvo las de producción (Serwist, Drizzle). Además se quitan dos piezas: el runtime `support.js` y la carga de MapLibre por CDN.
+**Conclusión:** todo lo que hace v6 tiene un equivalente directo en Next 16. No hace falta ninguna librería que v6 no use, salvo las de producción (Serwist, Drizzle) y Phaser para los minijuegos rediseñados. Además se quitan dos piezas: el runtime `support.js` y la carga de MapLibre por CDN.
 
 ---
 
@@ -114,7 +115,8 @@ components/
   sections/             Hero, ConnectedByWater, Territory, RoadStatus, Pause, PortalsRail,
                         PortalSheet, Ecosystem, Fragility, Play, Act, Future
   map/                  MapView (client, MapLibre diferido), PortalMiniMap
-  games/                GamesIndex + un componente por juego (nombres y mecánicas por definir; CleanChannels, WaterSigns, DarkSky y NightVoices son los de v6, solo referencia: ver sección 10)
+  games/                GameStage (wrapper único: intro, dificultad, carga, canvas, revisión, resultado y
+                        “Próximamente”) + la fase de revisión en DOM de cada juego (clean-channels/, water-signs/)
   report/               ReportWizard, ReportsMapDialog, TrackingTimeline
   ui/                   Icon, Lightbox, Controls (flechas, botón vidrio, acción subrayada, punto),
                         LitText, Reveal, CustomCursor (fase 5)
@@ -126,11 +128,14 @@ hooks/                  useLandingScroll (header, sección activa, franja), useT
 lib/
   data/                 portals, road-status, ecosystem, games, reports, copy, images, statuses
   map/config.ts         BOUNDS, PELLEGRINI, satStyle(), atribución
-  storage/local-store.ts
+  games/                contract.ts (contrato juego ↔ wrapper), registry.ts (4 temas: jugable o “próximamente”),
+                        shared/ (runtime de Phaser), un módulo por juego (clean-channels/, water-signs/)
+  storage/local-store.ts · game-progress.ts (mejor resultado por juego)
   validation/report.ts
 types/                  portal, report, game, content
 utils/                  format, geo, image
 public/img/             19 fotos WebP · public/iso.svg
+public/games/<id>/      arte de cada juego (WebP); si falta un archivo, el juego usa un placeholder
 tests/e2e/              Playwright
 ```
 
@@ -275,6 +280,12 @@ Fase 4: los reportes se guardan en `localStorage`. Fase 6: Server Action + Postg
 >
 > **Los minijuegos de la landing v6 son una referencia, no el objetivo.** El equipo decidió **no replicarlos tal cual** y construir experiencias **mejores**: más cuidadas, más educativas y más acordes a la estética minimalista y moderna del resto de la página. Si seguís el desarrollo, **no copies las mecánicas de la tabla de abajo por inercia** ni las tomes como criterio de aceptación: usalas como punto de partida para pensar algo superior.
 
+### Estado (fase 4, entrega `play`)
+
+- **Jugables:** Canales limpios (`clean-channels`: recorrido en kayak + clasificación agrupada por tipo, con sonido) y Señales del agua (`water-signs`: escena fija para marcar señales + una pregunta de cierre). **Próximamente:** Cielo oscuro y Voces de la noche.
+- Se desarrollaron en un proyecto aparte (`iberapp-games`, misma versión de Next) con un contrato y una suite de conformidad propios, y se copiaron a las mismas rutas: `lib/games/`, `components/games/`, `lib/storage/game-progress.ts` y `public/games/`. La sección es `components/sections/Play.tsx`.
+- **Pendiente:** el arte nuevo de Canales limpios (pala y reemplazos) y el arte y las coordenadas reales de Señales del agua. Entran copiando archivos a `public/games/<id>/` (y, para Señales del agua, las coordenadas en `lib/games/water-signs/hotspots.ts`), sin cambiar código.
+
 ### Qué se conserva (estructura: contrato con el resto de la página)
 
 Esto **sí** se respeta, porque otras secciones dependen de ello:
@@ -342,7 +353,7 @@ Rama de trabajo: `feat/landing-v6`. Cada fase termina con lint, build y Playwrig
 | **1 · Cáscara** ✅ | Header (tono, vidrio, link activo), menú móvil, selector de tema, franja “Caminos hoy”, footer, `Reveal`, breakpoint `tab`, `useLandingScroll`, secciones provisorias con ids/tonos/alturas de v6 | Comparación lado a lado con v6 (header arriba y sobre superficie, oscuro y claro, menú, franja, footer) en 1440 y 390 px; 12 tests en verde | `feat(layout): add v6 header, mobile menu, roads band and footer` |
 | **2 · Secciones de contenido** ✅ | Portada (entrada animada), Conectado por el agua (texto iluminado), Caminos, Pausa, Carrusel de portales, Ficha con galería, lightbox y “Antes de ir”, Ecosistema y Fragilidad (ficha activa por scroll), Cierre; `LandingContext` (portal y juego elegidos) | Comparación lado a lado con v6 de 12 escenarios en 1440 y 390 px; 19 tests en verde | `feat(sections): build v6 content sections` |
 | **3 · Mapas** ✅ | `MapView` (MapLibre diferido, marcadores HTML por `project()`, tratamiento del raster por tema, estados y reintento), Territorio (pines, etiquetas, tarjeta, zoom, reiniciar, brújula, escala, leyenda, intro, tira de portales en celular), mapa de la ficha; worker de MapLibre servido desde `public/` | Comparación lado a lado con v6 en 1440 y 390 px; 26 tests en verde (incluye fallo de teselas) | `feat(map): territory and portal sheet maps` |
-| 4 · Interactivos ⏳ | **Minijuegos rediseñados (no son copia de v6; sección 10)**, asistente de reporte con foto y GPS reales, panel de reclamos, `useOffline`. Se puede dividir en dos entregas: `report` (paridad con v6) y `play` (diseño nuevo) | Reporte: flujos E2E en verde y comparación con v6. Juegos: cumplen los criterios de calidad de la sección 10 y tienen sus propios tests; **no se comparan contra v6** | `feat(report): report wizard and claims map` / `feat(play): redesigned minigames` |
+| 4 · Interactivos ⏳ | **Minijuegos rediseñados (no son copia de v6; sección 10)**, asistente de reporte con foto y GPS reales, panel de reclamos, `useOffline`. Se puede dividir en dos entregas: `report` (paridad con v6) y `play` (diseño nuevo). **`play` ✅** (rama `feat/play`): sección `#jugar` con 2 juegos y 2 “próximamente” | Reporte: flujos E2E en verde y comparación con v6. Juegos: cumplen los criterios de calidad de la sección 10 y tienen sus propios tests; **no se comparan contra v6** (`play`: suite de conformidad en `iberapp-games` + `tests/e2e/play.spec.ts`) | `feat(report): report wizard and claims map` / `feat(play): redesigned minigames` |
 | **5 · Coreografía** ✅ | Parallax, iluminado, mapa sticky por scroll, ondulación, sanación, cursor, carrusel con parallax, reduced-motion | Comparación visual con v6 en escritorio y celular; 36 tests en verde (10 nuevos en `motion.spec.ts`) | `feat(motion): scroll choreography from v6` |
 | 6 · Producción | Postgres + Drizzle, bucket, Server Action, Serwist, imágenes de reemplazo, deploy en Railway | Reporte sin señal que llega al volver la conexión; Lighthouse móvil ≥ 90 | `feat(api): persist reports and offline queue` |
 
