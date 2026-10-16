@@ -15,6 +15,7 @@
   "dependencies": {
     "maplibre-gl": "^6.11.2",
     "next": "16.3.6",
+    "phaser": "3.90.0",
     "postcss": "^8.5.28",
     "react": "19.2.8",
     "react-dom": "19.2.8",
