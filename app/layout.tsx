@@ -44,7 +44,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     // The inline ThemeScript may change data-theme before hydration.
-    <html lang="es-AR" data-theme="dark" suppressHydrationWarning className={`${barlow.variable} ${barlowCondensed.variable}`}>
+    <html lang="es-AR" data-theme="dark" data-scroll-behavior="smooth" suppressHydrationWarning className={`${barlow.variable} ${barlowCondensed.variable}`}>
       <head>
         <ThemeScript />
       </head>

@@ -16,7 +16,8 @@ test.describe("desktop 1440", () => {
 
   test("header is transparent on top and turns into glass after scrolling", async ({ page }) => {
     await page.goto("/");
-    const header = page.locator("header");
+    // The site header (banner landmark): sections may have their own <header>, like #jugar and the game stage.
+    const header = page.getByRole("banner");
     await expect(header).toHaveCSS("background-color", "rgba(11, 16, 14, 0)");
     await page.evaluate(() => window.scrollTo({ top: 200, behavior: "instant" }));
     await expect(header).not.toHaveCSS("background-color", "rgba(11, 16, 14, 0)");

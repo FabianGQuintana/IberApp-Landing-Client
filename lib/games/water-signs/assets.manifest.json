@@ -1,0 +1,5 @@
+[
+  { "key": "scene", "file": "scene.webp", "type": "image", "width": 720, "height": 900, "format": "webp", "alpha": false, "frames": null, "maxKB": 150, "placeholder": "caja sky de 720 × 900", "use": "la laguna entera con las 8 señales y los 7 distractores pintados; vector plano rasterizado a la medida exacta; sin texto, sin transparencia y sin sombras" },
+  { "key": "marker-signal", "file": "marker-signal.webp", "type": "image", "width": 96, "height": 96, "format": "webp", "alpha": true, "frames": null, "maxKB": 8, "placeholder": "círculo mint de 96 px", "use": "marca de señal encontrada, centrada sobre el elemento; vector plano" },
+  { "key": "marker-distractor", "file": "marker-distractor.webp", "type": "image", "width": 96, "height": 96, "format": "webp", "alpha": true, "frames": null, "maxKB": 8, "placeholder": "círculo orange de 96 px", "use": "marca de falsa alarma (distractor marcado), distinta de la de señal; vector plano" }
+]

@@ -10,18 +10,18 @@ import { Fragility } from "@/components/sections/Fragility";
 import { Future } from "@/components/sections/Future";
 import { Hero } from "@/components/sections/Hero";
 import { Pause } from "@/components/sections/Pause";
+import { Play } from "@/components/sections/Play";
 import { PortalSheet } from "@/components/sections/PortalSheet";
 import { PortalsRail } from "@/components/sections/PortalsRail";
 import { RoadStatus } from "@/components/sections/RoadStatus";
-import { SectionPlaceholder } from "@/components/sections/SectionPlaceholder";
 import { Territory } from "@/components/sections/Territory";
 import { LandingProvider } from "@/context/LandingContext";
-import { SECTION_IDS } from "@/lib/data/copy";
 
 // Ibera Landing v6, section by section and in the same order.
-// Placeholder: Aprender jugando (a teammate builds the games). The v6 "Reportar" section was dropped: tourists use "Valorar".
+// The v6 "Reportar" section was dropped: tourists use "Valorar" (FeedbackModal) and rangers report from their own app.
 // Aprender jugando keeps v6's place, id and index of four topics, but its minigames are NOT copied from v6: the team
-// agreed to redesign them to be better (guide §10). Scroll choreography lives in <ScrollMotion /> and <CustomCursor />.
+// agreed to redesign them to be better (guide §10); they are Phaser modules behind <GameStage /> (components/games).
+// Scroll choreography lives in <ScrollMotion /> and <CustomCursor />.
 export default function LandingPage() {
   return (
     <LandingProvider>
@@ -38,7 +38,7 @@ export default function LandingPage() {
         <PortalSheet />
         <Ecosystem />
         <Fragility />
-        <SectionPlaceholder id={SECTION_IDS.play} tone="surface" label="Aprender · Desafío Iberá" title="Lo que se hace en el estero, se aprende jugando" heightClass="min-h-[150vh]" surface="bg2" />
+        <Play />
         <Future />
       </main>
       <Footer />

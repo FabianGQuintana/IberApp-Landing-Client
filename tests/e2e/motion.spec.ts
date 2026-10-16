@@ -11,6 +11,9 @@ const sectionTop = (page: Page, id: string) =>
     id,
   );
 const settle = (page: Page) => page.waitForTimeout(250);
+// Client effects run after hydration, a few hundred ms after `load` in dev: tests that act right away must wait for it
+// (CustomCursor marks <html> once its effect runs, on desktop without reduced motion).
+const hydrated = (page: Page) => page.waitForFunction(() => document.documentElement.dataset.customCursor === "on");
 
 test.describe("desktop 1440", () => {
   test.use({ viewport: { width: 1440, height: 900 } });
@@ -124,6 +127,7 @@ test.describe("desktop 1440", () => {
     page,
   }) => {
     await page.goto("/");
+    await hydrated(page);
     const top = await sectionTop(page, "fragilidad");
     await scrollTo(page, top + 100);
     await page.waitForTimeout(150);
@@ -184,6 +188,7 @@ test.describe("desktop 1440", () => {
     page,
   }) => {
     await page.goto("/");
+    await hydrated(page);
     await page.locator("#portales").scrollIntoViewIfNeeded();
     await page.evaluate(() =>
       document

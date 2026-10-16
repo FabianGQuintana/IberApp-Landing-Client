@@ -50,3 +50,6 @@ next-env.d.ts
 
 # copied from node_modules by scripts/copy-maplibre-worker.mjs
 /public/vendor/
+
+# game art, generated from assets-src/ by scripts/build-assets.mjs (predev / prebuild)
+/public/games/
