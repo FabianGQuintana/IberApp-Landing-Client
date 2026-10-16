@@ -10,6 +10,7 @@ import { useSilentLocation, type LocationStatus } from "@/hooks/rangers/useSilen
 import { CATEGORIES } from "@/lib/rangers/categories";
 import { newId } from "@/lib/rangers/id";
 import { compressPhoto } from "@/lib/rangers/compress";
+import { DEMO_MODE, DEMO_PHOTO_URL, DEMO_POSITION } from "@/lib/rangers/demo";
 import { saveReport } from "@/lib/rangers/reports-db";
 
 type Props = { onDone: () => void };
@@ -65,6 +66,20 @@ export function NewReportView({ onDone }: Props) {
     }
   };
 
+  // Demo mode: a sample photo so the flow can be tried on a computer without a camera
+  const loadSamplePhoto = async () => {
+    setProcessingPhoto(true);
+    setError(null);
+    try {
+      const blob = await (await fetch(DEMO_PHOTO_URL)).blob();
+      setPhoto(blob);
+    } catch {
+      setError("No se pudo cargar la foto de ejemplo.");
+    } finally {
+      setProcessingPhoto(false);
+    }
+  };
+
   const save = async () => {
     if (!categoryId) {
       setError("Elegí qué encontraste tocando uno de los 4 botones.");
@@ -77,8 +92,10 @@ export function NewReportView({ onDone }: Props) {
     let position = fix;
     if (!position && status !== "denied" && status !== "unavailable") {
       setSaving("waiting-gps");
-      position = await waitForFix(GPS_WAIT_MS);
+      position = await waitForFix(DEMO_MODE ? 4000 : GPS_WAIT_MS);
     }
+    // Demo mode: if the browser gives no position (permission denied, desktop without GPS), use Laguna Iberá
+    if (!position && DEMO_MODE) position = DEMO_POSITION;
 
     setSaving("saving");
     try {
@@ -105,7 +122,7 @@ export function NewReportView({ onDone }: Props) {
       <SuccessOverlay
         title="¡Reporte guardado!"
         message={
-          fix || status === "ok"
+          fix || status === "ok" || DEMO_MODE
             ? "Quedó en el teléfono. Envialo con «Sincronizar» cuando tengas señal."
             : "Quedó en el teléfono, pero sin ubicación GPS. Envialo con «Sincronizar» cuando tengas señal."
         }
@@ -157,9 +174,16 @@ export function NewReportView({ onDone }: Props) {
             </BigButton>
           </>
         ) : (
-          <BigButton icon="📷" className="min-h-32" onClick={() => fileRef.current?.click()}>
-            Tomar foto
-          </BigButton>
+          <>
+            <BigButton icon="📷" className="min-h-32" onClick={() => fileRef.current?.click()}>
+              Tomar foto
+            </BigButton>
+            {DEMO_MODE ? (
+              <BigButton variant="neutral" icon="🖼️" onClick={loadSamplePhoto}>
+                Usar foto de ejemplo (demo)
+              </BigButton>
+            ) : null}
+          </>
         )}
       </section>
 
