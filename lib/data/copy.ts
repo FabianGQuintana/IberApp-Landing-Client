@@ -22,7 +22,6 @@ export const SECTION_IDS = {
   ecosystem: "ecosistema",
   fragility: "fragilidad",
   play: "jugar",
-  act: "actuar",
   future: "futuro",
 } as const;
 

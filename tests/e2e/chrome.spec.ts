@@ -62,9 +62,9 @@ test.describe("phone 390", () => {
     await page.getByRole("button", { name: "Menú" }).click();
     const menu = page.getByRole("dialog", { name: "Menú", includeHidden: true });
     await expect(menu).toHaveCSS("opacity", "1");
-    await menu.getByRole("link", { name: "Reportar" }).click();
+    await menu.getByRole("link", { name: "Aprender" }).click();
     await expect(menu).toHaveCSS("opacity", "0");
-    await expect(page).toHaveURL(/#actuar$/);
+    await expect(page).toHaveURL(/#jugar$/);
   });
 
   test("Escape closes the menu", async ({ page }) => {

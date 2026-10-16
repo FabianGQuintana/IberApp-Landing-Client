@@ -1,3 +1,5 @@
+import { FeedbackModal } from "@/components/feedback/FeedbackModal";
+import { FeedbackQueueToast } from "@/components/feedback/FeedbackQueueToast";
 import { Footer } from "@/components/layout/Footer";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { CustomCursor } from "@/components/motion/CustomCursor";
@@ -12,16 +14,14 @@ import { Play } from "@/components/sections/Play";
 import { PortalSheet } from "@/components/sections/PortalSheet";
 import { PortalsRail } from "@/components/sections/PortalsRail";
 import { RoadStatus } from "@/components/sections/RoadStatus";
-import { SectionPlaceholder } from "@/components/sections/SectionPlaceholder";
 import { Territory } from "@/components/sections/Territory";
 import { LandingProvider } from "@/context/LandingContext";
-import { SECTION_IDS } from "@/lib/data/copy";
 
 // Ibera Landing v6, section by section and in the same order.
-// Placeholder: Reportar (phase 4: interactive).
+// The v6 "Reportar" section was dropped: tourists use "Valorar" (FeedbackModal) and rangers report from their own app.
 // Aprender jugando keeps v6's place, id and index of four topics, but its minigames are NOT copied from v6: the team
 // agreed to redesign them to be better (guide §10); they are Phaser modules behind <GameStage /> (components/games).
-// Reportar does follow v6. Scroll choreography lives in <ScrollMotion /> and <CustomCursor />.
+// Scroll choreography lives in <ScrollMotion /> and <CustomCursor />.
 export default function LandingPage() {
   return (
     <LandingProvider>
@@ -39,10 +39,11 @@ export default function LandingPage() {
         <Ecosystem />
         <Fragility />
         <Play />
-        <SectionPlaceholder id={SECTION_IDS.act} tone="photo" label="Actuar" title="¿Viste algo que no debería estar acá?" heightClass="min-h-[120vh]" image="caiman" />
         <Future />
       </main>
       <Footer />
+      <FeedbackModal />
+      <FeedbackQueueToast />
     </LandingProvider>
   );
 }

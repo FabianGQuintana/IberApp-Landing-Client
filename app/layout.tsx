@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Barlow, Barlow_Semi_Condensed } from "next/font/google";
+import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
 import { ThemeScript } from "@/components/theme/ThemeScript";
 import "./globals.css";
 
@@ -19,11 +20,16 @@ const barlowCondensed = Barlow_Semi_Condensed({
   display: "swap",
 });
 
+// On Vercel the production domain is known even without NEXT_PUBLIC_SITE_URL.
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000");
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(siteUrl),
   title: "Iberá · Un paisaje hecho de agua",
   description:
-    "Gran Parque Iberá, Corrientes. Explorá los portales y el estado de sus caminos, conocé el ecosistema, aprendé jugando y reportá lo que daña el estero.",
+    "Gran Parque Iberá, Corrientes. Explorá los portales y el estado de sus caminos, conocé el ecosistema, aprendé jugando y valorá tu visita.",
   applicationName: "IberAPP",
   openGraph: { images: ["/img/wetlands.webp"], locale: "es_AR", type: "website" },
 };
@@ -42,7 +48,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <ThemeScript />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <ServiceWorkerRegister />
+      </body>
     </html>
   );
 }

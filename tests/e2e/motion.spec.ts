@@ -195,12 +195,16 @@ test.describe("desktop 1440", () => {
         .getElementById("portales")!
         .scrollIntoView({ behavior: "instant" }),
     );
+    // The cursor listens only after hydration; under parallel load the first moves can land before that.
+    await expect(page.locator("html")).toHaveAttribute("data-custom-cursor", "on");
     const card = page.getByRole("button", { name: "Ver portal Laguna Iberá" });
-    const box = (await card.boundingBox())!;
-    await page.mouse.move(box.x + 100, box.y + 100);
-    await page.mouse.move(box.x + 140, box.y + 120);
     const cursor = page.getByTestId("custom-cursor");
-    await expect(cursor).toHaveCSS("opacity", "1");
+    await expect(async () => {
+      const box = (await card.boundingBox())!;
+      await page.mouse.move(box.x + 100, box.y + 100);
+      await page.mouse.move(box.x + 140, box.y + 120);
+      await expect(cursor).toHaveCSS("opacity", "1", { timeout: 1000 });
+    }).toPass();
     await expect(cursor).toContainText("Ver portal");
     await page.mouse.move(5, 5);
     await expect(cursor).toHaveCSS("opacity", "0");

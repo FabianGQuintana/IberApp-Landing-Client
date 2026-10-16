@@ -14,6 +14,12 @@ interface LandingState {
   gameId: GameId;
   /** Selects a game and scrolls to the games section (v6: `goJuegoCur`) */
   openGame: (id: GameId, options?: { scroll?: boolean }) => void;
+  /** Tourist feedback modal ("Valorar") */
+  feedbackOpen: boolean;
+  /** Portal preselected when opened from a portal sheet ("" = none) */
+  feedbackPortalId: string;
+  openFeedback: (portalId?: string) => void;
+  closeFeedback: () => void;
 }
 
 const LandingContext = createContext<LandingState | null>(null);
@@ -28,6 +34,8 @@ export function scrollToSection(id: string) {
 export function LandingProvider({ children }: { children: ReactNode }) {
   const [portalId, setPortalId] = useState(PORTALS[0].id);
   const [gameId, setGameId] = useState<GameId>("clean-channels");
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [feedbackPortalId, setFeedbackPortalId] = useState("");
 
   const openPortal = useCallback((id: string, { scroll = true } = {}) => {
     setPortalId(id);
@@ -40,7 +48,16 @@ export function LandingProvider({ children }: { children: ReactNode }) {
     if (scroll) scrollToSection(SECTION_IDS.play);
   }, []);
 
-  const value = useMemo(() => ({ portalId, openPortal, gameId, openGame }), [portalId, openPortal, gameId, openGame]);
+  const openFeedback = useCallback((id = "") => {
+    setFeedbackPortalId(id);
+    setFeedbackOpen(true);
+  }, []);
+  const closeFeedback = useCallback(() => setFeedbackOpen(false), []);
+
+  const value = useMemo(
+    () => ({ portalId, openPortal, gameId, openGame, feedbackOpen, feedbackPortalId, openFeedback, closeFeedback }),
+    [portalId, openPortal, gameId, openGame, feedbackOpen, feedbackPortalId, openFeedback, closeFeedback],
+  );
   return <LandingContext.Provider value={value}>{children}</LandingContext.Provider>;
 }
 

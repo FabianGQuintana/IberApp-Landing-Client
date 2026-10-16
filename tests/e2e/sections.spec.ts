@@ -10,7 +10,7 @@ test.describe("desktop 1440", () => {
   test("all v6 sections are present in order", async ({ page }) => {
     await page.goto("/");
     const ids = await page.locator("main > section[id]").evaluateAll((els) => els.map((e) => e.id));
-    expect(ids).toEqual(["descubrir", "intro", "territorio", "caminos", "portales", "ficha", "ecosistema", "fragilidad", "jugar", "actuar", "futuro"]);
+    expect(ids).toEqual(["descubrir", "intro", "territorio", "caminos", "portales", "ficha", "ecosistema", "fragilidad", "jugar", "futuro"]);
   });
 
   test("choosing a road opens that portal sheet", async ({ page }) => {
@@ -47,7 +47,7 @@ test.describe("desktop 1440", () => {
     await expect(dialog).toBeHidden();
   });
 
-  test("portal challenge links go to the games and report sections", async ({ page }) => {
+  test("portal challenge links go to the games section", async ({ page }) => {
     await page.goto("/");
     await page.locator("#ficha").getByRole("button", { name: /Aprendelo jugando: Canales limpios/ }).click();
     await expect.poll(() => page.evaluate(() => Math.abs(document.getElementById("jugar")!.getBoundingClientRect().top))).toBeLessThan(5);

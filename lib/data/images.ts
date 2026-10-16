@@ -24,4 +24,3 @@ export const IMAGES: Record<ImageId, { src: string; alt: string; file: string }>
   "light-pollution": { src: "/img/light-pollution.webp", alt: "Contaminación lumínica sobre una ciudad", file: "Light pollution.jpg" },
 };
 
-export const commonsUrl = (file: string) => `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(file.replace(/ /g, "_"))}`;

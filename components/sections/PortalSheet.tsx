@@ -6,7 +6,7 @@ import { PortalMiniMap } from "@/components/map/PortalMiniMap";
 import { Dot, RoundArrowButton, TextAction } from "@/components/ui/Controls";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { Reveal } from "@/components/ui/Reveal";
-import { scrollToSection, useLanding } from "@/context/LandingContext";
+import { useLanding } from "@/context/LandingContext";
 import { SECTION_IDS } from "@/lib/data/copy";
 import { GAMES } from "@/lib/data/games";
 import { IMAGES } from "@/lib/data/images";
@@ -19,7 +19,7 @@ const EASE = "cubic-bezier(.2,.7,.2,1)";
 
 // "Ficha del portal" (v6 #ficha).
 export function PortalSheet() {
-  const { portalId, openPortal, openGame } = useLanding();
+  const { portalId, openPortal, openGame, openFeedback } = useLanding();
   const portal = getPortal(portalId) ?? PORTALS[0];
   const status = roadStatusOf(portal.id);
   const game = GAMES.find((g) => g.id === portal.game);
@@ -211,8 +211,8 @@ export function PortalSheet() {
                     Aprendelo jugando: {game.title}
                   </TextAction>
                 )}
-                <TextAction arrow="→" className="text-head" onClick={() => scrollToSection(SECTION_IDS.act)}>
-                  Reportar en esta zona
+                <TextAction arrow="→" className="text-head" onClick={() => openFeedback(portal.id)} aria-haspopup="dialog">
+                  Valorar este portal
                 </TextAction>
               </div>
             </Reveal>
@@ -229,7 +229,7 @@ export function PortalSheet() {
             <BeforeRow label="Cómo llegar">{portal.route}</BeforeRow>
             <BeforeRow label="Señal">{portal.signal}</BeforeRow>
             <BeforeRow label="Combustible">{portal.fuel}</BeforeRow>
-            <BeforeRow label="Visitantes">{portal.phone}</BeforeRow>
+            {portal.phone && <BeforeRow label="Visitantes">{portal.phone}</BeforeRow>}
             <PortalMiniMap portalId={portal.id} label={`${portal.kind === "national-park" ? "Parque Nacional" : "Portal"} ${portal.name}`} />
             <TextAction className="mt-6 text-head" onClick={() => setSavedId(saved ? null : portal.id)} aria-pressed={saved}>
               {saved && <span className="h-[7px] w-[7px] animate-ib-fadeup rounded-full bg-mint" />}
