@@ -1,3 +1,4 @@
+import { DEMO_MODE, demoSync } from "@/lib/rangers/demo";
 import { ApiError, apiFetch } from "@/lib/rangers/api";
 import { deleteReport, saveReport } from "@/lib/rangers/reports-db";
 import type { PendingReport, SyncReportsRequest, SyncReportsResult } from "@/types/rangers/report";
@@ -28,6 +29,8 @@ export const hasLocation = (r: PendingReport) => r.latitude !== null && r.longit
  * and the rest stays for the next try.
  */
 export async function syncReports(reports: PendingReport[], onProgress: (p: SyncProgress) => void): Promise<SyncSummary> {
+  if (DEMO_MODE) return demoSync(reports, onProgress);
+
   const withoutLocation = reports.filter((r) => !hasLocation(r) && !r.serverId).length;
   let sent = 0;
 

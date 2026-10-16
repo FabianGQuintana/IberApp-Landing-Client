@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { BigButton } from "@/components/rangers/ui/BigButton";
+import { DEMO_MODE } from "@/lib/rangers/demo";
 import { RangerHeader } from "@/components/rangers/ui/RangerHeader";
 import { OfflineBanner } from "@/components/rangers/ui/OfflineBanner";
 import type { UserProfile } from "@/types/rangers/auth";
@@ -39,6 +40,13 @@ export function DashboardView({ user, pendingCount, onNewReport, onSync, onLogou
           <span className="eyebrow text-mute">Recorrido de hoy</span>
           <h1 className="title-display m-0 text-[clamp(36px,10vw,52px)] leading-[0.95] text-head">Hola, {user.name}</h1>
         </div>
+
+        {DEMO_MODE ? (
+          <p className="m-0 rounded-[10px] border border-mint/60 bg-mint/10 px-4 py-3 text-[14px] text-fg">
+            🧪 <strong>Modo demostración.</strong> Los reportes se guardan en este navegador y &quot;Sincronizar&quot; simula el envío. Probá también
+            sin conexión (DevTools → Network → Offline).
+          </p>
+        ) : null}
         <BigButton size="hero" icon="📸" onClick={onNewReport}>
           Nuevo reporte
         </BigButton>

@@ -6,6 +6,7 @@ import { ErrorBox } from "@/components/rangers/ui/ErrorBox";
 import { Screen } from "@/components/rangers/ui/Screen";
 import { TextField } from "@/components/rangers/ui/TextField";
 import { ApiError, OfflineError } from "@/lib/rangers/api";
+import { DEMO_CREDENTIALS, DEMO_MODE } from "@/lib/rangers/demo";
 import { login } from "@/services/rangers/auth";
 
 type Props = {
@@ -40,6 +41,7 @@ export function LoginView({ reason, defaultEmail = "", onCancel }: Props) {
     } catch (err) {
       if (err instanceof OfflineError) setError("No hay señal. Para entrar la primera vez necesitás conexión.");
       else if (err instanceof ApiError) setError(err.message);
+      else if (DEMO_MODE && err instanceof Error) setError(err.message);
       else setError("No pudimos entrar. Probá de nuevo.");
       setLoading(false);
     }
@@ -54,6 +56,32 @@ export function LoginView({ reason, defaultEmail = "", onCancel }: Props) {
       ) : (
         <p className="text-[17px]">Entrá con tu usuario para empezar a reportar.</p>
       )}
+
+      {DEMO_MODE && !reason ? (
+        <section aria-labelledby="demo-title" className="flex flex-col gap-3 rounded-[12px] border border-mint/60 bg-mint/10 p-4">
+          <h2 id="demo-title" className="eyebrow m-0 text-mint">🧪 Modo demostración</h2>
+          <p className="m-0 text-[15px] text-fg">
+            Para probar el módulo sin servidor, entrá con estos datos de prueba. Todo queda en este navegador: nada se envía a un servidor real.
+          </p>
+          <dl className="m-0 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[15px]">
+            <dt className="text-mute">Email</dt>
+            <dd className="m-0 select-all font-semibold">{DEMO_CREDENTIALS.email}</dd>
+            <dt className="text-mute">Contraseña</dt>
+            <dd className="m-0 select-all font-semibold">{DEMO_CREDENTIALS.password}</dd>
+          </dl>
+          <button
+            type="button"
+            onClick={() => {
+              setEmail(DEMO_CREDENTIALS.email);
+              setPassword(DEMO_CREDENTIALS.password);
+              setError(null);
+            }}
+            className="min-h-12 rounded-[10px] border border-mint bg-transparent px-4 text-[15px] font-semibold text-fg transition-colors hover:bg-mint hover:text-night"
+          >
+            Completar con los datos de prueba
+          </button>
+        </section>
+      ) : null}
 
       <form onSubmit={submit} className="flex flex-col gap-6" noValidate>
         <TextField

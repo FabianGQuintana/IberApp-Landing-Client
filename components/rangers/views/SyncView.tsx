@@ -12,6 +12,7 @@ import { useSession } from "@/hooks/rangers/useSession";
 import { ApiError, OfflineError } from "@/lib/rangers/api";
 import { getCategory } from "@/lib/rangers/categories";
 import { deleteReport } from "@/lib/rangers/reports-db";
+import { DEMO_MODE } from "@/lib/rangers/demo";
 import { hasLocation, syncReports, type SyncProgress, type SyncSummary } from "@/services/rangers/reports";
 import type { PendingReport } from "@/types/rangers/report";
 
@@ -74,7 +75,9 @@ export function SyncView({ onDone }: Props) {
               ]
                 .filter(Boolean)
                 .join(", ")}).`
-            : "Todo llegó al servidor. Ya no queda nada pendiente."
+            : DEMO_MODE
+              ? "Envío simulado (modo demostración): con el backend publicado, los reportes llegan al servidor."
+              : "Todo llegó al servidor. Ya no queda nada pendiente."
         }
         buttonLabel="Volver al inicio"
         onClose={onDone}
