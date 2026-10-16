@@ -89,6 +89,13 @@ export function SiteChrome() {
             >
               Valorar
             </button>
+            <a
+              href="/rangers"
+              className="flex h-10 items-center rounded-[10px] border px-[18px] text-[15px] font-medium leading-none no-underline transition-transform duration-[350ms] hover:scale-[1.015]"
+              style={{ color: fg, borderColor: lineStrong, transition: "color .5s, border-color .5s, transform .35s" }}
+            >
+              Ingresar
+            </a>
           </nav>
           <ThemeToggle color={fg} borderColor={lineStrong} />
           <button
@@ -159,6 +166,18 @@ export function SiteChrome() {
             >
               Valorar
             </button>
+          </span>
+          <span className="block overflow-hidden">
+            <a
+              href="/rangers"
+              className="title-display block py-2 text-left text-[clamp(28px,8vw,40px)] leading-[0.95] text-white/80 no-underline hover:text-white"
+              style={{
+                transform: `translateY(${menuOpen ? 0 : 100}%)`,
+                transition: `transform .8s cubic-bezier(.2,.7,.2,1) ${menuOpen ? (0.12 + (NAV_LINKS.length + 1) * 0.06).toFixed(2) : 0}s`,
+              }}
+            >
+              Ingresar · Guardaparques
+            </a>
           </span>
         </nav>
         <div className="eyebrow mt-8 border-t border-white/[.14] pt-6 leading-[1.4] text-sage">Gran Parque Iberá · Corrientes, Argentina</div>
