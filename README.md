@@ -12,10 +12,11 @@ La guía de implementación es la fuente de verdad: [`docs/GUIA_IMPLEMENTACION.m
 | --- | --- | --- |
 | 0–3 | Base, cáscara, secciones de contenido, mapas | ✅ |
 | 4 | Valoración para turistas (modal "Valorar") | ✅ |
-| 4 | Minijuegos (*Aprender jugando*) | ⏳ en curso |
+| 4 | Minijuegos (*Aprender jugando*): Canales limpios y Señales del agua | ✅ (Cielo oscuro y Voces de la noche: próximamente) |
 | 5 | Coreografía de scroll | ✅ |
 | 6 | Uso sin conexión (service worker) y deploy en Vercel | ✅ |
-| 6 | Backend IberaReclamos y estado real de los caminos | ⏳ pendiente |
+| 6 | Backend [IberaReclamos](https://github.com/FabianGQuintana/IBERA-Rangers-API) (recibe las valoraciones) | ✅ (falta publicarlo en Railway) |
+| 6 | Estado real de los caminos | ⏳ pendiente |
 
 ## ⚠️ Decisión pactada: los minijuegos no son los de la landing v6
 
@@ -24,7 +25,7 @@ La app replica la landing v6 (`docs/prototipo/`) **salvo en los minijuegos**. De
 ## Desarrollo
 
 ```bash
-npm run dev            # servidor de desarrollo (copia antes el worker de MapLibre)
+npm run dev            # servidor de desarrollo (antes copia el worker de MapLibre y genera el arte de los juegos)
 npm run lint
 npm run build
 npm run test:e2e       # Playwright

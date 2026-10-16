@@ -1,0 +1,4 @@
+# Not needed to build or serve the site on Vercel
+docs/
+tests/
+playwright.config.ts

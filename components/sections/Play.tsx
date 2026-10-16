@@ -1,7 +1,7 @@
 "use client";
 
 import { GameStage } from "@/components/games/GameStage";
-import { scrollToSection, useLanding } from "@/context/LandingContext";
+import { useLanding } from "@/context/LandingContext";
 import { SECTION_IDS } from "@/lib/data/copy";
 import { GAMES } from "@/lib/data/games";
 import { PORTALS } from "@/lib/data/portals";
@@ -15,7 +15,7 @@ import { useGameProgress } from "@/lib/storage/game-progress";
 // the wrapper is keyed by game, so the previous game is destroyed before the next one can mount. Nothing here moves
 // per frame, nothing has a transform and nothing carries data-cursor (the game's area keeps the native cursor).
 export function Play() {
-  const { gameId, openGame, portalId: sheetPortalId } = useLanding();
+  const { gameId, openGame, openFeedback, portalId: sheetPortalId } = useLanding();
   const progress = useGameProgress();
 
   // Portal shown with the game (P4, display only): the one open in the sheet when it belongs to this game (entry from
@@ -68,7 +68,7 @@ export function Play() {
         </div>
 
         <div className="mx-auto w-full max-w-[1180px]">
-          <GameStage gameId={gameId} portalId={portalId} onReport={() => scrollToSection(SECTION_IDS.act)} />
+          <GameStage gameId={gameId} portalId={portalId} onReport={() => openFeedback(portalId)} />
         </div>
       </div>
     </section>

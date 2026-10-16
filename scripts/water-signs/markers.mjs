@@ -1,5 +1,5 @@
 import { writeFileSync } from "node:fs";
-const ink="#0B100E", mint="#00D58A", sky="#90B4E1", night="#0B100E";
+const ink="#0B100E", mint="#00D58A", sky="#90B4E1";
 // Marca de señal: circulo menta con tilde. Marca de distractor: circulo celeste con guion.
 const base = (fill, inner) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
 <circle cx="48" cy="48" r="36" fill="${fill}" stroke="${ink}" stroke-width="6"/>

@@ -1,6 +1,6 @@
 // IberAPP service worker: the landing opens without signal once it was visited with signal.
 // Hand-written (no dependencies). Bump VERSION to drop every old cache on the next visit.
-const VERSION = "v1";
+const VERSION = "v2";
 const PAGES = `ibera-pages-${VERSION}`;
 const STATIC = `ibera-static-${VERSION}`;
 const MEDIA = `ibera-media-${VERSION}`;
@@ -77,7 +77,7 @@ self.addEventListener("fetch", (event) => {
   if (request.mode === "navigate" && url.origin === self.location.origin) return event.respondWith(page(request));
   if (url.origin === self.location.origin) {
     if (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/vendor/")) return event.respondWith(cacheFirst(request, STATIC));
-    if (url.pathname.startsWith("/_next/image") || url.pathname.startsWith("/img/") || url.pathname === "/iso.svg" || url.pathname === "/favicon.ico")
+    if (url.pathname.startsWith("/_next/image") || url.pathname.startsWith("/img/") || url.pathname.startsWith("/icons/") || url.pathname === "/iso.svg" || url.pathname === "/favicon.ico" || url.pathname === "/apple-icon.png")
       return event.respondWith(staleWhileRevalidate(request, MEDIA));
     return;
   }
