@@ -2,7 +2,8 @@
 
 import { useScrollFrame } from "@/hooks/useScrollFrame";
 
-const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
+const clamp = (v: number, min: number, max: number) =>
+  Math.max(min, Math.min(max, v));
 /** 0 when the element's top enters the viewport bottom, 1 when its bottom leaves the top (v6 `viewP`) */
 const viewProgress = (el: Element, vh: number) => {
   const r = el.getBoundingClientRect();
@@ -23,26 +24,35 @@ const viewProgress = (el: Element, vh: number) => {
 export function ScrollMotion() {
   useScrollFrame(() => {
     const vh = window.innerHeight;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const q = <T extends HTMLElement>(s: string) => document.querySelector<T>(s);
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const q = <T extends HTMLElement>(s: string) =>
+      document.querySelector<T>(s);
 
     if (reduce) {
-      document.querySelectorAll<HTMLElement>("[data-reveal]").forEach((el) => (el.style.clipPath = "none"));
-      document.querySelectorAll<HTMLElement>("[data-heal]").forEach((el) => (el.style.filter = "none"));
+      document
+        .querySelectorAll<HTMLElement>("[data-reveal]")
+        .forEach((el) => (el.style.clipPath = "none"));
+      document
+        .querySelectorAll<HTMLElement>("[data-heal]")
+        .forEach((el) => (el.style.filter = "none"));
       return;
     }
 
     // Hero: the photo sinks and settles, the title block rises and fades (cheap: three writes per frame).
     const hp = clamp(window.scrollY / vh, 0, 1);
     const img = q("[data-hero-img]");
-    if (img) img.style.transform = `translate3d(0,${(hp * 4).toFixed(2)}%,0) scale(${(1.08 - hp * 0.08).toFixed(4)})`;
+    if (img)
+      img.style.transform = `translate3d(0,${(hp * 4).toFixed(2)}%,0) scale(${(1.08 - hp * 0.08).toFixed(4)})`;
     const txt = q("[data-hero-txt]");
     if (txt) {
       txt.style.transform = `translate3d(0,${(-hp * 70).toFixed(1)}px,0)`;
       txt.style.opacity = String(clamp(1 - hp * 1.4, 0, 1));
     }
     const meta = q("[data-hero-meta]");
-    if (meta) meta.style.transform = `translate3d(0,${(-hp * 50).toFixed(1)}px,0)`;
+    if (meta)
+      meta.style.transform = `translate3d(0,${(-hp * 50).toFixed(1)}px,0)`;
 
     document.querySelectorAll<HTMLElement>("[data-par]").forEach((el) => {
       const parent = el.parentElement;
@@ -71,7 +81,8 @@ export function ScrollMotion() {
       const e = 1 - Math.pow(1 - p, 2);
       el.style.clipPath = `inset(${((1 - e) * 10).toFixed(2)}% ${((1 - e) * 8).toFixed(2)}% round 2px)`;
       const img = el.querySelector<HTMLElement>("[data-reveal-img]");
-      if (img) img.style.transform = `translate3d(0,${(-4 + viewProgress(el, vh) * 8).toFixed(2)}%,0) scale(${(1.08 - e * 0.08).toFixed(4)})`;
+      if (img)
+        img.style.transform = `translate3d(0,${(-4 + viewProgress(el, vh) * 8).toFixed(2)}%,0) scale(${(1.08 - e * 0.08).toFixed(4)})`;
     });
 
     // "Sanación": the closing photo regains color and light as its section arrives (progress follows the
@@ -86,7 +97,11 @@ export function ScrollMotion() {
         heal.style.filter = `grayscale(${(1 - p).toFixed(3)}) brightness(${(0.55 + p * 0.45).toFixed(3)})`;
         heal.style.transform = `translate3d(0,${(-3 + p * 6).toFixed(2)}%,0) scale(${(1.06 - p * 0.06 + settle * 0.05).toFixed(4)})`;
         const outro = q("[data-outro]");
-        if (outro) outro.style.opacity = clamp((settle - 0.55) / 0.45, 0, 1).toFixed(3);
+        if (outro) {
+          const opacity = clamp((settle - 0.55) / 0.45, 0, 1);
+          outro.style.opacity = opacity.toFixed(3);
+          closing.toggleAttribute("data-theme-surface", opacity >= 0.7);
+        }
       }
     }
   });

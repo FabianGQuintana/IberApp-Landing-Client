@@ -2,8 +2,14 @@ import { expect, test, type Page } from "@playwright/test";
 
 // Phase 5: scroll choreography (Ibera Landing v6 update()).
 
-const scrollTo = (page: Page, y: number) => page.evaluate((top) => window.scrollTo({ top, behavior: "instant" }), y);
-const sectionTop = (page: Page, id: string) => page.evaluate((i) => document.getElementById(i)!.getBoundingClientRect().top + window.scrollY, id);
+const scrollTo = (page: Page, y: number) =>
+  page.evaluate((top) => window.scrollTo({ top, behavior: "instant" }), y);
+const sectionTop = (page: Page, id: string) =>
+  page.evaluate(
+    (i) =>
+      document.getElementById(i)!.getBoundingClientRect().top + window.scrollY,
+    id,
+  );
 const settle = (page: Page) => page.waitForTimeout(250);
 // Client effects run after hydration, a few hundred ms after `load` in dev: tests that act right away must wait for it
 // (CustomCursor marks <html> once its effect runs, on desktop without reduced motion).
@@ -12,17 +18,23 @@ const hydrated = (page: Page) => page.waitForFunction(() => document.documentEle
 test.describe("desktop 1440", () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test("hero parallax: photo settles, text rises and fades", async ({ page }) => {
+  test("hero parallax: photo settles, text rises and fades", async ({
+    page,
+  }) => {
     await page.goto("/");
     await settle(page);
     const txt = page.locator("[data-hero-txt]");
     await expect(txt).toHaveCSS("opacity", "1");
     await scrollTo(page, 450);
     await settle(page);
-    const opacity = Number(await txt.evaluate((el) => getComputedStyle(el).opacity));
+    const opacity = Number(
+      await txt.evaluate((el) => getComputedStyle(el).opacity),
+    );
     expect(opacity).toBeGreaterThan(0.2);
     expect(opacity).toBeLessThan(0.8);
-    expect(await txt.evaluate((el) => (el as HTMLElement).style.transform)).toContain("translate3d(0px, -35");
+    expect(
+      await txt.evaluate((el) => (el as HTMLElement).style.transform),
+    ).toContain("translate3d(0px, -35");
     await scrollTo(page, 900);
     await settle(page);
     await expect(txt).toHaveCSS("opacity", "0");
@@ -31,20 +43,29 @@ test.describe("desktop 1440", () => {
   test("pause: clip-path opens as the block enters", async ({ page }) => {
     await page.goto("/");
     const block = page.locator("[data-reveal]").first();
-    const top = await block.evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+    const top = await block.evaluate(
+      (el) => el.getBoundingClientRect().top + window.scrollY,
+    );
     await scrollTo(page, top - 800);
     await settle(page);
-    const early = await block.evaluate((el) => (el as HTMLElement).style.clipPath);
+    const early = await block.evaluate(
+      (el) => (el as HTMLElement).style.clipPath,
+    );
     expect(early).toMatch(/inset\((?!0%)/);
     await scrollTo(page, top - 40);
     await settle(page);
-    expect(await block.evaluate((el) => (el as HTMLElement).style.clipPath)).toMatch(/inset\(0\.?0*%/);
+    expect(
+      await block.evaluate((el) => (el as HTMLElement).style.clipPath),
+    ).toMatch(/inset\(0\.?0*%/);
   });
 
   test("closing photo heals from grayscale to color", async ({ page }) => {
     await page.goto("/");
     const top = await sectionTop(page, "futuro");
-    const filter = () => page.locator("[data-heal]").evaluate((el) => (el as HTMLElement).style.filter);
+    const filter = () =>
+      page
+        .locator("[data-heal]")
+        .evaluate((el) => (el as HTMLElement).style.filter);
     await scrollTo(page, top - 880);
     await expect.poll(filter).toMatch(/grayscale\(0\.[5-9]/);
     await scrollTo(page, top + 300); // pinned: fully healed
@@ -54,35 +75,93 @@ test.describe("desktop 1440", () => {
   test("closing stage fades into the footer's night", async ({ page }) => {
     await page.goto("/");
     const top = await sectionTop(page, "futuro");
-    const height = await page.locator("#futuro").evaluate((el) => el.getBoundingClientRect().height);
-    const outro = () => page.locator("[data-outro]").evaluate((el) => Number((el as HTMLElement).style.opacity));
+    const height = await page
+      .locator("#futuro")
+      .evaluate((el) => el.getBoundingClientRect().height);
+    const outro = () =>
+      page
+        .locator("[data-outro]")
+        .evaluate((el) => Number((el as HTMLElement).style.opacity));
     await scrollTo(page, top + 300);
     await expect.poll(outro).toBe(0);
     await scrollTo(page, top + height - 900);
     await expect.poll(outro).toBeGreaterThan(0.95);
   });
 
-  test("fragility: photo darkens with the scroll and ripples once", async ({ page }) => {
+  test("Future follows the selected theme only after the outro reaches 70%", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const top = await sectionTop(page, "futuro");
+    const future = page.locator("#futuro");
+    const height = await future.evaluate(
+      (el) => el.getBoundingClientRect().height,
+    );
+    const scrollToOutroOpacity = (opacity: number) =>
+      top + (height - 900) * (0.55 + 0.45 * opacity);
+    const background = () =>
+      future.evaluate((el) => getComputedStyle(el).backgroundColor);
+
+    await scrollTo(page, scrollToOutroOpacity(0.69));
+    await expect
+      .poll(() =>
+        page
+          .locator("[data-outro]")
+          .evaluate((el) => Number((el as HTMLElement).style.opacity)),
+      )
+      .toBeCloseTo(0.69, 1);
+    await expect(future).not.toHaveAttribute("data-theme-surface");
+    await page.getByRole("button", { name: "Cambiar a modo claro" }).click();
+    await expect.poll(background).toBe("rgb(11, 16, 14)");
+
+    await scrollTo(page, scrollToOutroOpacity(0.71));
+    await expect(future).toHaveAttribute("data-theme-surface", "");
+    await expect.poll(background).toBe("rgb(242, 245, 243)");
+    await expect(page.locator("#futuro [data-theme-content]")).toHaveCSS(
+      "color",
+      "rgb(0, 62, 37)",
+    );
+  });
+
+  test("fragility: photo darkens with the scroll and ripples once", async ({
+    page,
+  }) => {
     await page.goto("/");
     await hydrated(page);
     const top = await sectionTop(page, "fragilidad");
     await scrollTo(page, top + 100);
     await page.waitForTimeout(150);
-    expect(await page.locator("[data-dim]").evaluate((el) => (el as HTMLElement).style.filter)).toContain("ibera-ripple");
+    expect(
+      await page
+        .locator("[data-dim]")
+        .evaluate((el) => (el as HTMLElement).style.filter),
+    ).toContain("ibera-ripple");
     await page.waitForTimeout(1000);
-    expect(await page.locator("[data-dim]").evaluate((el) => (el as HTMLElement).style.filter)).not.toContain("ibera-ripple");
+    expect(
+      await page
+        .locator("[data-dim]")
+        .evaluate((el) => (el as HTMLElement).style.filter),
+    ).not.toContain("ibera-ripple");
     await scrollTo(page, top + 900);
     await settle(page);
-    const overlay = await page.locator("[data-dim] + div").evaluate((el) => Number(getComputedStyle(el).opacity));
+    const overlay = await page
+      .locator("[data-dim] + div")
+      .evaluate((el) => Number(getComputedStyle(el).opacity));
     expect(overlay).toBeGreaterThan(0.3);
   });
 
-  test("territory is sticky and the scroll flies through the portals", async ({ page }) => {
+  test("territory is sticky and the scroll flies through the portals", async ({
+    page,
+  }) => {
     await page.goto("/");
     const top = await sectionTop(page, "territorio");
-    const height = await page.locator("#territorio").evaluate((el) => el.getBoundingClientRect().height);
+    const height = await page
+      .locator("#territorio")
+      .evaluate((el) => el.getBoundingClientRect().height);
     expect(height).toBeCloseTo(2700, -1); // 300vh at 900 px
-    const card = page.locator("#territorio [aria-hidden='false'] .title-display").first();
+    const card = page
+      .locator("#territorio [aria-hidden='false'] .title-display")
+      .first();
 
     await scrollTo(page, top);
     await settle(page);
@@ -99,15 +178,23 @@ test.describe("desktop 1440", () => {
     await scrollTo(page, top + 1700);
     await settle(page);
     await expect(card).not.toHaveText(mid!);
-    const num = page.locator("#territorio [aria-hidden='false'] .eyebrow").last();
+    const num = page
+      .locator("#territorio [aria-hidden='false'] .eyebrow")
+      .last();
     await expect(num).toHaveText(/0[5-8] \/ 08/);
   });
 
-  test("custom cursor follows cards in the rail and shows the label", async ({ page }) => {
+  test("custom cursor follows cards in the rail and shows the label", async ({
+    page,
+  }) => {
     await page.goto("/");
     await hydrated(page);
     await page.locator("#portales").scrollIntoViewIfNeeded();
-    await page.evaluate(() => document.getElementById("portales")!.scrollIntoView({ behavior: "instant" }));
+    await page.evaluate(() =>
+      document
+        .getElementById("portales")!
+        .scrollIntoView({ behavior: "instant" }),
+    );
     const card = page.getByRole("button", { name: "Ver portal Laguna Iberá" });
     const box = (await card.boundingBox())!;
     await page.mouse.move(box.x + 100, box.y + 100);
@@ -121,14 +208,40 @@ test.describe("desktop 1440", () => {
 
   test("rail cards parallax with the horizontal scroll", async ({ page }) => {
     await page.goto("/");
-    await page.evaluate(() => document.getElementById("portales")!.scrollIntoView({ behavior: "instant" }));
+    await page.evaluate(() =>
+      document
+        .getElementById("portales")!
+        .scrollIntoView({ behavior: "instant" }),
+    );
     await settle(page);
     const second = page.locator("[data-card]").nth(1).locator("[data-cimg]");
-    const t0 = await second.evaluate((el) => (el as HTMLElement).style.transform);
+    const t0 = await second.evaluate(
+      (el) => (el as HTMLElement).style.transform,
+    );
     await page.getByRole("button", { name: "Portal siguiente" }).click();
     await page.waitForTimeout(900);
-    const t1 = await second.evaluate((el) => (el as HTMLElement).style.transform);
+    const t1 = await second.evaluate(
+      (el) => (el as HTMLElement).style.transform,
+    );
     expect(t0).not.toBe(t1);
+  });
+
+  test("portal rail can be dragged horizontally with the mouse", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const rail = page.locator("#portales > div").nth(1);
+    await rail.scrollIntoViewIfNeeded();
+    const box = (await rail.boundingBox())!;
+    const startX = box.x + box.width * 0.8;
+    const y = box.y + box.height * 0.5;
+    await page.mouse.move(startX, y);
+    await page.mouse.down();
+    await page.mouse.move(startX - 650, y, { steps: 8 });
+    await page.mouse.up();
+    await expect
+      .poll(() => rail.evaluate((el) => el.scrollLeft))
+      .toBeGreaterThan(100);
   });
 
   test("collage photos drift with the scroll", async ({ page }) => {
@@ -145,16 +258,32 @@ test.describe("desktop 1440", () => {
 });
 
 test.describe("mobile 390", () => {
-  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+  test.use({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+    isMobile: true,
+  });
 
-  test("territory stays a plain block and no horizontal scroll appears", async ({ page }) => {
+  test("territory stays a plain block and no horizontal scroll appears", async ({
+    page,
+  }) => {
     await page.goto("/");
-    const h = await page.locator("#territorio").evaluate((el) => el.getBoundingClientRect().height);
+    const h = await page
+      .locator("#territorio")
+      .evaluate((el) => el.getBoundingClientRect().height);
     expect(h).toBeLessThan(1600);
     for (const id of ["territorio", "fragilidad", "futuro"]) {
-      await page.evaluate((i) => document.getElementById(i)!.scrollIntoView({ behavior: "instant" }), id);
+      await page.evaluate(
+        (i) =>
+          document.getElementById(i)!.scrollIntoView({ behavior: "instant" }),
+        id,
+      );
       await settle(page);
-      expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth - window.innerWidth,
+        ),
+      ).toBeLessThanOrEqual(0);
     }
   });
 });
@@ -164,12 +293,31 @@ test.describe("reduced motion", () => {
 
   test("effects fall back to their static end states", async ({ page }) => {
     await page.goto("/");
-    const top = await page.locator("[data-reveal]").first().evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+    const top = await page
+      .locator("[data-reveal]")
+      .first()
+      .evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
     await scrollTo(page, top - 800);
     await settle(page);
-    expect(await page.locator("[data-reveal]").first().evaluate((el) => (el as HTMLElement).style.clipPath)).toBe("none");
-    expect(await page.locator("[data-heal]").evaluate((el) => (el as HTMLElement).style.filter)).toBe("none");
-    expect(await page.locator("[data-hero-txt]").evaluate((el) => (el as HTMLElement).style.transform)).toBe("");
-    await expect(page.locator("html")).not.toHaveAttribute("data-custom-cursor", "on");
+    expect(
+      await page
+        .locator("[data-reveal]")
+        .first()
+        .evaluate((el) => (el as HTMLElement).style.clipPath),
+    ).toBe("none");
+    expect(
+      await page
+        .locator("[data-heal]")
+        .evaluate((el) => (el as HTMLElement).style.filter),
+    ).toBe("none");
+    expect(
+      await page
+        .locator("[data-hero-txt]")
+        .evaluate((el) => (el as HTMLElement).style.transform),
+    ).toBe("");
+    await expect(page.locator("html")).not.toHaveAttribute(
+      "data-custom-cursor",
+      "on",
+    );
   });
 });

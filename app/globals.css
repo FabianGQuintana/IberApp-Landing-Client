@@ -217,6 +217,24 @@
   }
 }
 
+/* Future joins the selected theme only after its outro has covered 70% of the content. */
+html[data-theme="light"] [data-theme-surface] {
+  background-color: var(--bg);
+  color: var(--fg);
+}
+
+html[data-theme="light"] [data-theme-surface] [data-theme-content],
+html[data-theme="light"] [data-theme-surface] [data-theme-content] a,
+html[data-theme="light"] [data-theme-surface] [data-theme-content] a:hover {
+  color: var(--head);
+  transition: color 0.5s;
+}
+
+html[data-theme="light"] [data-theme-surface] [data-outro] {
+  background-color: var(--bg);
+  transition: background-color 0.5s;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
