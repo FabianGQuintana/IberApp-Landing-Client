@@ -1,6 +1,6 @@
 // IberAPP service worker: the landing opens without signal once it was visited with signal.
 // Hand-written (no dependencies). Bump VERSION to drop every old cache on the next visit.
-const VERSION = "v2";
+const VERSION = "v3";
 const PAGES = `ibera-pages-${VERSION}`;
 const STATIC = `ibera-static-${VERSION}`;
 const MEDIA = `ibera-media-${VERSION}`;
@@ -8,7 +8,7 @@ const TILES = `ibera-tiles-${VERSION}`;
 const MAX_TILES = 400; // map tiles the visitor already saw (~10 MB at most)
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(PAGES).then((c) => c.addAll(["/", "/manifest.webmanifest"])));
+  event.waitUntil(caches.open(PAGES).then((c) => c.addAll(["/", "/rangers", "/manifest.webmanifest", "/rangers.webmanifest"])));
   self.skipWaiting();
 });
 
@@ -77,7 +77,7 @@ self.addEventListener("fetch", (event) => {
   if (request.mode === "navigate" && url.origin === self.location.origin) return event.respondWith(page(request));
   if (url.origin === self.location.origin) {
     if (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/vendor/")) return event.respondWith(cacheFirst(request, STATIC));
-    if (url.pathname.startsWith("/_next/image") || url.pathname.startsWith("/img/") || url.pathname.startsWith("/icons/") || url.pathname === "/iso.svg" || url.pathname === "/favicon.ico" || url.pathname === "/apple-icon.png")
+    if (url.pathname.startsWith("/_next/image") || url.pathname.startsWith("/img/") || url.pathname.startsWith("/icons/") || url.pathname === "/iso.svg" || url.pathname === "/favicon.ico" || url.pathname === "/apple-icon.png" || url.pathname === "/rangers.webmanifest")
       return event.respondWith(staleWhileRevalidate(request, MEDIA));
     return;
   }
