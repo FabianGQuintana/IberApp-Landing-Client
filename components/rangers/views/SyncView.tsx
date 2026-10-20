@@ -9,7 +9,7 @@ import { SuccessOverlay } from "@/components/rangers/ui/SuccessOverlay";
 import { LoginView } from "@/components/rangers/views/LoginView";
 import { usePendingReports } from "@/hooks/rangers/usePendingReports";
 import { useSession } from "@/hooks/rangers/useSession";
-import { ApiError, OfflineError } from "@/lib/rangers/api";
+import { ApiError, OfflineError } from "@/lib/api/client";
 import { getCategory } from "@/lib/rangers/categories";
 import { deleteReport } from "@/lib/rangers/reports-db";
 import { DEMO_MODE } from "@/lib/rangers/demo";
@@ -76,7 +76,7 @@ export function SyncView({ onDone }: Props) {
                 .filter(Boolean)
                 .join(", ")}).`
             : DEMO_MODE
-              ? "Envío simulado (modo demostración): con el backend publicado, los reportes llegan al servidor."
+              ? "Modo demostración: los reportes llegaron al servidor de prueba. Entrá al panel (/admin) como administrador para verlos."
               : "Todo llegó al servidor. Ya no queda nada pendiente."
         }
         buttonLabel="Volver al inicio"
