@@ -1,5 +1,6 @@
 import { DEMO_MODE, demoSync } from "@/lib/rangers/demo";
-import { ApiError, apiFetch } from "@/lib/rangers/api";
+import { ApiError } from "@/lib/api/client";
+import { rangerApi as apiFetch } from "@/lib/rangers/session";
 import { deleteReport, saveReport } from "@/lib/rangers/reports-db";
 import type { PendingReport, SyncReportsRequest, SyncReportsResult } from "@/types/rangers/report";
 
